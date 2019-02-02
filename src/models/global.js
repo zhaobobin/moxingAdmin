@@ -31,7 +31,7 @@ export default {
     *register({ payload, callback }, { call, put }) {
 
       const res = yield call(
-        (params) => request('/api/register', {method: 'POST', body: params}),
+        (params) => request('/admin/register', {method: 'POST', body: params}),
         payload
       );
       yield callback(res);
@@ -52,7 +52,7 @@ export default {
 
     *login({ payload, callback }, { call, put }) {
       const res = yield call(
-        (params) => request('/api/login/account', {method: 'POST', body: params}),
+        (params) => request('/admin/user/login', {method: 'POST', body: params}),
         payload
       );
       yield callback(res);
@@ -61,7 +61,7 @@ export default {
         payload: res,
       });
       // Login successfully
-      if (res.status === 'ok') {
+      if (res.code === 0) {
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
