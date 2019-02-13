@@ -28,6 +28,13 @@ export default [
         component: './Home/Home',
       },
 
+      {
+        name: 'user-list',
+        icon: 'user',
+        path: '/user-list',
+        component: './User/UserList',
+      },
+
       // forms
       {
         path: '/form',

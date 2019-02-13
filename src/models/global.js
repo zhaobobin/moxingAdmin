@@ -31,7 +31,7 @@ export default {
     *register({ payload, callback }, { call, put }) {
 
       const res = yield call(
-        (params) => request('/admin/register', {method: 'POST', body: params}),
+        (params) => request('/api/register', {method: 'POST', body: params}),
         payload
       );
       yield callback(res);
@@ -52,16 +52,22 @@ export default {
 
     *login({ payload, callback }, { call, put }) {
       const res = yield call(
-        (params) => request('/admin/user/login', {method: 'POST', body: params}),
+        (params) => request('/api/user/admin_login', {method: 'POST', body: params}),
         payload
       );
       yield callback(res);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: res,
-      });
+
       // Login successfully
-      if (res.code === 0) {
+      if (res.code === '0') {
+
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {
+            currentAuthority: 'admin',
+            ...res,
+          },
+        });
+
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -260,7 +266,7 @@ export default {
   },
 
   reducers: {
-    changeLoginStatus(state, {payload}){
+    changeLoginStatus(state, { payload }){
       setAuthority(payload.currentAuthority);
       return {
         ...state,

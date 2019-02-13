@@ -77,10 +77,10 @@ export default {
     '@antv/data-set': 'DataSet',
   },
   proxy: {
-    '/admin': {
+    '/api': {
       target: 'http://47.94.100.232',
       changeOrigin: true,
-      //pathRewrite: { '^/admin': '' },
+      pathRewrite: { '^/api': '' },
     },
   },
   ignoreMomentLocale: true,
