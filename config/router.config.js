@@ -22,33 +22,47 @@ export default [
       { path: '/', redirect: '/home' },
 
       {
-        name: 'home',
+        name: '首页',
         icon: 'home',
         path: '/home',
         component: './Home/Home',
       },
 
       {
-        name: 'user-list',
+        name: '节点信息',
+        icon: 'branches',
+        path: '/node',
+        component: './Node/NodeList',
+      },
+
+      {
+        name: '用户列表',
         icon: 'user',
-        path: '/user-list',
+        path: '/users',
         component: './User/UserList',
+      },
+
+      {
+        name: '角色列表',
+        icon: 'solution',
+        path: '/roles',
+        component: './Role/RoleList',
       },
 
       // forms
       {
         path: '/form',
         icon: 'form',
-        name: 'form',
+        name: '表单',
         routes: [
           {
             path: '/form/basic-form',
-            name: 'basicform',
+            name: '基础表单',
             component: './Forms/BasicForm',
           },
           {
             path: '/form/step-form',
-            name: 'stepform',
+            name: '分步表单',
             component: './Forms/StepForm',
             hideChildrenInMenu: true,
             routes: [
@@ -75,7 +89,7 @@ export default [
           },
           {
             path: '/form/advanced-form',
-            name: 'advancedform',
+            name: '高级表单',
             authority: ['admin'],
             component: './Forms/AdvancedForm',
           },

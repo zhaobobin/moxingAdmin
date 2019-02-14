@@ -1,3 +1,5 @@
+const ENV = require('./utils/utils').ENV;
+
 module.exports = {
   navTheme: 'dark', // theme for nav menu
   primaryColor: '#1890FF', // primary color of ant design
@@ -7,7 +9,7 @@ module.exports = {
   autoHideHeader: false, // auto hide header
   fixSiderbar: false, // sticky siderbar
   menu: {
-    disableLocal: false,
+    disableLocal: true,  //国际化
   },
-  title: 'Ant Design Pro',
+  title: ENV.appname,
 };

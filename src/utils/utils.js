@@ -38,18 +38,18 @@ export const ENV = {
   gongan: '京公网安备 11010502036682号',
   gonganUrl: 'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010502036682',
 
-  storageUserIp: 'qtw-userIp',
-  storageAccessToken: 'qtw-access-token',
-  storageRefreshToken: 'qtw-refresh-token',
-  storageUserId: 'qtw-userid',
-  storageCurrentUser: 'qtw-currentCurrentUser',
-  storageLastTel: 'qtw-lastTel',
-  storageRemenber: 'qtw-remenber',
-  storageTheme: 'qtw-theme',
-  storageCurrentMenu: 'qtw-currentMenu',
-  storagePagesize: 'qtw-pagesize',
-  storageHistory: 'qtw-history',                          // 路由历史
-  storageSmscodeErrorNum: 'qtw-smscodeErrorNum',          // 验证码错误次数
+  storageUserIp: 'mxw-userIp',
+  storageAccessToken: 'mxw-access-token',
+  storageRefreshToken: 'mxw-refresh-token',
+  storageUserId: 'mxw-userid',
+  storageCurrentUser: 'mxw-currentCurrentUser',
+  storageLastTel: 'mxw-lastTel',
+  storageRemenber: 'mxw-remenber',
+  storageTheme: 'mxw-theme',
+  storageCurrentMenu: 'mxw-currentMenu',
+  storagePagesize: 'mxw-pagesize',
+  storageHistory: 'mxw-history',                          // 路由历史
+  storageSmscodeErrorNum: 'mxw-smscodeErrorNum',          // 验证码错误次数
 };
 
 /**

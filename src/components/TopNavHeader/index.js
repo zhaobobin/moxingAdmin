@@ -3,6 +3,7 @@ import Link from 'umi/link';
 import RightContent from '../GlobalHeader/RightContent';
 import BaseMenu from '../SiderMenu/BaseMenu';
 import { getFlatMenuKeys } from '../SiderMenu/SiderMenuUtils';
+import {ENV} from '@/utils/utils';
 import styles from './index.less';
 
 export default class TopNavHeader extends PureComponent {
@@ -32,7 +33,7 @@ export default class TopNavHeader extends PureComponent {
             <div className={styles.logo} key="logo" id="logo">
               <Link to="/">
                 <img src={logo} alt="logo" />
-                <h1>Ant Design Pro</h1>
+                <h1>{ENV.appname}</h1>
               </Link>
             </div>
             <div
