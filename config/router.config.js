@@ -18,35 +18,94 @@ export default [
     Routes: ['src/pages/Authorized'],
     authority: ['admin', 'user'],
     routes: [
-      // home
-      { path: '/', redirect: '/home' },
+
+      { path: '/', redirect: '/member/list' },
 
       {
-        name: '首页',
-        icon: 'home',
-        path: '/home',
-        component: './Home/Home',
+        name: '会员管理',
+        icon: 'team',
+        path: '/member',
+        routes: [
+          { path: '/member', redirect: '/member/list' },
+          {
+            name: '会员查询',
+            path: 'list',
+            component: './MemberManage/MemberList',
+          },
+          {
+            name: '会员详情',
+            path: 'detail/:id',
+            hideInMenu: true,
+            component: './MemberManage/MemberDetail',
+          },
+        ]
       },
 
       {
-        name: '节点信息',
-        icon: 'branches',
-        path: '/node',
-        component: './Node/NodeList',
+        name: '内容管理',
+        icon: 'project',
+        path: '/content',
+        routes: [
+          { path: '/content', redirect: '/content/category' },
+          {
+            name: '分类管理',
+            path: 'category',
+            component: './ContentManage/Category',
+          },
+          {
+            name: '文章管理',
+            path: 'article',
+            component: './ContentManage/ArticleList',
+          },
+          {
+            name: '动态管理',
+            path: 'dynamic',
+            component: './ContentManage/Dynamic',
+          },
+          {
+            name: '数据源管理',
+            path: 'source',
+            component: './ContentManage/Source',
+          },
+        ]
       },
 
       {
-        name: '用户列表',
+        name: '商品管理',
+        icon: 'shop',
+        path: '/goods',
+        routes: [
+          { path: '/goods', redirect: '/goods/list' },
+          {
+            name: '商品列表',
+            path: 'list',
+            component: './GoodsManage/GoodsList',
+          },
+          {
+            name: '商品分类',
+            path: 'category',
+            component: './GoodsManage/GoodsCategory',
+          },
+        ]
+      },
+
+      {
+        name: '管理员管理',
         icon: 'user',
         path: '/users',
-        component: './User/UserList',
-      },
-
-      {
-        name: '角色列表',
-        icon: 'solution',
-        path: '/roles',
-        component: './Role/RoleList',
+        routes: [
+          { path: '/users', redirect: '/users/list' },
+          {
+            name: '管理员列表',
+            path: 'list',
+            component: './UserManage/UserList',
+          },
+          {
+            name: '角色列表',
+            path: 'role',
+            component: './UserManage/RoleList',
+          },
+        ]
       },
 
       // forms
@@ -72,17 +131,17 @@ export default [
               },
               {
                 path: '/form/step-form/info',
-                name: 'info',
+                name: '基本信息',
                 component: './Forms/StepForm/Step1',
               },
               {
                 path: '/form/step-form/confirm',
-                name: 'confirm',
+                name: '对话框',
                 component: './Forms/StepForm/Step2',
               },
               {
                 path: '/form/step-form/result',
-                name: 'result',
+                name: '结果',
                 component: './Forms/StepForm/Step3',
               },
             ],

@@ -10,6 +10,7 @@ import pathToRegexp from 'path-to-regexp';
 import Media from 'react-media';
 import { formatMessage } from 'umi/locale';
 import Authorized from '@/utils/Authorized';
+//import Breadcrumb from '@/components/PageHeader/breadcrumb';
 import logo from '@/assets/logo.png';
 
 import Header from './Header';
@@ -226,7 +227,10 @@ class BasicLayout extends React.PureComponent {
           <ContainerQuery query={query}>
             {params => (
               <Context.Provider value={this.getContext()}>
-                <div className={classNames(params)}>{layout}</div>
+                <div className={classNames(params)}>
+                  {/*<Breadcrumb location={this.props.location} routes={this.props.routes} breadcrumbNameMap={breadcrumbNameMap}/>*/}
+                  {layout}
+                </div>
               </Context.Provider>
             )}
           </ContainerQuery>

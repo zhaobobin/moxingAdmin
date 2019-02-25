@@ -52,12 +52,12 @@ if (process.env.APP_TYPE === 'site') {
   ]);
 }
 
-const distPath = 'moxingAdmin';
+//const distPath = 'moxingAdmin';
 
 export default {
   // add for transfer to umi
-  outputPath: "./dist/" + distPath,
-  publicPath: "/" + distPath + '/',
+  outputPath: "./dist",
+  publicPath: "/",
   plugins,
   define: {
     APP_TYPE: process.env.APP_TYPE || '',
@@ -80,7 +80,6 @@ export default {
     '/api': {
       target: 'http://47.94.100.232',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
     },
   },
   ignoreMomentLocale: true,

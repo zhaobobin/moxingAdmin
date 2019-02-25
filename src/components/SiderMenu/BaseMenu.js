@@ -138,7 +138,7 @@ export default class BaseMenu extends PureComponent {
         openKeys: openKeys.length === 0 ? [...selectedKeys] : openKeys,
       };
     }
-    const { handleOpenChange, style, menuData } = this.props;
+    const { style, menuData } = this.props;
     const cls = classNames(className, {
       'top-nav-menu': mode === 'horizontal',
     });
@@ -148,11 +148,10 @@ export default class BaseMenu extends PureComponent {
         key="Menu"
         mode={mode}
         theme={theme}
-        onOpenChange={handleOpenChange}
-        selectedKeys={selectedKeys}
+        defaultSelectedKeys={selectedKeys}
+        defaultOpenKeys={selectedKeys}
         style={style}
         className={cls}
-        {...props}
       >
         {this.getNavMenuItems(menuData)}
       </Menu>

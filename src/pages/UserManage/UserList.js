@@ -46,7 +46,7 @@ export default class UserList extends React.Component {
       <div>
         <TableInit
           params={{
-            api: 'api/user/index',
+            api: '/api/user/index',
             columns,
             queryParams: {
 

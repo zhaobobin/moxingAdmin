@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment'
 import TableInit from '@/components/Table/TableInit'
 
-export default class UserList extends React.Component {
+export default class GoodsList extends React.Component {
 
   render(){
 
@@ -46,7 +46,7 @@ export default class UserList extends React.Component {
       <div>
         <TableInit
           params={{
-            api: 'api/user/index',
+            api: '/api/goods/index',
             columns,
             queryParams: {
 
