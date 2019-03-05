@@ -13,7 +13,7 @@ export default class TableInit extends React.Component {
     super(props);
     this.ajaxFlag = true;
     this.state = {
-      loading: true,
+      loading: false,
       list: [],
       total: null,
 
@@ -25,19 +25,26 @@ export default class TableInit extends React.Component {
   }
 
   componentDidMount() {
+    if(this.props.onRef) this.props.onRef(this);
     this.queryList(this.props.params.queryParams);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.params !== this.props.params) {
+    if (nextProps.params.queryParams !== this.props.params.queryParams) {
       this.queryList(nextProps.params.queryParams);
     }
   }
+
+  refresh = (queryParams) => {
+    this.queryList(queryParams);
+  };
 
   queryList(queryParams){
 
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
+
+    this.setState({ loading: true });
 
     let {page, page_count} = this.state.queryParams;
 
@@ -61,7 +68,7 @@ export default class TableInit extends React.Component {
               page: queryParams.page || page,
               page_count: queryParams.page_count || page_count,
             },
-          })
+          });
         }else{
           this.setState({loading: false, total: 0})
         }
@@ -72,7 +79,6 @@ export default class TableInit extends React.Component {
   //表格筛选
   handleTableChange = (pagination, filters, sorter) => {
     Storage.set(ENV.storagePagesize, pagination.pageSize);
-    this.setState({ loading: true });
     this.queryList({
       ...this.state.queryParams,
       page: pagination.current,
@@ -86,7 +92,7 @@ export default class TableInit extends React.Component {
     const { columns } = this.props.params;
 
     return(
-      <div style={{padding: '20px', background: '#fff'}}>
+      <div style={{padding: '20px 0'}}>
         <Table
           rowKey="id"
           loading={loading}

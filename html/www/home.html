@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
+  <title>趣族</title>
+  <link rel="icon" href="./img/logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="./css/base.css">
+</head>
+<body class="home">
+
+  <div class="download">
+    <img class="bg" src="./img/home_bg.jpg" alt="趣族bg">
+    <div class="com">
+      <div class="w">
+        <div class="left">
+          <img class="logo" src="./img/home_logo.png" alt="趣族logo">
+          <p class="btns">
+            <span><a class="ios" onclick="dislog_open()"><img class="logo" src="./img/btn_ios.png" alt="趣族ios下载"></a></span>
+            <span><a class="android" onclick="dislog_open()"><img class="logo" src="./img/btn_android.png" alt="趣族android下载"></a></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="links">
+      <p>
+        <span><a href="privacy.html">隐私协议</a></span>
+        <span class="yellow">|</span>
+        <span><a href="guide.html">用户说明</a></span>
+        <span class="yellow">|</span>
+        <span><a href="about.html">关于我们</a></span>
+      </p>
+    </div>
+    <p>
+      <span>&#169 2019 趣族 app.hobbyzone.com</span>
+      <span>中国互联网举报中心 </span>
+      <span>京ICP证000000号</span>
+      <span>京ICP备00000号-3</span>
+      <span>京公网安备 12312312121212112号</span>
+    </p>
+    <p>
+      <span>网络文化经营许可证跟帖评论自律管理承诺书</span>
+      <span>公司名称：北京xxx有限公司</span>
+    </p>
+  </div>
+
+  <div class="dialog" id="dialog">
+    <div class="con">
+      <p><span>应用还在上架中，敬请期待哦！</span></p>
+      <a class="close" id="close" onclick="dislog_close()">知道了</a>
+    </div>
+  </div>
+
+  <script>
+    function dislog_open(){
+      document.getElementById('dialog').style.display = 'block'
+    }
+    function dislog_close(){
+      document.getElementById('dialog').style.display = 'none'
+    }
+  </script>
+
+</body>
+</html>

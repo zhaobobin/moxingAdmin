@@ -10,6 +10,7 @@ import pathToRegexp from 'path-to-regexp';
 import Media from 'react-media';
 import { formatMessage } from 'umi/locale';
 import Authorized from '@/utils/Authorized';
+import GlobalContent from '@/components/GlobalContent'
 //import Breadcrumb from '@/components/PageHeader/breadcrumb';
 import logo from '@/assets/logo.png';
 
@@ -62,21 +63,21 @@ class BasicLayout extends React.PureComponent {
 
   componentDidMount() {
     const {
+      isAuth,
       dispatch,
       route: { routes, authority },
     } = this.props;
-    // dispatch({
-    //   type: 'global/token',
-    // });
-    // dispatch({
-    //   type: 'user/fetchCurrent',
-    // });
     dispatch({
       type: 'setting/getSetting',
     });
     dispatch({
       type: 'menu/getMenuData',
       payload: { routes, authority },
+    });
+    if(isAuth) return;
+    dispatch({
+      type: 'global/token',
+      payload: {},
     });
   }
 
@@ -214,7 +215,9 @@ class BasicLayout extends React.PureComponent {
               authority={routerConfig}
               noMatch={this.noMatchComponent(routerConfig)}
             >
-              {children}
+              <GlobalContent>
+                {children}
+              </GlobalContent>
             </Authorized>
           </Content>
 
@@ -242,6 +245,7 @@ class BasicLayout extends React.PureComponent {
 }
 
 export default connect(({ global, setting, menu: menuModel }) => ({
+  isAuth: global.isAuth,
   collapsed: global.collapsed,
   layout: setting.layout,
   menuData: menuModel.menuData,

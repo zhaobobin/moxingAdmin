@@ -71,6 +71,31 @@ export default [
       },
 
       {
+        name: '票务管理',
+        icon: 'shop',
+        path: '/ticket',
+        routes: [
+          { path: '/ticket', redirect: '/ticket/exhibition' },
+          {
+            name: '展会列表',
+            path: 'exhibition',
+            component: './TicketManage/ExhibitionList',
+          },
+          {
+            name: '票务列表',
+            path: 'list',
+            component: './TicketManage/TicketList',
+          },
+          {
+            name: '票务详情',
+            path: 'detail/:id',
+            hideInMenu: true,
+            component: './TicketManage/TicketDetail',
+          },
+        ]
+      },
+
+      {
         name: '商品管理',
         icon: 'shop',
         path: '/goods',

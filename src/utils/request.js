@@ -2,7 +2,7 @@ import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import router from 'umi/router';
 import hash from 'hash.js';
-import { ENV, isAntdPro } from './utils';
+import { ENV, Storage, isAntdPro } from './utils';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -66,7 +66,7 @@ const cachedSave = (response, hashcode) => {
 export default function request(url, option) {
 
   if(process.env.NODE_ENV === 'production'){
-    url += ENV.api.pro;
+    url = ENV.api.pro + url;
   }
 
   const options = {
@@ -84,7 +84,8 @@ export default function request(url, option) {
     .digest('hex');
 
   const defaultOptions = {
-    credentials: 'include',
+    mode: 'cors',
+    credentials: 'include',                           //跨域访问携带cookie
   };
   const newOptions = { ...defaultOptions, ...options };
   if (

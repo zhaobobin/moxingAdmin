@@ -1,30 +1,124 @@
-/**
- * 会员列表
- */
 import React from 'react';
+import { connect } from 'dva';
 import { Link } from 'dva/router'
-import moment from 'moment'
+import { Button, Popconfirm } from 'antd'
+
 import FormInit from '@/components/Form/FormInit'
 import TableInit from '@/components/Table/TableInit'
 
-export default class UserList extends React.Component {
+@connect(({ global }) => ({
+  global,
+}))
+export default class MemberList extends React.Component {
 
   constructor(props){
     super(props);
+    this.ajaxFlag = true;
     this.state = {
-      queryParams: {}
+      queryParams: {},                //查询参数
+      apiList: '/api/member/index',
+      apiAdd: '/api/member/user_add',
+      apiEdit: '/api/member/user_edit',
+      apiDel: '/api/member/user_del',
+      modalVisible: false,
+      modalAction: '',
+      modalTitle: '会员',
+      modalValues: '',
+
+      roleOptions: [],                   //角色下拉列表
+
     }
   }
 
-  refreshList = (values) => {
+  //表单回调
+  formCallback = (values) => {
     this.setState({
-      queryParams: values
+      queryParams: values,
+      modalVisible: false,
     })
+  };
+
+  //添加
+  add = () => {
+    this.setState({
+      modalVisible: true,
+      modalAction: '添加',
+    })
+  };
+
+  //编辑
+  edit = (item) => {
+    this.setState({
+      modalVisible: true,
+      modalAction: '编辑',
+      modalValues: item
+    })
+  };
+
+  //保存
+  save = (values) => {
+
+    if(!this.ajaxFlag) return;
+    this.ajaxFlag = false;
+
+    let {apiAdd, apiEdit, modalAction} = this.state;
+    let api = modalAction === '添加' ? apiAdd : apiEdit;
+    this.props.dispatch({
+      type: 'global/post',
+      url: api,
+      payload: {
+        ...values,
+      },
+      callback: (res) => {
+        setTimeout(() => {this.ajaxFlag = true}, 500);
+        if(res.code === '0'){
+          this.tableInit.refresh({});
+          this.setState({
+            modalVisible: false,
+            modalValues: '',
+          })
+        }
+      }
+    });
+  };
+
+  del = (id) => {
+    if(!this.ajaxFlag) return;
+    this.ajaxFlag = false;
+
+    let {apiDel} = this.state;
+
+    this.props.dispatch({
+      type: 'global/post',
+      url: apiDel,
+      payload: {
+        id,
+      },
+      callback: (res) => {
+        setTimeout(() => {this.ajaxFlag = true}, 500);
+        if(res.code === '0'){
+          this.tableInit.refresh({})
+        }
+      }
+    });
+  };
+
+  //modal回调
+  modalCallback = (values) => {
+    if(values){
+      this.save(values)
+    }else{
+      this.setState({
+        modalVisible: false,
+        modalValues: '',
+      })
+    }
   };
 
   render(){
 
-    const {queryParams} = this.state;
+    const {currentUser} = this.props.global;
+    const {apiList, queryParams, modalVisible, modalAction, modalTitle, modalValues} = this.state;
 
     const searchParams = [
       [
@@ -46,7 +140,7 @@ export default class UserList extends React.Component {
           rules: [],
         },
         {
-          key: 'user_type',
+          key: 'type',
           label: '分类名称',
           type: 'Select',
           value: '',
@@ -65,7 +159,7 @@ export default class UserList extends React.Component {
       ],
       [
         {
-          key: 'user_status',
+          key: 'status',
           label: '状态',
           type: 'Select',
           value: '',
@@ -105,12 +199,84 @@ export default class UserList extends React.Component {
       ]
     ];
 
+    const modalParams = [
+      [
+        {
+          key: 'nickname',
+          label: '昵称',
+          type: 'Input',
+          inputType: 'Input',
+          value: modalValues ? modalValues.nickname : undefined,
+          placeholder: '请输入昵称',
+          rules: [],
+        },
+        {
+          key: 'mobile',
+          label: '手机号',
+          type: 'Input',
+          value: modalValues ? modalValues.mobile : undefined,
+          placeholder: '请输入手机号',
+          rules: [],
+        },
+        {
+          key: 'type',
+          label: '用户类型',
+          type: 'Select',
+          value: modalValues ? modalValues.type : undefined,
+          placeholder: '请选择',
+          option: [
+            {
+              label: '会员',
+              value: 1
+            },
+            {
+              label: '店铺',
+              value: 2
+            }
+          ]
+        },
+        {
+          key: 'sex',
+          label: '性别',
+          type: 'Select',
+          value: modalValues ? modalValues.sex : undefined,
+          placeholder: '请选择',
+          option: [
+            {
+              label: '保密',
+              value: 0
+            },
+            {
+              label: '男',
+              value: 1
+            },
+            {
+              label: '女',
+              value: 2
+            }
+          ]
+        },
+      ]
+    ];
+
     const columns = [
       {
-        title: '昵称',
-        dataIndex: 'user_nickname',
-        key: 'user_nickname',
+        title: '姓名',
+        dataIndex: 'name',
+        key: 'name',
         align: 'center',
+        render: (name) => (
+          <span>{name || '--'}</span>
+        )
+      },
+      {
+        title: '昵称',
+        dataIndex: 'nickname',
+        key: 'nickname',
+        align: 'center',
+        render: (nickname) => (
+          <span>{nickname || '--'}</span>
+        )
       },
       {
         title: '手机号',
@@ -120,11 +286,11 @@ export default class UserList extends React.Component {
       },
       {
         title: '用户类型',
-        dataIndex: 'user_type',
-        key: 'user_type',
+        dataIndex: 'type',
+        key: 'type',
         align: 'center',
-        render: (user_type) => (
-          <span>{user_type === 1 ? '会员' : '店铺'}</span>
+        render: (type) => (
+          <span>{type === 1 ? '会员' : '店铺'}</span>
         )
       },
       {
@@ -146,54 +312,72 @@ export default class UserList extends React.Component {
         key: 'create_time',
         align: 'center',
         render: (create_time) => (
-          <span>{moment(create_time * 1000).format('YYYY-MM-DD')}</span>
+          <span>{create_time}</span>
         )
       },
-      {
-        title: '最后登录时间',
-        dataIndex: 'last_login_time',
-        key: 'last_login_time',
-        align: 'center',
-        render: (last_login_time) => (
-          <span>{last_login_time ? moment(last_login_time * 1000).format('YYYY-MM-DD') : '--'}</span>
-        )
-      },
-      {
-        title: '状态',
-        dataIndex: 'user_status',
-        key: 'user_status',
-        align: 'center',
-        render: (user_status) => (
-          <span>
-            {user_status === 0 ? '禁用' : null}
-            {user_status === 1 ? '正常' : null}
-            {user_status === 2 ? '未验证' : null}
-          </span>
-        )
-      },
+      // {
+      //   title: '状态',
+      //   dataIndex: 'user_status',
+      //   key: 'user_status',
+      //   align: 'center',
+      //   render: (user_status) => (
+      //     <span>
+      //       {user_status === 0 ? '禁用' : null}
+      //       {user_status === 1 ? '正常' : null}
+      //       {user_status === 2 ? '未验证' : null}
+      //     </span>
+      //   )
+      // },
       {
         title: '操作',
         dataIndex: 'action',
         key: 'action',
         align: 'center',
         render: (text, item) => (
-          <span>
-            <Link to={`/member/detail/${item.id}`}>查看</Link>
-          </span>
+          <div>
+            {
+              currentUser.role === '超级管理员' ?
+                <span>
+                  <a onClick={() => this.edit(item)}>编辑</a>
+                  <Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>
+                    <a>删除</a>
+                  </Popconfirm>
+                </span>
+                :
+                null
+            }
+          </div>
         )
       },
     ];
 
     return(
       <div>
+        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
 
-        <FormInit layout="horizontal" params={searchParams} callback={this.refreshList}/>
+        {
+          currentUser.role === '超级管理员' ?
+            <div style={{padding: '20px 0'}}>
+              <Button type="primary" onClick={this.add}>添加{modalTitle}</Button>
+              <FormInit
+                params={modalParams}
+                callback={this.modalCallback}
+                modal={{
+                  title: modalAction + modalTitle,
+                  visible: modalVisible
+                }}
+              />
+            </div>
+            :
+            null
+        }
 
         <TableInit
+          onRef={ref => this.tableInit = ref}
           params={{
-            api: '/api/member/index',
+            api: apiList,
             columns,
-            queryParams
+            queryParams,
           }}
         />
       </div>

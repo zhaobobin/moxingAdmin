@@ -35,7 +35,7 @@ export default {
         payload
       );
       yield callback(res);
-      if(res.code === 0){
+      if(res.code === '0'){
         Storage.set(ENV.storageAccessToken, res.data.access_token);               // 保存token
         yield put({
           type: 'changeLoginStatus',
@@ -59,12 +59,14 @@ export default {
 
       // Login successfully
       if (res.code === '0') {
-
+        Storage.set(ENV.storageAccessToken, res.data.token);               //保存token
         yield put({
           type: 'changeLoginStatus',
           payload: {
             currentAuthority: 'admin',
-            ...res,
+            loading: false,
+            isAuth: true,
+            currentUser: res.data,
           },
         });
 
@@ -85,22 +87,29 @@ export default {
           }
         }
         yield put(routerRedux.replace(redirect || '/'));
+      }else{
+        notification.error({
+          message: '错误提示',
+          description: res.msg,
+        });
       }
     },
 
     *token({ payload }, { call, put }) {
 
+      payload.accessToken = Storage.get(ENV.storageAccessToken) || null;
+
       const res = yield call(
-        (params) => request('/api/token', {method: 'POST', body: params}),
+        (params) => request('/api/user/get_user', {method: 'POST', body: params}),
         payload
       );
 
-      if(res.code === 0){
-        Storage.set(ENV.storageAccessToken, res.data.access_token);               // 保存token
-        Storage.set(ENV.storageUserId, res.data.userId);                          // 保存userId
+      if(res.code === '0'){
+        Storage.set(ENV.storageAccessToken, res.data.token);               // 保存token
         yield put({
           type: 'changeLoginStatus',
           payload: {
+            currentAuthority: 'admin',
             loading: false,
             isAuth: true,
             currentUser: res.data,
@@ -141,6 +150,8 @@ export default {
     // exp如果不为空：在查询时，先检查本地存储数据是否过期，再读取远程数据；并且在查询成功后，本地存储查询结果。
     *post({ url, payload, callback }, { call, put }) {
 
+      payload.accessToken = Storage.get(ENV.storageAccessToken) || null;
+
       let res,
         exp = payload.exp, storage = Storage.get(url);
 
@@ -151,18 +162,19 @@ export default {
           (params) => request(url, {method: 'POST', body: params}),
           payload
         );
-        if(res.code === 0 && exp) Storage.set(url, res);
+        if(res.code === '0' && exp) Storage.set(url, res);
       }
 
       // 登录过期等
-      if(res.code === 9){
+      if(res.code === '0'){
+        yield callback(res);
+      }else{
+        notification.error({
+          message: '错误提示',
+          description: res.msg,
+        });
         setAuthority('guest');
         yield put(routerRedux.push({ pathname: '/user/login' }));
-      }else{
-        yield callback(res);
-        if(res.code === -1){
-          yield put(routerRedux.push({ pathname: '/page500' }));
-        }
       }
 
     },
@@ -270,9 +282,11 @@ export default {
       setAuthority(payload.currentAuthority);
       return {
         ...state,
+        loading: payload.loading,
         status: payload.status,
         type: payload.type,
-        currentUser: payload.data,
+        isAuth: payload.isAuth,
+        currentUser: payload.currentUser,
       };
     },
 

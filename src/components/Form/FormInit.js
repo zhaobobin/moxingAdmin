@@ -83,11 +83,6 @@ export default class FormInit extends PureComponent {
     this.props.callback()
   };
 
-  //清空输入框
-  emitEmpty(key){
-    this.props.form.resetFields([key]);
-  };
-
   //依据表单类型，返回相应的html
   getFormItem = (topic, getFieldDecorator, getFieldValue) => {
     let html = '', style = topic.width ? {width: topic.width} : {width: '100%'};
@@ -106,16 +101,7 @@ export default class FormInit extends PureComponent {
               placeholder={topic.placeholder}
               style={style}
               disabled={topic.disabled}
-              suffix={
-                !topic.disabled && getFieldValue(topic.key) ?
-                  <Icon
-                    type="close-circle"
-                    className={styles.clearInput}
-                    onClick={() => this.emitEmpty(topic.key)}
-                  />
-                  :
-                  null
-              }
+              allowClear={true}
             />
           )}
         </FormItem>;
@@ -127,7 +113,12 @@ export default class FormInit extends PureComponent {
             initialValue: topic.value ? topic.value : undefined,
             rules: topic.rules ? topic.rules : undefined
           })(
-            <InputNumber min={0} max={9} placeholder={topic.placeholder} style={style} />
+            <InputNumber
+              min={0}
+              max={9}
+              placeholder={topic.placeholder} style={style}
+              allowClear={true}
+            />
           )}
         </FormItem>;
         break;
