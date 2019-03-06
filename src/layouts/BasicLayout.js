@@ -16,6 +16,7 @@ import logo from '@/assets/logo.png';
 
 import Header from './Header';
 import Context from './MenuContext';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import Exception403 from '@/pages/Exception/403';
 import Exception404 from '@/pages/Exception/404';
 import PageLoading from '@/components/PageLoading';
@@ -55,6 +56,7 @@ const query = {
 };
 
 class BasicLayout extends React.PureComponent {
+
   constructor(props) {
     super(props);
     this.getPageTitle = memoizeOne(this.getPageTitle);
@@ -185,6 +187,9 @@ class BasicLayout extends React.PureComponent {
     const isTop = PropsLayout === 'topmenu';
     const routerConfig = this.getRouterAuthority(pathname, routes);
     const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};
+
+    const pageTitle = this.getPageTitle(pathname, breadcrumbNameMap);
+
     const layout = (
       <Layout>
         {isTop && !isMobile ? null : (
@@ -216,7 +221,9 @@ class BasicLayout extends React.PureComponent {
               noMatch={this.noMatchComponent(routerConfig)}
             >
               <GlobalContent>
-                {children}
+                <PageHeaderWrapper title={pageTitle.split(' - ')[0]}>
+                  {children}
+                </PageHeaderWrapper>
               </GlobalContent>
             </Authorized>
           </Content>
@@ -224,14 +231,14 @@ class BasicLayout extends React.PureComponent {
         </Layout>
       </Layout>
     );
+
     return (
       <React.Fragment>
-        <DocumentTitle title={this.getPageTitle(pathname, breadcrumbNameMap)}>
+        <DocumentTitle title={pageTitle}>
           <ContainerQuery query={query}>
             {params => (
               <Context.Provider value={this.getContext()}>
                 <div className={classNames(params)}>
-                  {/*<Breadcrumb location={this.props.location} routes={this.props.routes} breadcrumbNameMap={breadcrumbNameMap}/>*/}
                   {layout}
                 </div>
               </Context.Provider>

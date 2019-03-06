@@ -16,9 +16,9 @@ function formatter(data, parentAuthority, parentName) {
 
       let locale = 'menu';
       if (parentName) {
-        locale = `${parentName}.${item.name}`;
+        locale = `${parentName}.${item.key}`;
       } else {
-        locale = `menu.${item.name}`;
+        locale = `menu.${item.key}`;
       }
       // if enableMenuLocale use item.name,
       // close menu international
@@ -66,7 +66,7 @@ const filterMenuData = menuData => {
     return [];
   }
   return menuData
-    .filter(item => item.name && !item.hideInMenu)
+    .filter(item => item.name)      //.filter(item => item.name && !item.hideInMenu)
     .map(item => check(item.authority, getSubMenu(item)))
     .filter(item => item);
 };

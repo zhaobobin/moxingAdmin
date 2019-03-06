@@ -16,6 +16,7 @@ export default class MemberList extends React.Component {
     this.ajaxFlag = true;
     this.state = {
       queryParams: {},                //查询参数
+      pageTitle: '会员列表',
       apiList: '/api/member/index',
       apiAdd: '/api/member/user_add',
       apiEdit: '/api/member/user_edit',

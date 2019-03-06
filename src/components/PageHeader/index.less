@@ -4,6 +4,11 @@
   background: @component-background;
   padding: 16px 32px 0 32px;
   border-bottom: @border-width-base @border-style-base @border-color-split;
+
+  .skeleton{
+    position: relative;
+  }
+
   .wide {
     max-width: 1200px;
     margin: auto;
@@ -80,6 +85,13 @@
 
   .main {
     width: 100%;
+    position: relative;
+
+    .back{
+      position:absolute;
+      right:0;
+      top: -20px;
+    }
   }
 
   .title,

@@ -1,12 +1,12 @@
 import React from 'react';
 
-export default class TicketDetail extends React.Component {
+export default class TicketAdd extends React.Component {
 
   render(){
 
     return(
       <div>
-        TicketDetail
+        TicketAdd
       </div>
     )
   }

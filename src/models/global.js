@@ -174,7 +174,7 @@ export default {
           description: res.msg,
         });
         setAuthority('guest');
-        yield put(routerRedux.push({ pathname: '/user/login' }));
+        if(res.code === '9') yield put(routerRedux.push({ pathname: '/user/login' }));
       }
 
     },

@@ -120,6 +120,11 @@ export const Storage = {
 
 };
 
+//字段错误校验
+export function hasErrors(fieldsError) {
+  return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
+
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
 }
