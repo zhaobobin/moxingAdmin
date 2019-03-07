@@ -238,21 +238,25 @@ export default [
           {
             path: '/exception/403',
             name: 'not-permission',
+            key: 'not-permission',
             component: './Exception/403',
           },
           {
             path: '/exception/404',
             name: 'not-find',
+            key: 'not-find',
             component: './Exception/404',
           },
           {
             path: '/exception/500',
             name: 'server-error',
+            key: 'server-error',
             component: './Exception/500',
           },
           {
             path: '/exception/trigger',
             name: 'trigger',
+            key: 'trigger',
             hideInMenu: true,
             component: './Exception/TriggerException',
           },

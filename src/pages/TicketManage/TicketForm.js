@@ -84,7 +84,7 @@ export default class TicketForm extends React.Component {
       ticketForm: [
         {
           name: '',
-          is_day: 0,
+          is_day: '0',
           price: '',
           storage: '',
         }
@@ -102,7 +102,7 @@ export default class TicketForm extends React.Component {
     let {ticketForm} = this.state;
     let item = {
       name: '',
-      is_day: 0,
+      is_day: '0',
       price: '',
       storage: '',
     };
@@ -123,9 +123,10 @@ export default class TicketForm extends React.Component {
 
   //监控门票表单
   changeTicketForm = (e, index, key) => {
-    let {ticketForm} = this.state;
-    ticketForm[index][key] = e.target.value;
-    console.log(ticketForm)
+    let value = e.target.value,
+      {ticketForm} = this.state;
+    //if(key === 'price') value = value.toFixed(2);
+    ticketForm[index][key] = value;
     this.setState({
       ticketForm
     })
@@ -148,7 +149,9 @@ export default class TicketForm extends React.Component {
       if (!err) {
         values.start_time = moment(values.time[0]._d).format('YYYY-MM-DD HH:mm'); //展会开始时间
         values.end_time = moment(values.time[1]._d).format('YYYY-MM-DD HH:mm');   //展会结束时间
-        //this.save(values);
+        values.ticket = this.state.ticketForm;
+        console.log(values)
+        this.save(values);
       }
     });
     setTimeout(() => { this.ajaxFlag = true }, 500);
@@ -192,17 +195,6 @@ export default class TicketForm extends React.Component {
     const ticketFormList = (
       ticketForm.map((item, index) => (
         <div key={index} className={styles.ticketFormItem}>
-          {
-            index > 0 ?
-              <a
-                className={styles.remove}
-                onClick={() => this.removeTicketForm(index)}
-              >
-                删除门票信息
-              </a>
-              :
-              null
-          }
           <FormItem {...formItemLayout2} label="票面名称">
             {getFieldDecorator(`ticket-name-${index}`,
               {
@@ -219,13 +211,13 @@ export default class TicketForm extends React.Component {
             )}
           </FormItem>
           <FormItem {...formItemLayout2} label="门票时间">
-            {getFieldDecorator(`ticket-time-${index}`,
+            {getFieldDecorator(`ticket-is_day-${index}`,
               {
                 initialValue: item.is_day,
               })(
-              <RadioGroup name="refund" onChange={ e => this.changeTicketForm(e, index, 'time') }>
-                <Radio value={0}>展会期间有效</Radio>
-                <Radio value={1}>展会当日有效</Radio>
+              <RadioGroup name="is_day" onChange={ e => this.changeTicketForm(e, index, 'is_day') }>
+                <Radio value={'0'}>展会期间有效</Radio>
+                <Radio value={'1'}>展会当日有效</Radio>
               </RadioGroup>
             )}
           </FormItem>
@@ -235,6 +227,7 @@ export default class TicketForm extends React.Component {
                 validateFirst: true,
                 rules: [
                   { required: true, message: '请输入销售票价' },
+                  { pattern: /^[0-9.]+$/, message: '只能输入数值' },
                 ],
               })(
               <Input
@@ -251,9 +244,10 @@ export default class TicketForm extends React.Component {
                 validateFirst: true,
                 rules: [
                   { required: true, message: '请输入销售数量' },
+                  { pattern: /^[0-9]+$/, message: '只能输入正整数' },
                 ],
               })(
-              <InputNumber
+              <Input
                 autoComplete="off"
                 style={{width: '100%'}}
                 placeholder="请输入销售数量"
@@ -261,6 +255,17 @@ export default class TicketForm extends React.Component {
               />
             )}
           </FormItem>
+          {
+            index > 0 ?
+              <a
+                className={styles.remove}
+                onClick={() => this.removeTicketForm(index)}
+              >
+                删除门票信息
+              </a>
+              :
+              null
+          }
         </div>
       ))
     );
@@ -346,14 +351,14 @@ export default class TicketForm extends React.Component {
               <FormItem {...formItemLayout} label="限购数量">
                 {getFieldDecorator('limit',
                   {
-                    initialValue: 0,
+                    initialValue: '0',
                   })(
                   <RadioGroup name="limit">
-                    <Radio value={0}>不限购</Radio>
-                    <Radio value={1}>
+                    <Radio value={'0'}>不限购</Radio>
+                    <Radio value={'1'}>
                       限购
                       {
-                        getFieldValue('limit') === 0 ?
+                        getFieldValue('limit') === '0' ?
                           null
                           :
                           <InputNumber
@@ -371,11 +376,11 @@ export default class TicketForm extends React.Component {
               <FormItem {...formItemLayout} label="退票正常">
                 {getFieldDecorator('refund',
                   {
-                    initialValue: 0,
+                    initialValue: '0',
                   })(
                   <RadioGroup name="refund">
-                    <Radio value={0}>不支持</Radio>
-                    <Radio value={1}>支持</Radio>
+                    <Radio value={'0'}>不支持</Radio>
+                    <Radio value={'1'}>支持</Radio>
                   </RadioGroup>
                 )}
               </FormItem>
