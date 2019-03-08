@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Row, Col, Form, Input, InputNumber, Button, Icon, Select, DatePicker, Radio } from 'antd'
+import { Row, Col, Form, Input, InputNumber, Button, Icon, Select, DatePicker, Radio, Modal } from 'antd'
 import styles from './TicketForm.less'
+
+import GaodeMap from '@/components/Map/GaodeMap'
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -80,6 +82,8 @@ export default class TicketForm extends React.Component {
     super(props);
     this.ajaxFlag = true;
     this.state = {
+      mapVisible: false,      //地图显示
+      mapAddress: '',         //地图地址
       basicInfo: '',
       ticketForm: [
         {
@@ -91,6 +95,43 @@ export default class TicketForm extends React.Component {
       ],
     }
   }
+
+  //显示地图
+  showMap = () => {
+    this.setState({
+      mapVisible: true
+    })
+  };
+
+  //隐藏地图
+  hideMap = () => {
+    this.setState({
+      mapVisible: false
+    })
+  };
+
+  handleMapSubmit = () => {
+    this.props.form.setFieldsValue({'place': this.state.mapAddress});
+    this.hideMap();
+  };
+
+  handleMapCancel = () => {
+    this.hideMap();
+  };
+
+  //地图回调
+  mapCallback = (value) => {
+    this.setState({
+      mapAddress: value,
+    });
+  };
+
+  changeAddress = (e) => {
+    let mapAddress = e.target.value;
+    this.setState({
+      mapAddress
+    })
+  };
 
   //修改限购数量
   onChangeLimit = (value) => {
@@ -149,8 +190,8 @@ export default class TicketForm extends React.Component {
       if (!err) {
         values.start_time = moment(values.time[0]._d).format('YYYY-MM-DD HH:mm'); //展会开始时间
         values.end_time = moment(values.time[1]._d).format('YYYY-MM-DD HH:mm');   //展会结束时间
-        values.ticket = this.state.ticketForm;
-        console.log(values)
+        values.ticket = JSON.stringify(this.state.ticketForm);
+        //console.log(values)
         this.save(values);
       }
     });
@@ -187,7 +228,7 @@ export default class TicketForm extends React.Component {
   render(){
 
     const {action} = this.props;
-    const {ticketForm} = this.state;
+    const {mapVisible, mapAddress, ticketForm} = this.state;
 
     const { getFieldDecorator, getFieldValue, getFieldsError } = this.props.form;
 
@@ -206,6 +247,7 @@ export default class TicketForm extends React.Component {
               <Input
                 autoComplete="off"
                 placeholder="请输入票面名称"
+                allowClear={true}
                 onChange={ e => this.changeTicketForm(e, index, 'name') }
               />
             )}
@@ -233,6 +275,7 @@ export default class TicketForm extends React.Component {
               <Input
                 autoComplete="off"
                 placeholder="请输入销售票价"
+                allowClear={true}
                 suffix="￥"
                 onChange={ e => this.changeTicketForm(e, index, 'price') }
               />
@@ -250,6 +293,7 @@ export default class TicketForm extends React.Component {
               <Input
                 autoComplete="off"
                 style={{width: '100%'}}
+                allowClear={true}
                 placeholder="请输入销售数量"
                 onChange={ e => this.changeTicketForm(e, index, 'storage') }
               />
@@ -292,6 +336,7 @@ export default class TicketForm extends React.Component {
                   })(
                   <Input
                     autoComplete="off"
+                    allowClear={true}
                     placeholder="请输入展会名称"
                   />
                 )}
@@ -325,9 +370,12 @@ export default class TicketForm extends React.Component {
                   })(
                   <Input
                     autoComplete="off"
+                    allowClear={true}
                     placeholder="请输入展会地点"
+                    onChange={this.changeAddress}
                   />
                 )}
+                <a className={styles.mapBtn} onClick={this.showMap}>地图</a>
               </FormItem>
 
               <FormItem {...btnItemLayout2}>
@@ -412,6 +460,30 @@ export default class TicketForm extends React.Component {
           </Col>
           <Col xs={0} sm={0} md={0} lg={10}/>
         </Row>
+
+        <Modal
+          title="点击地图选取地址"
+          width={800}
+          centered={true}
+          destroyOnClose={true}
+          visible={mapVisible}
+          onOk={this.handleMapSubmit}
+          onCancel={this.handleMapCancel}
+        >
+          <div
+            id="app"
+            style={{width:'100%', height: '500px', padding: '0 0 20px'}}
+          >
+            <GaodeMap defaultAddress={mapAddress} callback={this.mapCallback}/>
+            <p
+              className={styles.currentAddress}
+              style={{padding: '5px 0'}}
+            >
+              <strong>当前地址：</strong>
+              <span>{mapAddress}</span>
+            </p>
+          </div>
+        </Modal>
 
       </div>
     )
