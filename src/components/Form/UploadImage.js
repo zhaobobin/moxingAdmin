@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Upload, Icon, Input, notification } from 'antd'
 import { file2base64, dataURLtoBlob, base64to2 } from "@/utils/utils";
 import styles from './UploadImage.less'
+//const base64 = require('base-64');      //let image = base64.encode(data.base64);
 
 @connect(({ global }) => ({
   global,
@@ -37,20 +38,24 @@ export default class UploadImage extends React.Component {
 
     this.setState({loading: true});
 
+    //this.uploadImage(file);
+
     let _this = this;
     file2base64(file, function(data){
-      _this.uploadImage(data.base64);
+      let imageList = [];
+      imageList.push(data.base64);
+      _this.uploadImage(imageList);
     });
   };
 
-  uploadImage = (image) => {
-
+  uploadImage = (imageList) => {
+//console.log(image)
     this.props.dispatch({
       type: 'global/post',
       url: '/api/expert/upload',
       payload: {
         type: '4',
-        image: image,
+        image: imageList,
       },
       callback: (res) => {
         setTimeout(() => { this.ajaxFlag = true }, 500);
@@ -72,7 +77,7 @@ export default class UploadImage extends React.Component {
     const { loading } = this.state;
 
     const uploadButton = (
-      <div>
+      <div style={{padding: '30px'}}>
         <p className="ant-upload-drag-icon">
           <Icon type={loading ? 'loading' : 'inbox'} />
         </p>

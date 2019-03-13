@@ -147,6 +147,17 @@ export default {
       );
     },
 
+    *upload({ url, payload, callback }, { call, put }) {
+
+      const res = yield call(
+        (params) => request(url, {method: 'fileUpload', body: params}),
+        payload
+      );
+
+      yield callback(res);
+
+    },
+
     // exp如果不为空：在查询时，先检查本地存储数据是否过期，再读取远程数据；并且在查询成功后，本地存储查询结果。
     *post({ url, payload, callback }, { call, put }) {
 

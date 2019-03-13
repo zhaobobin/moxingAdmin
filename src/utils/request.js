@@ -107,6 +107,14 @@ export default function request(url, option) {
         ...newOptions.headers,
       };
     }
+  }else if (newOptions.method === 'fileUpload') {//这部分为上传文件
+    //console.log(newOptions.body)
+    newOptions.method = 'POST';
+    newOptions.headers = {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data; boundary=%',
+      ...newOptions.headers,
+    };
   }
 
   const expirys = options.expirys && 60;
