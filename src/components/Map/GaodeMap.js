@@ -17,7 +17,8 @@ export default class GaodeMap extends React.Component {
     };
   }
 
-  componentDidMount(){
+  //初始化默认地址
+  initAddress = () => {
     const { defaultAddress } = this.props;
     if(defaultAddress){
       let _this = this,
@@ -32,7 +33,7 @@ export default class GaodeMap extends React.Component {
         }
       });
     }
-  }
+  };
 
   //地图点击事件
   mapClick = (o) => {
@@ -73,6 +74,7 @@ export default class GaodeMap extends React.Component {
 
     //地图事件
     const mapEvents = {
+      created: this.initAddress,
       click: this.mapClick
     };
 
@@ -98,6 +100,7 @@ export default class GaodeMap extends React.Component {
         loading={Loading}
         amapkey={amapkey}
         events={mapEvents}
+        version={'1.4.2&plugin=AMap.Geocoder'}
         plugins={plugins}
         center={position}
         zoom={15}

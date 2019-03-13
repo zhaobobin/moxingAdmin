@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
+  <title>幸运抽奖 - 趣族</title>
+  <link rel="icon" href="./img/logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="./css/lucky.css">
+
+</head>
+<body class="lucky">
+
+<!-- 弹出层 -->
+<div class="cover"></div>
+<div class="covers1">
+  <div class="covers_quit">
+    <img src="./img/lucky/pop_up_quit_icon.png" alt="pop_up_quit_icon" />
+  </div>
+  <div class="covers_icon">
+    <img src="./img/lucky/task_draw_reward_free_img.png" alt="task_draw_reward_free_img" />
+  </div>
+  <div class="covers_font">恭喜您获得1次<span>免费</span>的机会</div>
+  <div class="covers_btn">立即前往抽奖</div>
+</div>
+
+<div class="covers2">
+  <div class="covers_quit">
+    <img src="./img/lucky/pop_up_quit_icon.png" alt="pop_up_quit_icon" />
+  </div>
+  <div class="covers_icon">
+    <img src="./img/lucky/task_draw_reward_gereward_img.png" alt="task_draw_reward_gereward_img" />
+  </div>
+  <div class="covers_font">恭喜您获得<span>10金币</span>奖励</div>
+  <div class="covers_btn covers_btn1">支付200金币再抽一次</div>
+  <a href="#rules_con_footer"><div class="covers_btn2">完成任务,免费抽奖</div></a>
+</div>
+
+<div class="covers3">
+  <div class="covers_quit">
+    <img src="./img/lucky/pop_up_quit_icon.png" alt="pop_up_quit_icon" />
+  </div>
+  <div class="covers_icon">
+    <img src="./img/lucky/task_draw_reward_tip_img.png" alt="task_draw_reward_tip_img" />
+  </div>
+  <div class="covers_font">今天的免费机会已经用完</div>
+  <div class="covers_btn covers_btn1">支付200金币再抽一次</div>
+  <a href="#rules_con_footer"><div class="covers_btn2">完成任务,免费抽奖</div></a>
+</div>
+
+<!-- 抽奖转盘 -->
+<div class="turntable">
+  <img class="turntablebg" src="./img/lucky/task_draw_reward_default_bg.png" alt="turntableBg"/>
+  <div class="rotate"><img id="rotate" src="./img/lucky/task_draw_reward_bg.png"/></div>
+  <div class="pointer"><img src="./img/lucky/task_draw_reward_pointer.png"/></div>
+  <div class="turntable_font">
+    <div class="turn_font_left">
+      <img src="./img/lucky/task_draw_reward_coin_icon.png" alt="task_draw_reward_coin_icon"/>
+      <span>剩余金币:</span>
+      <font>123456</font>
+    </div>
+    <div class="turn_font_right">
+      <img src="./img/lucky/task_draw_reward_clock_icon.png" alt="task_draw_reward_clock_icon"/>
+      <span>免费次数:</span>
+      <font>1</font>
+      <span>次</span>
+    </div>
+  </div>
+</div>
+
+<!-- task&rules -->
+<div class="taskRules">
+
+  <div class="rules">
+    <div class="task_title">
+      <img src="./img/lucky/task_draw_reward_rule_title_img.png" alt="task_draw_reward_rule_title_img" />
+    </div>
+    <div class="rules_cover">
+      <img src="./img/lucky/task_draw_reward_rule_white_img.png" alt="task_draw_reward_rule_white_img" />
+    </div>
+    <div class="rules_con">
+      <ul>
+        <li>1、每人每天开局有<span>1</span>次免费抽奖机会；</li>
+        <li>2、阅读新闻每20分钟获得<span>1</span>次免费抽奖机会，每天最多<span>2</span>次；</li>
+        <li>3、观看视频每30分钟获得<span>1</span>次免费抽奖机会，每天最多<span>2</span>次；</li>
+        <li>4、合计每人每天最多<span>5次免费抽奖机会；</span></li>
+        <li>5、用户可以花金币购买抽奖机会，<span>200金币一次，次数无限；</span></li>
+        <li>6、转盘分10份，分别设置为：10金币、20金币、50金币、100金币、150金币、200金币、250金币、300金币、500金币、900金币；</li>
+        <li>7、抽奖结果以当次抽奖结束后显示窗口的内容为准；</li><br/>
+        <li class="rules_li">温馨提醒：如果页面未及时显示您的免费机会，请尝试退出活动页面再重新进来哦。</li>
+      </ul>
+      <div id="rules_con_footer" class="rules_con_footer">本活动解释权归XXX所有</div>
+    </div>
+    <div class="rules_footer">点击查看规则</div>
+  </div>
+</div>
+
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+<script type="text/javascript" src="./js/awardRotate.js"></script>
+<script type="text/javascript" src="./js/lucky.js"></script>
+
+</body>
+</html>

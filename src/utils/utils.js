@@ -120,6 +120,98 @@ export const Storage = {
 
 };
 
+export function readFile(file, cb) {
+  let reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = function (e) {
+    let image = e.target.result;
+    console.log(image);
+    return cb(image);
+  };
+}
+
+export function base64to2(base64) {
+  let len = base64.length * .75 // 转换为int8array所需长度
+  base64 = base64.replace(/=*$/, '') // 去掉=号（占位的）
+
+  const int8 = new Int8Array(len) //设置int8array视图
+  let arr1, arr2, arr3, arr4, p = 0
+
+  for (let i = 0; i < base64.length; i += 4) {
+    arr1 = map[base64[i]] // 每次循环 都将base644个字节转换为3个int8array直接
+    arr2 = map[base64[i + 1]]
+    arr3 = map[base64[i + 2]]
+    arr4 = map[base64[i + 3]]
+    // 假设数据arr 数据 00101011 00101111 00110011 00110001
+    int8[p++] = arr1 << 2 | arr2 >> 4
+    // 上面的操作 arr1向左边移动2位 变为10101100
+    // arr2 向右移动4位：00000010
+    // | 为'与'操作: 10101110
+    int8[p++] = arr2 << 4 | arr3 >> 2
+    int8[p++] = arr3 << 6 | arr4
+
+  }
+  return int8
+}
+
+//文件转为base64
+export function file2base64(file, cb) {
+
+  let base64 = '', reader = new FileReader();
+
+  reader.readAsDataURL(file);
+  reader.onload = function (e) {
+
+    base64 = e.target.result;
+
+    let img = new Image();
+    img.src = base64;
+    img.onload = function () {
+      let data = {
+        base64: base64,
+        width: this.width,
+        height: this.height
+      };
+      return cb(data);
+    };
+
+  };
+}
+
+/**
+ * Base64字符串转二进制
+ * @param dataurl
+ * @returns {Blob}
+ */
+export function dataURLtoBlob(dataurl) {
+  let arr = dataurl.split(','),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], {
+    type: mime
+  });
+}
+
+/**
+ * 将blod转为base64
+ * @param blob
+ * @param cb
+ */
+function blobToDataURL(blob, cb) {
+  let a = new FileReader();
+  a.onload = function (e) {
+    cb(e.target.result);
+  };
+  a.readAsDataURL(blob);
+}
+
+
+
 //字段错误校验
 export function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some(field => fieldsError[field]);

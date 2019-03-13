@@ -41,7 +41,7 @@ export default class ExhibitionList extends React.Component {
 
   //编辑
   edit = (id) => {
-
+    this.props.dispatch(routerRedux.push(`/ticket/exhibition-edit/${id}`))
   };
 
   del = (id) => {

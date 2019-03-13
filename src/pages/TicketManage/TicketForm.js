@@ -1,16 +1,19 @@
 import React from 'react';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router'
 import moment from 'moment';
-import { Row, Col, Form, Input, InputNumber, Button, Icon, Select, DatePicker, Radio, Modal } from 'antd'
+import { Row, Col, Form, Input, InputNumber, Button, Icon, Select, Checkbox, DatePicker, Radio, Modal } from 'antd'
 import styles from './TicketForm.less'
 
 import GaodeMap from '@/components/Map/GaodeMap'
+import UploadImage from '@/components/Form/UploadImage'
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const RadioGroup = Radio.Group;
+const CheckboxGroup = Checkbox.Group;
 
 const formItemLayout = {
   labelCol: {
@@ -72,6 +75,36 @@ const btnItemLayout2 = {
   },
 };
 
+//获取日期范围
+function getAllDate(beginDate, endDate){			// 开始日期和结束日期
+  if(!beginDate || !endDate){			// 去除空的可能性
+    //console.log('时间不能为空');
+		return false;
+  }
+  let begin = beginDate.split(' ')[0], beginTime = beginDate.split(' ')[1],
+    end = endDate.split(' ')[0], endTime = endDate.split(' ')[1];
+
+  let ab = begin.split('-');			// 把日期参数分割，注意，如果以'/'连接，则分割'/'
+  let ae = end.split('-');
+  let db = new Date();
+  db.setUTCFullYear(ab[0], ab[1]-1, ab[2]);			// 返回符合UTC的时间格式
+  let de = new Date();
+  de.setUTCFullYear(ae[0], ae[1]-1, ae[2]);
+  let unixDb = db.getTime();
+  let unixDe = de.getTime();
+  let arr = [];
+  for(let k = unixDb, i = 1; k <= unixDe; i++){
+    let date = moment(new Date(parseInt(k))).format('YYYY-MM-DD');
+    let tickeyTime = {
+      label: date + " " + beginTime + " ~ " + date + " " + endTime,
+      value: i.toString()
+    };
+    arr.push(tickeyTime);
+    k = k + 24 * 60 * 60 * 1000;
+  }
+  return arr;			// 返回两个日期之间的所有日期数组。
+}
+
 @connect(({ global }) => ({
   global,
 }))
@@ -82,6 +115,8 @@ export default class TicketForm extends React.Component {
     super(props);
     this.ajaxFlag = true;
     this.state = {
+      loading: false,
+      detail: '',
       mapVisible: false,      //地图显示
       mapAddress: '',         //地图地址
       basicInfo: '',
@@ -89,11 +124,32 @@ export default class TicketForm extends React.Component {
         {
           name: '',
           is_day: '0',
+          choose: '',
           price: '',
           storage: '',
         }
       ],
+      ticketTimeArr: [],
     }
+  }
+
+  componentDidMount(){
+    let {detail, action} = this.props;
+    if(action === 'add') return;
+    let mapAddress = detail.place,
+      ticketForm = detail.ticket;
+    let ticketTimeArr = getAllDate(detail.start_time, detail.end_time);
+    for(let i in ticketForm){
+      if(ticketForm[i].choose){
+        ticketForm[i].choose = ticketForm[i].choose.split(',')
+      }
+    }
+    this.setState({
+      detail,
+      mapAddress,
+      ticketForm,
+      ticketTimeArr
+    })
   }
 
   //显示地图
@@ -126,11 +182,23 @@ export default class TicketForm extends React.Component {
     });
   };
 
+  //监控展会地址
   changeAddress = (e) => {
     let mapAddress = e.target.value;
     this.setState({
       mapAddress
     })
+  };
+
+  //展会时间 - 循环门票时间范围
+  handleChangeTime = (values) => {
+    if(!values[0]) return;
+    let start_time = moment(values[0]._d).format('YYYY-MM-DD HH:mm'); //展会开始时间
+    let end_time = moment(values[1]._d).format('YYYY-MM-DD HH:mm');   //展会结束时间
+    let ticketTimeArr = getAllDate(start_time, end_time);
+    this.setState({
+      ticketTimeArr
+    });
   };
 
   //修改限购数量
@@ -144,6 +212,7 @@ export default class TicketForm extends React.Component {
     let item = {
       name: '',
       is_day: '0',
+      choose: '',
       price: '',
       storage: '',
     };
@@ -164,13 +233,24 @@ export default class TicketForm extends React.Component {
 
   //监控门票表单
   changeTicketForm = (e, index, key) => {
-    let value = e.target.value,
-      {ticketForm} = this.state;
-    //if(key === 'price') value = value.toFixed(2);
-    ticketForm[index][key] = value;
+    let {ticketForm} = this.state;
+    ticketForm[index][key] = e.target.value;
     this.setState({
       ticketForm
     })
+  };
+
+  changeTicketTime = (checkedValues, key) => {
+    let {ticketForm} = this.state;
+    ticketForm[key]['choose'] = checkedValues;
+    this.setState({
+      ticketForm
+    })
+  };
+
+  //上传图片回调
+  uploadCallback = (value) => {
+    if(value) this.props.form.setFieldsValue({'image': value});
   };
 
   //重置查询
@@ -188,10 +268,14 @@ export default class TicketForm extends React.Component {
 
     this.props.form.validateFields('', (err, values) => {
       if (!err) {
+        let {ticketForm} = this.state;
+        for(let i in ticketForm){
+          if(ticketForm[i].choose) ticketForm[i].choose = ticketForm[i].choose.join(',')
+        }
+        values.ticket = JSON.stringify(ticketForm);
         values.start_time = moment(values.time[0]._d).format('YYYY-MM-DD HH:mm'); //展会开始时间
         values.end_time = moment(values.time[1]._d).format('YYYY-MM-DD HH:mm');   //展会结束时间
-        values.ticket = JSON.stringify(this.state.ticketForm);
-        //console.log(values)
+
         this.save(values);
       }
     });
@@ -200,22 +284,27 @@ export default class TicketForm extends React.Component {
 
   //保存
   save = (values) => {
-    const {action} = this.props;
+    const {action, detail} = this.props;
     const api = action === 'add' ? '/api/exhibition/exhibition_add' : '/api/exhibition/exhibition_edit';
+    let data = {
+      name: values.name,
+      image: values.image || '',
+      start_time: values.start_time,
+      end_time: values.end_time,
+      place: values.place,
+      ticket: values.ticket,
+      limit: values.limit,
+      refund: values.refund,
+      content: values.content || '',
+    };
+    if(action === 'edit'){
+      data.id = detail.id;
+      data.is_edit = '1';
+    }
     this.props.dispatch({
       type: 'global/post',
       url: api,
-      payload: {
-        name: values.name,
-        image: values.image || '',
-        start_time: values.start_time,
-        end_time: values.end_time,
-        place: values.place,
-        ticket: values.ticket,
-        limit: values.limit,
-        refund: values.refund,
-        content: values.content || '',
-      },
+      payload: data,
       callback: (res) => {
         setTimeout(() => {this.ajaxFlag = true}, 500);
         if(res.code === '0'){
@@ -227,10 +316,12 @@ export default class TicketForm extends React.Component {
 
   render(){
 
-    const {action} = this.props;
-    const {mapVisible, mapAddress, ticketForm} = this.state;
+    const {detail, mapVisible, mapAddress, ticketForm, ticketTimeArr} = this.state;
 
     const { getFieldDecorator, getFieldValue, getFieldsError } = this.props.form;
+
+    // console.log(ticketForm)
+    // console.log(ticketTimeArr)
 
     //门票信息表单
     const ticketFormList = (
@@ -239,6 +330,7 @@ export default class TicketForm extends React.Component {
           <FormItem {...formItemLayout2} label="票面名称">
             {getFieldDecorator(`ticket-name-${index}`,
               {
+                initialValue: detail && item.name || '',
                 validateFirst: true,
                 rules: [
                   { required: true, message: '请输入票面名称' },
@@ -255,17 +347,32 @@ export default class TicketForm extends React.Component {
           <FormItem {...formItemLayout2} label="门票时间">
             {getFieldDecorator(`ticket-is_day-${index}`,
               {
-                initialValue: item.is_day,
+                initialValue: detail && item.is_day.toString() || item.is_day,
               })(
               <RadioGroup name="is_day" onChange={ e => this.changeTicketForm(e, index, 'is_day') }>
                 <Radio value={'0'}>展会期间有效</Radio>
-                <Radio value={'1'}>展会当日有效</Radio>
+                <br/>
+                <Radio value={'1'}>
+                  <span>展会当日有效</span>
+                  <br/>
+                  {
+                    getFieldValue(`ticket-is_day-${index}`) === '1' && ticketTimeArr.length > 0 ?
+                      <CheckboxGroup
+                        options={ticketTimeArr}
+                        defaultValue={item.choose || ''}
+                        onChange={ e => this.changeTicketTime(e, index) }
+                      />
+                      :
+                      null
+                  }
+                </Radio>
               </RadioGroup>
             )}
           </FormItem>
           <FormItem {...formItemLayout2} label="销售票价">
             {getFieldDecorator(`ticket-price-${index}`,
               {
+                initialValue: detail && item.price || '',
                 validateFirst: true,
                 rules: [
                   { required: true, message: '请输入销售票价' },
@@ -284,6 +391,7 @@ export default class TicketForm extends React.Component {
           <FormItem {...formItemLayout2} label="销售数量">
             {getFieldDecorator(`ticket-storage-${index}`,
               {
+                initialValue: detail && item.storage || '',
                 validateFirst: true,
                 rules: [
                   { required: true, message: '请输入销售数量' },
@@ -329,6 +437,7 @@ export default class TicketForm extends React.Component {
               <FormItem {...formItemLayout} label="展会名称">
                 {getFieldDecorator('name',
                   {
+                    initialValue: detail && detail.name || '',
                     validateFirst: true,
                     rules: [
                       { required: true, message: '请输入展会名称' },
@@ -345,6 +454,11 @@ export default class TicketForm extends React.Component {
               <FormItem {...formItemLayout} label="展会时间">
                 {getFieldDecorator('time',
                   {
+                    initialValue:
+                      detail && detail.start_time && detail.end_time ?
+                        [moment(detail.start_time, 'YYYY-MM-DD HH:mm'), moment(detail.end_time, 'YYYY-MM-DD HH:mm')]
+                        :
+                        '',
                     validateFirst: true,
                     rules: [
                       { required: true, message: '请选择展会时间' },
@@ -356,6 +470,7 @@ export default class TicketForm extends React.Component {
                     showTime={{
                       defaultValue: [moment('09:00', 'HH:mm'), moment('20:00', 'HH:mm')]
                     }}
+                    onChange={this.handleChangeTime}
                   />
                 )}
               </FormItem>
@@ -363,6 +478,7 @@ export default class TicketForm extends React.Component {
               <FormItem {...formItemLayout} label="展会地点">
                 {getFieldDecorator('place',
                   {
+                    initialValue: detail && detail.place || '',
                     validateFirst: true,
                     rules: [
                       { required: true, message: '请输入展会地点' },
@@ -378,9 +494,7 @@ export default class TicketForm extends React.Component {
                 <a className={styles.mapBtn} onClick={this.showMap}>地图</a>
               </FormItem>
 
-              <FormItem {...btnItemLayout2}>
-
-                <h3>门票信息</h3>
+              <FormItem {...formItemLayout} label={<strong>门票信息</strong>}>
 
                 {ticketFormList}
 
@@ -396,10 +510,19 @@ export default class TicketForm extends React.Component {
 
               </FormItem>
 
+              <FormItem {...formItemLayout} label="展会封面">
+                {getFieldDecorator('image',
+                  {
+                    initialValue: detail && detail.image || '',
+                  })(
+                  <UploadImage callback={this.uploadCallback}/>
+                )}
+              </FormItem>
+
               <FormItem {...formItemLayout} label="限购数量">
                 {getFieldDecorator('limit',
                   {
-                    initialValue: '0',
+                    initialValue: detail && detail.limit || '0',
                   })(
                   <RadioGroup name="limit">
                     <Radio value={'0'}>不限购</Radio>
@@ -411,7 +534,7 @@ export default class TicketForm extends React.Component {
                           :
                           <InputNumber
                             min={1}
-                            defaultValue={100}
+                            defaultValue={detail && detail.limit || 100}
                             style={{marginLeft: '10px'}}
                             onChange={this.onChangeLimit}
                           />
@@ -424,7 +547,7 @@ export default class TicketForm extends React.Component {
               <FormItem {...formItemLayout} label="退票正常">
                 {getFieldDecorator('refund',
                   {
-                    initialValue: '0',
+                    initialValue: detail && detail.refund || '0',
                   })(
                   <RadioGroup name="refund">
                     <Radio value={'0'}>不支持</Radio>
@@ -436,9 +559,7 @@ export default class TicketForm extends React.Component {
               <FormItem {...formItemLayout} label="展会介绍">
                 {getFieldDecorator('content',
                   {
-                    rules: [
-
-                    ],
+                    initialValue: detail && detail.content || '',
                   })(
                   <TextArea autosize={{ minRows: 4, maxRows: 8 }} placeholder="请输入展会介绍"/>
                 )}
