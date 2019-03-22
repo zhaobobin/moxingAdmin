@@ -3,7 +3,7 @@ import React from 'react';
 import FormInit from '@/components/Form/FormInit'
 import TableInit from '@/components/Table/TableInit'
 
-export default class TicketList extends React.Component {
+export default class ArticleComment extends React.Component {
 
   constructor(props){
     super(props);
@@ -141,7 +141,7 @@ export default class TicketList extends React.Component {
 
         <TableInit
           params={{
-            api: '/api/exhibition/ticket',
+            api: '/api/portal/comment_edit',
             columns,
             queryParams
           }}

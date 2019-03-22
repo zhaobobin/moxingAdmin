@@ -1,52 +1,101 @@
-/**
- * 文章列表
- */
 import React from 'react';
-import { Link } from 'dva/router'
-import moment from 'moment'
+import { connect } from 'dva';
+import { Link, routerRedux } from 'dva/router'
+import { Button, Popconfirm } from 'antd'
+
 import FormInit from '@/components/Form/FormInit'
 import TableInit from '@/components/Table/TableInit'
 
+const titleStyle = {
+  width: '100px',
+  height: '20px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
+
+@connect(({ global }) => ({
+  global,
+}))
 export default class ArticleList extends React.Component {
 
   constructor(props){
     super(props);
+    this.ajaxFlag = true;
     this.state = {
-      queryParams: {}
+      queryParams: {
+        type: '1'       //文章类型
+      },                //查询参数
+      apiList: '/api/portal/get_portal',
+      apiDel: '/api/portal/portal_del',
+      title: '文章',
+
     }
   }
 
-  refreshList = (values) => {
+  //表单回调
+  formCallback = (values) => {
     this.setState({
-      queryParams: values
+      queryParams: values,
     })
+  };
+
+  //添加
+  add = () => {
+    this.props.dispatch(routerRedux.push('/content/article-add'))
+  };
+
+  //编辑
+  edit = (id) => {
+    this.props.dispatch(routerRedux.push(`/content/article-edit/${id}`))
+  };
+
+  del = (id) => {
+    if(!this.ajaxFlag) return;
+    this.ajaxFlag = false;
+
+    let {apiDel} = this.state;
+
+    this.props.dispatch({
+      type: 'global/post',
+      url: apiDel,
+      payload: {
+        id,
+      },
+      callback: (res) => {
+        setTimeout(() => {this.ajaxFlag = true}, 500);
+        if(res.code === '0'){
+          this.tableInit.refresh({})
+        }
+      }
+    });
   };
 
   render(){
 
-    const {queryParams} = this.state;
+    const {currentUser} = this.props.global;
+    const {apiList, queryParams, title} = this.state;
 
     const searchParams = [
       [
         {
           key: 'title',
-          label: '文章名称',
+          label: '文章标题',
           type: 'Input',
-          inputType: 'Input',
           value: '',
-          placeholder: '请输入文章名称',
+          placeholder: '请输入文章标题',
           rules: [],
         },
         {
-          key: 'create_time',
-          label: '创建时间',
+          key: 'published_time',
+          label: '发布时间',
           type: 'DatePicker',
           value: '',
           placeholder: '请选择',
           rules: [],
         },
         {
-          key: 'user',
+          key: 'author',
           label: '发布用户',
           type: 'Input',
           value: '',
@@ -56,23 +105,31 @@ export default class ArticleList extends React.Component {
       ],
       [
         {
-          key: 'user_status',
-          label: '状态',
+          key: 'category_name',
+          label: '文章分类',
+          type: 'Input',
+          value: '',
+          placeholder: '请输入文章分类',
+          rules: [],
+        },
+        {
+          key: 'status',
+          label: '文章状态',
           type: 'Select',
           value: '',
           placeholder: '请选择',
           option: [
             {
-              label: '禁用',
-              value: 0
+              label: '未发布',
+              value: '0'
             },
             {
-              label: '正常',
-              value: 1
+              label: '已发布',
+              value: '2'
             },
             {
-              label: '未验证',
-              value: 2
+              label: '已下架',
+              value: '3'
             },
           ]
         },
@@ -92,38 +149,34 @@ export default class ArticleList extends React.Component {
             },
           ]
         },
-        {}
       ]
     ];
 
     const columns = [
       {
-        title: '分类',
-        dataIndex: 'type',
-        key: 'type',
-        align: 'center',
-        render: (type) => (
-          <span>
-            {type === 1 ? '文章' : null}
-            {type === 2 ? '动态' : null}
-            {type === 3 ? '抓取' : null}
-          </span>
-        )
-      },
-      {
         title: '文章标题',
         dataIndex: 'title',
         key: 'title',
+        render: (title) => (
+          <div style={titleStyle}>
+            {title || '--'}
+          </div>
+        )
+      },
+      {
+        title: '分类',
+        dataIndex: 'category_name',
+        key: 'category_name',
         align: 'center',
+        render: (category_name) => (
+          <span>{category_name || '--'}</span>
+        )
       },
       {
         title: '发布时间',
-        dataIndex: 'create_time',
-        key: 'create_time',
+        dataIndex: 'published_time',
+        key: 'published_time',
         align: 'center',
-        render: (create_time) => (
-          <span>{moment(create_time * 1000).format('YYYY-MM-DD')}</span>
-        )
       },
       {
         title: '阅读',
@@ -168,9 +221,9 @@ export default class ArticleList extends React.Component {
         align: 'center',
         render: (status) => (
           <span>
-            {status === 0 ? '禁用' : null}
-            {status === 1 ? '正常' : null}
-            {status === 2 ? '未验证' : null}
+            {status === 0 ? '未发布' : null}
+            {status === 1 ? '已发布' : null}
+            {status === 2 ? '已下架' : null}
           </span>
         )
       },
@@ -180,9 +233,19 @@ export default class ArticleList extends React.Component {
         key: 'action',
         align: 'center',
         render: (text, item) => (
-          <span>
-            <Link to={`/article/detail/${item.id}`}>查看</Link>
-          </span>
+          <div>
+            {
+              currentUser.role === '超级管理员' ?
+                <span>
+                  <a onClick={() => this.edit(item.id)}>编辑</a>
+                  {/*<Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>*/}
+                    {/*<a>删除</a>*/}
+                  {/*</Popconfirm>*/}
+                </span>
+                :
+                null
+            }
+          </div>
         )
       },
     ];
@@ -190,15 +253,26 @@ export default class ArticleList extends React.Component {
     return(
       <div>
 
-        <FormInit layout="horizontal" params={searchParams} callback={this.refreshList}/>
+        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
+
+        {
+          currentUser.role === '超级管理员' ?
+            <div style={{padding: '20px 0'}}>
+              <Button type="primary" onClick={this.add}>添加{title}</Button>
+            </div>
+            :
+            null
+        }
 
         <TableInit
+          onRef={ref => this.tableInit = ref}
           params={{
-            api: '/api/portal/get_portal',
+            api: apiList,
             columns,
-            queryParams
+            queryParams,
           }}
         />
+
       </div>
     )
   }

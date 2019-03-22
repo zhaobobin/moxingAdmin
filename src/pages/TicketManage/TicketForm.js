@@ -7,6 +7,7 @@ import styles from './TicketForm.less'
 
 import GaodeMap from '@/components/Map/GaodeMap'
 import UploadImage from '@/components/Form/UploadImage'
+import Ueditor from '@/components/Form/Ueditor'
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -249,11 +250,16 @@ export default class TicketForm extends React.Component {
   };
 
   //上传图片回调
-  uploadCallback = (value) => {
-    if(value) this.props.form.setFieldsValue({'image': value});
+  uploadCallback = (url) => {
+    if(url) this.props.form.setFieldsValue({'image': url});
   };
 
-  //重置查询
+  //富文本
+  editorCallback = (content) => {
+    this.props.form.setFieldsValue({'content': content});
+  };
+
+  //重置
   handleFormReset = (e) => {
     e.preventDefault();
     this.props.form.resetFields();
@@ -426,161 +432,175 @@ export default class TicketForm extends React.Component {
     return(
       <div className={styles.container}>
 
-        <Row>
-          <Col xs={24} sm={24} md={24} lg={14}>
-            <Form
-              hideRequiredMark={true}
-              onSubmit={this.handleFormSubmit}
-              onReset={this.handleFormReset}
-            >
-
-              <FormItem {...formItemLayout} label="展会名称">
-                {getFieldDecorator('name',
-                  {
-                    initialValue: detail && detail.name || '',
-                    validateFirst: true,
-                    rules: [
-                      { required: true, message: '请输入展会名称' },
-                    ],
-                  })(
-                  <Input
-                    autoComplete="off"
-                    allowClear={true}
-                    placeholder="请输入展会名称"
-                  />
-                )}
-              </FormItem>
-
-              <FormItem {...formItemLayout} label="展会时间">
-                {getFieldDecorator('time',
-                  {
-                    initialValue:
-                      detail && detail.start_time && detail.end_time ?
-                        [moment(detail.start_time, 'YYYY-MM-DD HH:mm'), moment(detail.end_time, 'YYYY-MM-DD HH:mm')]
-                        :
-                        '',
-                    validateFirst: true,
-                    rules: [
-                      { required: true, message: '请选择展会时间' },
-                    ],
-                  })(
-                  <RangePicker
-                    style={{width: '100%'}}
-                    format="YYYY-MM-DD HH:mm"
-                    showTime={{
-                      defaultValue: [moment('09:00', 'HH:mm'), moment('20:00', 'HH:mm')]
-                    }}
-                    onChange={this.handleChangeTime}
-                  />
-                )}
-              </FormItem>
-
-              <FormItem {...formItemLayout} label="展会地点">
-                {getFieldDecorator('place',
-                  {
-                    initialValue: detail && detail.place || '',
-                    validateFirst: true,
-                    rules: [
-                      { required: true, message: '请输入展会地点' },
-                    ],
-                  })(
-                  <Input
-                    autoComplete="off"
-                    allowClear={true}
-                    placeholder="请输入展会地点"
-                    onChange={this.changeAddress}
-                  />
-                )}
-                <a className={styles.mapBtn} onClick={this.showMap}>地图</a>
-              </FormItem>
-
-              <FormItem {...formItemLayout} label={<strong>门票信息</strong>}>
-
-                {ticketFormList}
-
-                <Button
-                  type="dashed"
-                  size="large"
-                  style={{width: '100%'}}
-                  onClick={this.addTicketForm}
+        {
+          detail ?
+            <Row>
+              <Col xs={24} sm={24} md={24} lg={14}>
+                <Form
+                  hideRequiredMark={true}
+                  onSubmit={this.handleFormSubmit}
+                  onReset={this.handleFormReset}
                 >
-                  <Icon type="plus" />
-                  <span>添加门票信息</span>
-                </Button>
 
-              </FormItem>
-
-              <FormItem {...formItemLayout} label="展会封面">
-                {getFieldDecorator('image',
-                  {
-                    initialValue: detail && detail.image || '',
-                  })(
-                  <UploadImage callback={this.uploadCallback}/>
-                )}
-              </FormItem>
-
-              <FormItem {...formItemLayout} label="限购数量">
-                {getFieldDecorator('limit',
-                  {
-                    initialValue: detail && detail.limit || '0',
-                  })(
-                  <RadioGroup name="limit">
-                    <Radio value={'0'}>不限购</Radio>
-                    <Radio value={'1'}>
-                      限购
+                  <FormItem {...formItemLayout} label="展会名称">
+                    {getFieldDecorator('name',
                       {
-                        getFieldValue('limit') === '0' ?
-                          null
+                        initialValue: detail.name || '',
+                        validateFirst: true,
+                        rules: [
+                          { required: true, message: '请输入展会名称' },
+                        ],
+                      })(
+                      <Input
+                        autoComplete="off"
+                        allowClear={true}
+                        placeholder="请输入展会名称"
+                      />
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="展会时间">
+                    {getFieldDecorator('time',
+                      {
+                        initialValue:
+                          detail.start_time && detail.end_time ?
+                            [moment(detail.start_time, 'YYYY-MM-DD HH:mm'), moment(detail.end_time, 'YYYY-MM-DD HH:mm')]
+                            :
+                            '',
+                        validateFirst: true,
+                        rules: [
+                          { required: true, message: '请选择展会时间' },
+                        ],
+                      })(
+                      <RangePicker
+                        style={{width: '100%'}}
+                        format="YYYY-MM-DD HH:mm"
+                        showTime={{
+                          defaultValue: [moment('09:00', 'HH:mm'), moment('20:00', 'HH:mm')]
+                        }}
+                        onChange={this.handleChangeTime}
+                      />
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="展会地点">
+                    {getFieldDecorator('place',
+                      {
+                        initialValue: detail.place || '',
+                        validateFirst: true,
+                        rules: [
+                          { required: true, message: '请输入展会地点' },
+                        ],
+                      })(
+                      <Input
+                        autoComplete="off"
+                        allowClear={true}
+                        placeholder="请输入展会地点"
+                        onChange={this.changeAddress}
+                      />
+                    )}
+                    <div className={styles.mapAction}>
+                      <a className={styles.mapBtn} onClick={this.showMap}>地图</a>
+                      {
+                        getFieldValue('place') ?
+                          <span className={styles.green}>(已标记)</span>
                           :
-                          <InputNumber
-                            min={1}
-                            defaultValue={detail && detail.limit || 100}
-                            style={{marginLeft: '10px'}}
-                            onChange={this.onChangeLimit}
-                          />
+                          <span className={styles.red}>(未标记)</span>
                       }
-                    </Radio>
-                  </RadioGroup>
-                )}
-              </FormItem>
+                    </div>
 
-              <FormItem {...formItemLayout} label="退票正常">
-                {getFieldDecorator('refund',
-                  {
-                    initialValue: detail && detail.refund || '0',
-                  })(
-                  <RadioGroup name="refund">
-                    <Radio value={'0'}>不支持</Radio>
-                    <Radio value={'1'}>支持</Radio>
-                  </RadioGroup>
-                )}
-              </FormItem>
+                  </FormItem>
 
-              <FormItem {...formItemLayout} label="展会介绍">
-                {getFieldDecorator('content',
-                  {
-                    initialValue: detail && detail.content || '',
-                  })(
-                  <TextArea autosize={{ minRows: 4, maxRows: 8 }} placeholder="请输入展会介绍"/>
-                )}
-              </FormItem>
+                  <FormItem {...formItemLayout} label={<strong>门票信息</strong>}>
 
-              <FormItem {...btnItemLayout}>
-                <div className={styles.btns}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                  >
-                    提交
-                  </Button>
-                  <Button htmlType="reset">取消</Button>
-                </div>
-              </FormItem>
+                    {ticketFormList}
 
-            </Form>
-          </Col>
-          <Col xs={0} sm={0} md={0} lg={10}/>
-        </Row>
+                    <Button
+                      type="dashed"
+                      size="large"
+                      style={{width: '100%'}}
+                      onClick={this.addTicketForm}
+                    >
+                      <Icon type="plus" />
+                      <span>添加门票信息</span>
+                    </Button>
+
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="展会封面">
+                    {getFieldDecorator('image',
+                      {
+                        initialValue: detail.image || '',
+                      })(
+                      <UploadImage callback={this.uploadCallback} defaultUrl={detail.image || ''}/>
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="限购数量">
+                    {getFieldDecorator('limit',
+                      {
+                        initialValue: detail.limit || '0',
+                      })(
+                      <RadioGroup name="limit">
+                        <Radio value={'0'}>不限购</Radio>
+                        <Radio value={'1'}>
+                          限购
+                          {
+                            getFieldValue('limit') === '0' ?
+                              null
+                              :
+                              <InputNumber
+                                min={1}
+                                defaultValue={detail && detail.limit || 100}
+                                style={{marginLeft: '10px'}}
+                                onChange={this.onChangeLimit}
+                              />
+                          }
+                        </Radio>
+                      </RadioGroup>
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="退票正常">
+                    {getFieldDecorator('refund',
+                      {
+                        initialValue: detail.refund || '0',
+                      })(
+                      <RadioGroup name="refund">
+                        <Radio value={'0'}>不支持</Radio>
+                        <Radio value={'1'}>支持</Radio>
+                      </RadioGroup>
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="展会介绍" className={styles.ueditor}>
+                    {getFieldDecorator('content',
+                      {
+                        initialValue: detail.content || '',
+                      })(
+                      <Ueditor content={detail.content} callback={this.editorCallback} />
+                    )}
+                  </FormItem>
+
+                  <FormItem {...btnItemLayout}>
+                    <div className={styles.btns}>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                      >
+                        提交
+                      </Button>
+                      <Button htmlType="reset">取消</Button>
+                    </div>
+                  </FormItem>
+
+                </Form>
+              </Col>
+              <Col xs={0} sm={0} md={0} lg={10}/>
+            </Row>
+            :
+            null
+        }
 
         <Modal
           title="点击地图选取地址"

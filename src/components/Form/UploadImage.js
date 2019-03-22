@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Upload, Icon, Input, notification } from 'antd'
-import { file2base64, dataURLtoBlob, base64to2 } from "@/utils/utils";
+import { file2base64 } from "@/utils/utils";
 import styles from './UploadImage.less'
 //const base64 = require('base-64');      //let image = base64.encode(data.base64);
 
@@ -49,20 +49,24 @@ export default class UploadImage extends React.Component {
   };
 
   uploadImage = (imageList) => {
-//console.log(image)
+    //console.log(imageList)
     this.props.dispatch({
       type: 'global/post',
       url: '/api/expert/upload',
       payload: {
         type: '4',
-        image: imageList,
+        image: JSON.stringify(imageList),
       },
       callback: (res) => {
         setTimeout(() => { this.ajaxFlag = true }, 500);
-        this.setState({loading: false});
         if(res.code === '0'){
-          this.props.callback(res.data);                   //将url传给父组件
+          this.setState({
+            loading: false,
+            imageUrl: res.data[0].img_url
+          });
+          this.props.callback(res.data[0].img_url);                   //将url传给父组件
         }else{
+          this.setState({loading: false});
           notification.error({
             message: '上传错误！',
             description: res.msg
@@ -74,17 +78,23 @@ export default class UploadImage extends React.Component {
 
   render(){
 
-    const { loading } = this.state;
+    let currentUrl = this.props.defaultUrl;
+    const { loading, imageUrl } = this.state;
 
-    const uploadButton = (
-      <div style={{padding: '30px'}}>
+    if(imageUrl) currentUrl = imageUrl;
+
+    const uploadButton = currentUrl && !loading ?
+      <div>
+        <img src={currentUrl} width="100%" height="auto" alt="imgUrl"/>
+      </div>
+      :
+      <div style={{padding: '50px'}}>
         <p className="ant-upload-drag-icon">
           <Icon type={loading ? 'loading' : 'inbox'} />
         </p>
         <p className="ant-upload-text">选择图片进行上传</p>
         <p className="ant-upload-hint">只能上传单张不超过2mb的jpg、png图片</p>
-      </div>
-    );
+      </div>;
 
     return(
       <div className={styles.uploadImg}>

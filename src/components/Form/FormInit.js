@@ -66,7 +66,7 @@ export default class FormInit extends PureComponent {
     }
   }
 
-  //按条件查询
+  // 按条件查询
   handleFormSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields('', (err, values) => {
@@ -76,11 +76,18 @@ export default class FormInit extends PureComponent {
     });
   };
 
-  //重置查询
-  handleFormReset = (e) => {
+  // Modal取消
+  handleFormCancel = (e) => {
     e.preventDefault();
     this.props.form.resetFields();
     this.props.callback()
+  };
+
+  // 重置查询
+  handleFormReset = (e) => {
+    e.preventDefault();
+    this.props.form.resetFields();
+    this.props.callback({})
   };
 
   //依据表单类型，返回相应的html
@@ -97,6 +104,7 @@ export default class FormInit extends PureComponent {
             ]
           })(
             <Input
+              autoComplete="off"
               type={topic.inputType ? topic.inputType : 'text'}
               placeholder={topic.placeholder}
               style={style}
@@ -114,6 +122,7 @@ export default class FormInit extends PureComponent {
             rules: topic.rules ? topic.rules : undefined
           })(
             <InputNumber
+              autoComplete="off"
               min={0}
               max={9}
               placeholder={topic.placeholder} style={style}
@@ -219,8 +228,9 @@ export default class FormInit extends PureComponent {
             <Modal
               title={modal.title}
               visible={modal.visible}
+              destroyOnClose={true}
               onOk={this.handleFormSubmit}
-              onCancel={this.handleFormReset}
+              onCancel={this.handleFormCancel}
             >
               <Form>{inputBox}</Form>
             </Modal>

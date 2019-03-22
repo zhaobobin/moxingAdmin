@@ -6,23 +6,29 @@ import { Button, Popconfirm } from 'antd'
 import FormInit from '@/components/Form/FormInit'
 import TableInit from '@/components/Table/TableInit'
 
+const titleStyle = {
+  width: '100px',
+  height: '20px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
+
 @connect(({ global }) => ({
   global,
 }))
-export default class ExhibitionList extends React.Component {
+export default class ArticleDynamic extends React.Component {
 
   constructor(props){
     super(props);
     this.ajaxFlag = true;
     this.state = {
-      queryParams: {},                //查询参数
-      pageTitle: '展会列表',
-      apiList: '/api/exhibition/index',
-      apiAdd: '/api/exhibition/exhibition_add',
-      apiEdit: '/api/exhibition/exhibition_edit',
-      modalTitle: '展会',
-
-      roleOptions: [],                   //角色下拉列表
+      queryParams: {
+        type: '2'       //文章类型
+      },                //查询参数
+      apiList: '/api/portal/get_portal',
+      apiDel: '/api/portal/portal_del',
+      title: '文章',
 
     }
   }
@@ -36,12 +42,12 @@ export default class ExhibitionList extends React.Component {
 
   //添加
   add = () => {
-    this.props.dispatch(routerRedux.push('/ticket/exhibition-add'))
+    this.props.dispatch(routerRedux.push('/content/article-add'))
   };
 
   //编辑
   edit = (id) => {
-    this.props.dispatch(routerRedux.push(`/ticket/exhibition-edit/${id}`))
+    this.props.dispatch(routerRedux.push(`/content/article-edit/${id}`))
   };
 
   del = (id) => {
@@ -68,44 +74,57 @@ export default class ExhibitionList extends React.Component {
   render(){
 
     const {currentUser} = this.props.global;
-    const {apiList, queryParams, modalTitle} = this.state;
+    const {apiList, queryParams, title} = this.state;
 
     const searchParams = [
       [
         {
-          key: 'name',
-          label: '展会名称',
+          key: 'title',
+          label: '文章标题',
           type: 'Input',
-          inputType: 'number',
           value: '',
-          placeholder: '请输入展会名称',
+          placeholder: '请输入文章标题',
           rules: [],
         },
         {
-          key: 'time',
-          label: '展会时间',
+          key: 'published_time',
+          label: '发布时间',
           type: 'DatePicker',
           value: '',
           placeholder: '请选择',
           rules: [],
         },
         {
-          key: 'state',
-          label: '展会状态',
+          key: 'author',
+          label: '发布用户',
+          type: 'Input',
+          value: '',
+          placeholder: '请输入用户名称',
+          rules: [],
+        },
+      ],
+      [
+        {
+          key: 'category_name',
+          label: '文章分类',
+          type: 'Input',
+          value: '',
+          placeholder: '请输入文章分类',
+          rules: [],
+        },
+        {
+          key: 'status',
+          label: '文章状态',
           type: 'Select',
           value: '',
           placeholder: '请选择',
           option: [
             {
-              label: '未开售',
+              label: '未发布',
               value: '0'
             },
             {
-              label: '开售中',
-              value: '1'
-            },
-            {
-              label: '已结束',
+              label: '已发布',
               value: '2'
             },
             {
@@ -130,45 +149,81 @@ export default class ExhibitionList extends React.Component {
             },
           ]
         },
-      ],
+      ]
     ];
 
     const columns = [
       {
-        title: '展会名称',
-        dataIndex: 'name',
-        key: 'name',
+        title: '文章标题',
+        dataIndex: 'title',
+        key: 'title',
+        render: (title) => (
+          <div style={titleStyle}>
+            {title || '--'}
+          </div>
+        )
+      },
+      {
+        title: '分类',
+        dataIndex: 'category_name',
+        key: 'category_name',
+        align: 'center',
+        render: (category_name) => (
+          <span>{category_name || '--'}</span>
+        )
+      },
+      {
+        title: '发布时间',
+        dataIndex: 'published_time',
+        key: 'published_time',
         align: 'center',
       },
       {
-        title: '展会开始时间',
-        dataIndex: 'start_time',
-        key: 'start_time',
+        title: '阅读',
+        dataIndex: 'view',
+        key: 'view',
         align: 'center',
       },
       {
-        title: '展会结束时间',
-        dataIndex: 'end_time',
-        key: 'end_time',
+        title: '评论',
+        dataIndex: 'reply',
+        key: 'reply',
         align: 'center',
       },
       {
-        title: '门票数量',
-        dataIndex: 'salenum',
-        key: 'salenum',
+        title: '分享',
+        dataIndex: 'share',
+        key: 'share',
+        align: 'center',
+      },
+      {
+        title: '收藏',
+        dataIndex: 'favorites',
+        key: 'favorites',
+        align: 'center',
+      },
+      {
+        title: '点赞',
+        dataIndex: 'like',
+        key: 'like',
+        align: 'center',
+      },
+      {
+        title: '作者',
+        dataIndex: 'author',
+        key: 'author',
         align: 'center',
       },
       {
         title: '状态',
-        dataIndex: 'state',
-        key: 'state',
+        dataIndex: 'status',
+        key: 'status',
         align: 'center',
-        render: (state) => (
+        render: (status) => (
           <span>
-            {state === 0 ? '未开售' : null}
-            {state === 2 ? '开售中' : null}
-            {state === 3 ? '已结束' : null}
-            {state === 3 ? '已下架' : null}
+            {status === 0 ? '未发布' : null}
+            {status === 1 ? '已发布' : null}
+            {status === 2 ? '已下架' : null}
           </span>
         )
       },
@@ -183,9 +238,8 @@ export default class ExhibitionList extends React.Component {
               currentUser.role === '超级管理员' ?
                 <span>
                   <a onClick={() => this.edit(item.id)}>编辑</a>
-                  <Link to={`/ticket/list/${item.id}`}>统计</Link>
-                  {/*<Popconfirm title="确定删除该展会？" onConfirm={() => this.del(item.id)}>*/}
-                    {/*<a>删除</a>*/}
+                  {/*<Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>*/}
+                  {/*<a>删除</a>*/}
                   {/*</Popconfirm>*/}
                 </span>
                 :
@@ -204,7 +258,7 @@ export default class ExhibitionList extends React.Component {
         {
           currentUser.role === '超级管理员' ?
             <div style={{padding: '20px 0'}}>
-              <Button type="primary" onClick={this.add}>添加{modalTitle}</Button>
+              <Button type="primary" onClick={this.add}>添加{title}</Button>
             </div>
             :
             null

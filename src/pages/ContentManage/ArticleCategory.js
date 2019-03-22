@@ -20,7 +20,7 @@ function foreachCategory(values, cateArr){
 @connect(({ global }) => ({
   global,
 }))
-export default class GoodsCategory extends React.Component {
+export default class ArticleCategory extends React.Component {
 
   constructor(props){
     super(props);
@@ -28,18 +28,15 @@ export default class GoodsCategory extends React.Component {
     this.state = {
       queryParams: {},                //查询参数
 
-      pageTitle: '商品分类列表',
-      apiList: '/api/class/index',
-      apiAdd: '/api/class/class_add',
-      apiEdit: '/api/class/class_edit',
-      apiDel: '/api/class/class_del',
+      pageTitle: '文章分类列表',
+      apiList: '/api/portal/category',
+      apiAdd: '/api/portal/category_add',
+      apiEdit: '/api/portal/category_edit',
+      apiDel: '/api/portal/category_del',
 
       modalVisible: false,
       modalAction: '',
-      modalTitle: '商品分类',
-      modalValues: '',
-
-      pidOptions: [],
+      modalTitle: '文章分类',
 
     }
   }
@@ -69,10 +66,10 @@ export default class GoodsCategory extends React.Component {
 
     let {apiAdd, apiEdit, modalAction, modalValues} = this.state;
 
-    values.pid = parseInt(values.pid);
     let api = modalAction === '添加' ? apiAdd : apiEdit;
 
     let data = {...values};
+    data.uid = this.props.global.currentUser.uid;
     if(modalAction !== '添加') data.id = modalValues.id;
 
     this.props.dispatch({
@@ -117,17 +114,7 @@ export default class GoodsCategory extends React.Component {
 
   //表格回调，初始化商品分类Options
   tableCallback = (values) => {
-    if(!values ) return;
-    let pidOptions = [
-      {label: '作为一级分类', value: '0'}
-    ];
-    let cateArr = [];
-    cateArr = foreachCategory(values, cateArr);
-    pidOptions = pidOptions.concat(cateArr);
-    //console.log(pidOptions)
-    this.setState({
-      pidOptions,
-    })
+
   };
 
   //modal回调
@@ -145,7 +132,7 @@ export default class GoodsCategory extends React.Component {
   render(){
 
     const {currentUser} = this.props.global;
-    const {apiList, queryParams, modalVisible, modalAction, modalTitle, modalValues, pidOptions} = this.state;
+    const {apiList, queryParams, modalVisible, modalAction, modalTitle, modalValues} = this.state;
 
     const modalParams = [
       [
@@ -161,25 +148,14 @@ export default class GoodsCategory extends React.Component {
           ],
         },
         {
-          key: 'sort',
-          label: '排序',
+          key: 'explain',
+          label: '介绍',
           type: 'Input',
           inputType: 'Input',
-          value: modalValues ? modalValues.sort : undefined,
-          placeholder: '请输入排序',
+          value: modalValues ? modalValues.explain : undefined,
+          placeholder: '请输入分类介绍',
           rules: [
-            { pattern: /^[0-9]+$/, message: '只能输入数值' },
-          ],
-        },
-        {
-          key: 'pid',
-          label: '父级分类',
-          type: 'Select',
-          value: modalValues ? modalValues.pid.toString() : '0',
-          placeholder: '请选择',
-          option: pidOptions,
-          rules: [
-            { required: true, message: '请选择父级分类' },
+
           ],
         },
       ]
@@ -193,21 +169,30 @@ export default class GoodsCategory extends React.Component {
         width: 200,
       },
       {
-        title: '分类id',
-        dataIndex: 'id',
-        key: 'id',
-        align: 'center',
-      },
-      {
-        title: '父级分类id',
-        dataIndex: 'pid',
-        key: 'pid',
+        title: '分类介绍',
+        dataIndex: 'explain',
+        key: 'explain',
         align: 'center',
       },
       {
         title: '排序',
-        dataIndex: 'sort',
-        key: 'sort',
+        dataIndex: 'list_order',
+        key: 'list_order',
+        align: 'center',
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        key: 'status',
+        align: 'center',
+        render: (status) => (
+          <span>{status === 1 ? '正常' : ''}</span>
+        )
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'create_time',
+        key: 'create_time',
         align: 'center',
       },
       {

@@ -52,10 +52,10 @@ export default [
         routes: [
           { path: '/content', redirect: '/content/category' },
           {
-            name: '分类管理',
+            name: '文章分类',
             path: 'category',
             key: 'category',
-            component: './ContentManage/Category',
+            component: './ContentManage/ArticleCategory',
           },
           {
             name: '文章管理',
@@ -64,16 +64,37 @@ export default [
             component: './ContentManage/ArticleList',
           },
           {
+            name: '添加文章',
+            path: 'article-add',
+            key: 'article-add',
+            hideInMenu: true,
+            component: './ContentManage/ArticleAdd',
+          },
+          {
+            name: '编辑文章',
+            path: 'article-edit/:id',
+            key: 'article-edit',
+            hideInMenu: true,
+            component: './ContentManage/ArticleEdit',
+          },
+          {
+            name: '评论管理',
+            path: 'article-comment/:id',
+            key: 'article-comment',
+            hideInMenu: true,
+            component: './ContentManage/ArticleComment',
+          },
+          {
             name: '动态管理',
             path: 'dynamic',
-            key: 'dynamic',
-            component: './ContentManage/Dynamic',
+            key: 'article-dynamic',
+            component: './ContentManage/ArticleDynamic',
           },
           {
             name: '数据源管理',
             path: 'source',
-            key: 'source',
-            component: './ContentManage/Source',
+            key: 'article-source',
+            component: './ContentManage/ArticleSource',
           },
         ]
       },
@@ -108,9 +129,10 @@ export default [
 
 
           {
-            name: '展会票统计',
-            path: 'list',
+            name: '展会票务统计',
+            path: 'list/:id',
             key: 'ticket-list',
+            hideInMenu: true,
             component: './TicketManage/TicketList',
           },
           {
@@ -138,12 +160,12 @@ export default [
         key: 'goods',
         routes: [
           { path: '/goods', redirect: '/goods/list' },
-          {
-            name: '商品列表',
-            path: 'list',
-            key: 'list',
-            component: './GoodsManage/GoodsList',
-          },
+          // {
+          //   name: '商品列表',
+          //   path: 'list',
+          //   key: 'list',
+          //   component: './GoodsManage/GoodsList',
+          // },
           {
             name: '商品分类',
             path: 'category',
@@ -176,55 +198,55 @@ export default [
       },
 
       // forms
-      {
-        path: 'form',
-        icon: 'form',
-        name: '表单',
-        key: 'form',
-        routes: [
-          {
-            path: 'basic-form',
-            name: '基础表单',
-            key: 'basicform',
-            component: './Forms/BasicForm',
-          },
-          {
-            path: 'step-form',
-            name: '分步表单',
-            key: 'stepform',
-            component: './Forms/StepForm',
-            hideChildrenInMenu: true,
-            routes: [
-              { path: '/form/step-form', redirect: '/form/step-form/info' },
-              {
-                path: 'info',
-                name: '基本信息',
-                key: 'info',
-                component: './Forms/StepForm/Step1',
-              },
-              {
-                path: 'confirm',
-                name: '对话框',
-                key: 'confirm',
-                component: './Forms/StepForm/Step2',
-              },
-              {
-                path: 'result',
-                name: '结果',
-                key: 'result',
-                component: './Forms/StepForm/Step3',
-              },
-            ],
-          },
-          {
-            path: 'advanced-form',
-            name: '高级表单',
-            key: 'advancedform',
-            authority: ['admin'],
-            component: './Forms/AdvancedForm',
-          },
-        ],
-      },
+      // {
+      //   path: 'form',
+      //   icon: 'form',
+      //   name: '表单',
+      //   key: 'form',
+      //   routes: [
+      //     {
+      //       path: 'basic-form',
+      //       name: '基础表单',
+      //       key: 'basicform',
+      //       component: './Forms/BasicForm',
+      //     },
+      //     {
+      //       path: 'step-form',
+      //       name: '分步表单',
+      //       key: 'stepform',
+      //       component: './Forms/StepForm',
+      //       hideChildrenInMenu: true,
+      //       routes: [
+      //         { path: '/form/step-form', redirect: '/form/step-form/info' },
+      //         {
+      //           path: 'info',
+      //           name: '基本信息',
+      //           key: 'info',
+      //           component: './Forms/StepForm/Step1',
+      //         },
+      //         {
+      //           path: 'confirm',
+      //           name: '对话框',
+      //           key: 'confirm',
+      //           component: './Forms/StepForm/Step2',
+      //         },
+      //         {
+      //           path: 'result',
+      //           name: '结果',
+      //           key: 'result',
+      //           component: './Forms/StepForm/Step3',
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       path: 'advanced-form',
+      //       name: '高级表单',
+      //       key: 'advancedform',
+      //       authority: ['admin'],
+      //       component: './Forms/AdvancedForm',
+      //     },
+      //   ],
+      // },
 
 
       {

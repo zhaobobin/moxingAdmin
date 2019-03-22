@@ -30,7 +30,7 @@ export default class TableInit extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.params.queryParams !== this.props.params.queryParams) {
+    if (JSON.stringify(nextProps.params.queryParams) !== JSON.stringify(this.props.params.queryParams)) {
       this.queryList(nextProps.params.queryParams);
     }
   }
@@ -46,14 +46,16 @@ export default class TableInit extends React.Component {
 
     this.setState({ loading: true });
 
-    let {page, page_count} = this.state.queryParams;
+    const { uid } = this.props.global.currentUser;
+    const { page, page_count } = this.state.queryParams;
 
     this.props.dispatch({
       type: 'global/post',
       url: this.props.params.api,
       payload: {
-        uid: this.props.global.currentUser.uid,
-        ...this.state.queryParams,
+        uid,
+        page,
+        page_count,
         ...queryParams,
       },
       callback: (res) => {
@@ -69,6 +71,7 @@ export default class TableInit extends React.Component {
               page_count: queryParams.page_count || page_count,
             },
           });
+          if(this.props.callback) this.props.callback(res.data);
         }else{
           this.setState({loading: false, total: 0})
         }

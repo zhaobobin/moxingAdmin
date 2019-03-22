@@ -8,7 +8,7 @@ import { parse, stringify } from 'qs';
  */
 export const ENV = {
 
-  apiName: 'qtw-invest-api',                                      // 生产项目接口名称
+  apiName: '',                                      // 生产项目接口名称
 
   api: {
     dev: 'http://47.94.100.232',

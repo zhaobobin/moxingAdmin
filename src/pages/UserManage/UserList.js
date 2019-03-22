@@ -20,6 +20,7 @@ export default class UserList extends React.Component {
       apiAdd: '/api/user/user_add',
       apiEdit: '/api/user/user_edit',
       apiDel: '/api/user/user_del',
+
       modalVisible: false,
       modalAction: '',
       modalTitle: '管理员',

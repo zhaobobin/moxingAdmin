@@ -6,16 +6,19 @@ export default {
   'menu.member.detail': '会员详情',
 
   'menu.content': '内容管理',
-  'menu.content.category': '分类列表',
+  'menu.content.category': '文章分类',
   'menu.content.article': '文章管理',
-  'menu.content.dynamic': '动态管理',
-  'menu.content.source': '数据源管理',
+  'menu.content.article-add': '添加文章',
+  'menu.content.article-edit': '编辑文章',
+  'menu.content.article-dynamic': '动态管理',
+  'menu.content.article-source': '数据源管理',
+  'menu.content.article-comment': '评论管理',
 
   'menu.ticket': '票务管理',
   'menu.ticket.exhibition': '展会列表',
   'menu.ticket.exhibition-add': '创建展会',
   'menu.ticket.exhibition-edit': '编辑展会',
-  'menu.ticket.ticket-list': '展会票统计',
+  'menu.ticket.ticket-list': '展会票务统计',
   'menu.ticket.ticket-add': '添加展会票',
   'menu.ticket.ticket-edit': '编辑展会票',
 
