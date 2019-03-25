@@ -578,7 +578,11 @@ export default class TicketForm extends React.Component {
                       {
                         initialValue: detail.content || '',
                       })(
-                      <Ueditor content={detail.content} callback={this.editorCallback} />
+                      <Ueditor
+                        height={250}
+                        content={detail.content}
+                        callback={this.editorCallback}
+                      />
                     )}
                   </FormItem>
 

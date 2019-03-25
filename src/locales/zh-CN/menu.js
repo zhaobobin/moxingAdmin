@@ -23,8 +23,11 @@ export default {
   'menu.ticket.ticket-edit': '编辑展会票',
 
   'menu.goods': '商品管理',
-  'menu.goods.list': '商品列表',
-  'menu.goods.category': '商品分类',
+  'menu.goods.goods-category': '商品分类',
+  'menu.goods.goods-list': '商品列表',
+  'menu.goods.goods-detail': '商品详情',
+  'menu.goods.order-list': '订单列表',
+  'menu.goods.order-detail': '订单详情',
 
   'menu.users': '管理员管理',
   'menu.users.list': '管理员列表',

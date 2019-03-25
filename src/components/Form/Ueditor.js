@@ -28,7 +28,9 @@ export default class Ueditor extends React.Component {
   initContent = () => {
     const { content } = this.props;
     if(!content) return;
-    const blocksFromHtml = htmlToDraft(content);
+    let html = content.replace('↵', '');
+    html = '<div>' + html + '</div>';
+    const blocksFromHtml = htmlToDraft(html);
     const { contentBlocks, entityMap } = blocksFromHtml;
     const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
     const editorState = EditorState.createWithContent(contentState);
@@ -79,6 +81,7 @@ export default class Ueditor extends React.Component {
 
   render(){
 
+    const { height } = this.props
     const { editorState } = this.state;
 
     return(
@@ -115,17 +118,13 @@ export default class Ueditor extends React.Component {
                 min-width: 30px;
                 height: 30px;
               }
-              .public-DraftEditor-content{
-                padding: 10px 0;
-              }
               .public-DraftStyleDefault-block {
                 margin: 0;
-                height: 20px;
-                line-height: 20px;
               }
               .home-editor{
-                height: 300px;
-                padding:0 20px;
+                height: ${height}px;
+                padding: 15px 20px;
+                line-height: 20px;
                 border: 1px solid #d9d9d9;
                 border-top: none;
               }

@@ -105,7 +105,7 @@ export default class ArticleForm extends React.Component {
 
   //评论
   onChangeComment = (item) => {
-    console.log(item)
+    //console.log(item)
     this.props.dispatch({
       type: 'global/post',
       url: '/api/portal/comment_edit',
@@ -230,7 +230,7 @@ export default class ArticleForm extends React.Component {
                               {required: true, message: '请输入原文来源'},
                             ],
                           })(
-                          <Input autoComplete="off" placeholder="原文抓取地址" disabled={detail.source_url}/>
+                          <Input autoComplete="off" placeholder="原文抓取地址" disabled={detail.source_url !== ''}/>
                         )}
                       </FormItem>
                       :
@@ -270,7 +270,11 @@ export default class ArticleForm extends React.Component {
                           {required: true, message: '请输入内容'},
                         ],
                       })(
-                      <Ueditor content={detail.content} callback={this.editorCallback}/>
+                      <Ueditor
+                        height={400}
+                        content={detail.content}
+                        callback={this.editorCallback}
+                      />
                     )}
                   </FormItem>
 
@@ -300,7 +304,7 @@ export default class ArticleForm extends React.Component {
                                       <Switch
                                         checkedChildren="上架"
                                         unCheckedChildren="下架"
-                                        defaultChecked={item.status}
+                                        defaultChecked={item.status === 1}
                                         onChange={() => this.onChangeComment(item)}
                                       />
                                     </a>
@@ -318,7 +322,7 @@ export default class ArticleForm extends React.Component {
                                                 <Switch
                                                   checkedChildren="上架"
                                                   unCheckedChildren="下架"
-                                                  defaultChecked={topic.status}
+                                                  defaultChecked={topic.status === 1}
                                                   onChange={() => this.onChangeComment(topic)}
                                                 />
                                               </a>

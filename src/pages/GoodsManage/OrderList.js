@@ -9,18 +9,18 @@ import TableInit from '@/components/Table/TableInit'
 @connect(({ global }) => ({
   global,
 }))
-export default class ExhibitionList extends React.Component {
+export default class OrderList extends React.Component {
 
   constructor(props){
     super(props);
     this.ajaxFlag = true;
     this.state = {
       queryParams: {},                //查询参数
-      pageTitle: '展会列表',
+      pageTitle: '订单列表',
       apiList: '/api/exhibition/index',
       apiAdd: '/api/exhibition/exhibition_add',
       apiEdit: '/api/exhibition/exhibition_edit',
-      modalTitle: '展会',
+      modalTitle: '订单',
 
       roleOptions: [],                   //角色下拉列表
 
@@ -34,35 +34,9 @@ export default class ExhibitionList extends React.Component {
     })
   };
 
-  //添加
-  add = () => {
-    this.props.dispatch(routerRedux.push('/ticket/exhibition-add'))
-  };
-
-  //编辑
-  edit = (id) => {
-    this.props.dispatch(routerRedux.push(`/ticket/exhibition-edit/${id}`))
-  };
-
-  del = (id) => {
-    if(!this.ajaxFlag) return;
-    this.ajaxFlag = false;
-
-    let {apiDel} = this.state;
-
-    this.props.dispatch({
-      type: 'global/post',
-      url: apiDel,
-      payload: {
-        id,
-      },
-      callback: (res) => {
-        setTimeout(() => {this.ajaxFlag = true}, 500);
-        if(res.code === '0'){
-          this.tableInit.refresh({})
-        }
-      }
-    });
+  //详情
+  detail = (id) => {
+    this.props.dispatch(routerRedux.push(`/goods/order-detail/${id}`))
   };
 
   render(){
@@ -73,17 +47,17 @@ export default class ExhibitionList extends React.Component {
     const searchParams = [
       [
         {
-          key: 'name',
-          label: '展会名称',
+          key: 'id',
+          label: '订单号',
           type: 'Input',
           inputType: 'number',
           value: '',
-          placeholder: '请输入展会名称',
+          placeholder: '请输入订单号',
           rules: [],
         },
         {
           key: 'time',
-          label: '展会时间',
+          label: '订单时间',
           type: 'DatePicker',
           value: '',
           placeholder: '请选择',
@@ -135,27 +109,15 @@ export default class ExhibitionList extends React.Component {
 
     const columns = [
       {
-        title: '展会名称',
+        title: '订单名称',
         dataIndex: 'name',
         key: 'name',
         align: 'center',
       },
       {
-        title: '展会开始时间',
+        title: '订单时间',
         dataIndex: 'start_time',
         key: 'start_time',
-        align: 'center',
-      },
-      {
-        title: '展会结束时间',
-        dataIndex: 'end_time',
-        key: 'end_time',
-        align: 'center',
-      },
-      {
-        title: '门票数量',
-        dataIndex: 'salenum',
-        key: 'salenum',
         align: 'center',
       },
       {
@@ -182,12 +144,7 @@ export default class ExhibitionList extends React.Component {
             {
               currentUser.role === '超级管理员' ?
                 <span>
-                  <a onClick={() => this.edit(item.id)}>编辑</a>
-                  <span> | </span>
-                  <Link to={`/ticket/list/${item.id}`}>统计</Link>
-                  {/*<Popconfirm title="确定删除该展会？" onConfirm={() => this.del(item.id)}>*/}
-                    {/*<a>删除</a>*/}
-                  {/*</Popconfirm>*/}
+                  <a onClick={() => this.detail(item.id)}>查看</a>
                 </span>
                 :
                 null

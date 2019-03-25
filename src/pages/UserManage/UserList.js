@@ -280,6 +280,12 @@ export default class UserList extends React.Component {
                     item.user_name === 'admin' ?
                       null
                       :
+                      <span> | </span>
+                  }
+                  {
+                    item.user_name === 'admin' ?
+                      null
+                      :
                       <Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>
                         <a>删除</a>
                       </Popconfirm>

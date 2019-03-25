@@ -159,18 +159,38 @@ export default [
         path: 'goods',
         key: 'goods',
         routes: [
-          { path: '/goods', redirect: '/goods/list' },
-          // {
-          //   name: '商品列表',
-          //   path: 'list',
-          //   key: 'list',
-          //   component: './GoodsManage/GoodsList',
-          // },
+          { path: '/goods', redirect: '/goods/category' },
           {
             name: '商品分类',
             path: 'category',
-            key: 'category',
+            key: 'goods-category',
             component: './GoodsManage/GoodsCategory',
+          },
+          {
+            name: '商品列表',
+            path: 'list',
+            key: 'goods-list',
+            component: './GoodsManage/GoodsList',
+          },
+          {
+            name: '商品详情',
+            path: 'detail',
+            key: 'goods-detail',
+            hideInMenu: true,
+            component: './GoodsManage/GoodsDetail',
+          },
+          {
+            name: '订单列表',
+            path: 'order-list',
+            key: 'order-list',
+            component: './GoodsManage/OrderList',
+          },
+          {
+            name: '订单详情',
+            path: 'order-detail/:id',
+            key: 'order-detail',
+            hideInMenu: true,
+            component: './GoodsManage/OrderDetail',
           },
         ]
       },

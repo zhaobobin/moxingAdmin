@@ -206,6 +206,7 @@ export default class ArticleCategory extends React.Component {
               currentUser.role === '超级管理员' ?
                 <span>
                   <a onClick={() => this.edit(item)}>编辑</a>
+                  <span> | </span>
                   {
                     item.children && item.children.length > 0 ?
                       null

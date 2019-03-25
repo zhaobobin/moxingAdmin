@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router'
+import { Link, routerRedux } from 'dva/router'
 import { Button, Popconfirm } from 'antd'
 
 import FormInit from '@/components/Form/FormInit'
@@ -54,6 +54,11 @@ export default class MemberList extends React.Component {
       modalAction: '编辑',
       modalValues: item
     })
+  };
+
+  //详情
+  detail = (id) => {
+    this.props.dispatch(routerRedux.push(`/member/detail/${id}`))
   };
 
   //保存
@@ -336,10 +341,13 @@ export default class MemberList extends React.Component {
         align: 'center',
         render: (text, item) => (
           <div>
+            <a onClick={() => this.detail(item)}>详情</a>
             {
               currentUser.role === '超级管理员' ?
                 <span>
+                  <span> | </span>
                   <a onClick={() => this.edit(item)}>编辑</a>
+                  <span> | </span>
                   <Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>
                     <a>删除</a>
                   </Popconfirm>
