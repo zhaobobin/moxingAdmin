@@ -17,9 +17,9 @@ export default class OrderList extends React.Component {
     this.state = {
       queryParams: {},                //查询参数
       pageTitle: '订单列表',
-      apiList: '/api/exhibition/index',
-      apiAdd: '/api/exhibition/exhibition_add',
-      apiEdit: '/api/exhibition/exhibition_edit',
+      apiList: '/api/order/index',
+      apiAdd: '/api/order/order_add',
+      apiEdit: '/api/order/order_edit',
       modalTitle: '订单',
 
       roleOptions: [],                   //角色下拉列表

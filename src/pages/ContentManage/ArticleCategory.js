@@ -32,7 +32,7 @@ export default class ArticleCategory extends React.Component {
       apiList: '/api/portal/category',
       apiAdd: '/api/portal/category_add',
       apiEdit: '/api/portal/category_edit',
-      apiDel: '/api/portal/category_del',
+      apiDel: '/api/portal/portal_category_delete',
 
       modalVisible: false,
       modalAction: '',
@@ -100,7 +100,7 @@ export default class ArticleCategory extends React.Component {
       type: 'global/post',
       url: apiDel,
       payload: {
-        id,
+        category_id: id,
       },
       callback: (res) => {
         if(res.code === '0'){
