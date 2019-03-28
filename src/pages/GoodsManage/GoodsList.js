@@ -35,9 +35,14 @@ export default class GoodsList extends React.Component {
     })
   };
 
-  //详情
+  //添加商品
+  add = () => {
+    this.props.dispatch(routerRedux.push(`/goods/add`))
+  };
+
+  //编辑商品
   detail = (id) => {
-    this.props.dispatch(routerRedux.push(`/goods/order-detail/${id}`))
+    this.props.dispatch(routerRedux.push(`/goods/edit/${id}`))
   };
 
   //down
@@ -247,14 +252,14 @@ export default class GoodsList extends React.Component {
 
         <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
 
-        {
-          currentUser.role === '超级管理员' ?
-            <div style={{padding: '20px 0'}}>
-              <Button type="primary" onClick={this.add}>添加{modalTitle}</Button>
-            </div>
-            :
-            null
-        }
+        {/*{*/}
+          {/*currentUser.role === '超级管理员' ?*/}
+            {/*<div style={{padding: '20px 0'}}>*/}
+              {/*<Button type="primary" onClick={this.add}>添加{modalTitle}</Button>*/}
+            {/*</div>*/}
+            {/*:*/}
+            {/*null*/}
+        {/*}*/}
 
         <TableInit
           onRef={ref => this.tableInit = ref}

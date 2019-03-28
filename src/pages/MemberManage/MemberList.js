@@ -341,7 +341,7 @@ export default class MemberList extends React.Component {
         align: 'center',
         render: (text, item) => (
           <div>
-            <a onClick={() => this.detail(item)}>详情</a>
+            <a onClick={() => this.detail(item.id)}>详情</a>
             {
               currentUser.role === '超级管理员' ?
                 <span>

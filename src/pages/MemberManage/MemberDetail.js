@@ -19,24 +19,24 @@ export default class MemberDetail extends React.Component {
   }
 
   componentDidMount(){
-    //this.queryDetail(this.state.params);
+    this.queryDetail(this.props.match.params.id);
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.match.params.id !== this.state.id) {
-      this.queryDetail({
-        ...this.state.params,
-        id: nextProps.match.params.id
-      });
+    if(nextProps.match.params.id !== this.props.match.params.id) {
+      this.queryDetail(nextProps.match.params.id);
     }
   }
 
   //查询详情
-  queryDetail(params){
+  queryDetail(id){
     this.props.dispatch({
       type: 'fetch/post',
-      url: '/api/member/detail',
-      payload: params,
+      url: '/api/member/user_edit',
+      payload: {
+        id,
+        edit: 0
+      },
       callback: (res) => {
         this.setState({
           loading: false,

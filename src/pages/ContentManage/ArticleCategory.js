@@ -37,15 +37,21 @@ export default class ArticleCategory extends React.Component {
       modalVisible: false,
       modalAction: '',
       modalTitle: '文章分类',
+      pidDisabled: true,
+
+      pidOptions: [],
 
     }
   }
 
   //添加
-  add = () => {
+  add = (item) => {
     this.setState({
       modalVisible: true,
       modalAction: '添加',
+      modalValues: {
+        pid: item ? item.id : '0',
+      },
     })
   };
 
@@ -114,7 +120,17 @@ export default class ArticleCategory extends React.Component {
 
   //表格回调，初始化商品分类Options
   tableCallback = (values) => {
-
+    if(!values ) return;
+    let pidOptions = [
+      {label: '作为一级分类', value: '0'}
+    ];
+    let cateArr = [];
+    cateArr = foreachCategory(values, cateArr);
+    pidOptions = pidOptions.concat(cateArr);
+    //console.log(pidOptions)
+    this.setState({
+      pidOptions,
+    })
   };
 
   //modal回调
@@ -132,7 +148,7 @@ export default class ArticleCategory extends React.Component {
   render(){
 
     const {currentUser} = this.props.global;
-    const {apiList, queryParams, modalVisible, modalAction, modalTitle, modalValues} = this.state;
+    const {apiList, queryParams, modalVisible, modalAction, modalTitle, modalValues, pidOptions, pidDisabled} = this.state;
 
     const modalParams = [
       [
@@ -156,6 +172,18 @@ export default class ArticleCategory extends React.Component {
           placeholder: '请输入分类介绍',
           rules: [
 
+          ],
+        },
+        {
+          key: 'pid',
+          label: '父级分类',
+          type: 'Select',
+          value: modalValues ? modalValues.pid.toString() : '0',
+          placeholder: '请选择',
+          disabled: pidDisabled,
+          option: pidOptions,
+          rules: [
+            { required: true, message: '请选择父级分类' },
           ],
         },
       ]
@@ -213,8 +241,10 @@ export default class ArticleCategory extends React.Component {
                       :
                       <Popconfirm title="确定删除该分类？" onConfirm={() => this.del(item.id)}>
                         <a>删除</a>
+                        <span> | </span>
                       </Popconfirm>
                   }
+                  <a onClick={() => this.add(item)}>添加子分类</a>
                 </span>
                 :
                 null
@@ -230,7 +260,7 @@ export default class ArticleCategory extends React.Component {
         {
           currentUser.role === '超级管理员' ?
             <div style={{padding: '20px 0'}}>
-              <Button type="primary" onClick={this.add}>添加{modalTitle}</Button>
+              <Button type="primary" onClick={() => this.add()}>添加{modalTitle}</Button>
               <FormInit
                 params={modalParams}
                 callback={this.modalCallback}

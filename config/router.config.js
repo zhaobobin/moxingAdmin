@@ -173,11 +173,18 @@ export default [
             component: './GoodsManage/GoodsList',
           },
           {
-            name: '商品详情',
-            path: 'detail',
-            key: 'goods-detail',
+            name: '添加商品',
+            path: 'add',
+            key: 'goods-add',
             hideInMenu: true,
-            component: './GoodsManage/GoodsDetail',
+            component: './GoodsManage/GoodsAdd',
+          },
+          {
+            name: '编辑商品',
+            path: 'edit/:id',
+            key: 'goods-edit',
+            hideInMenu: true,
+            component: './GoodsManage/GoodsEdit',
           },
           {
             name: '订单列表',

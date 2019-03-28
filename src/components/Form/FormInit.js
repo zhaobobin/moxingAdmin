@@ -160,7 +160,7 @@ export default class FormInit extends PureComponent {
             initialValue: topic.value ? topic.value : undefined,
             rules: topic.rules ? topic.rules : undefined
           })(
-            <Select placeholder={topic.placeholder} style={style} >
+            <Select placeholder={topic.placeholder} style={style} disabled={topic.disabled}>
               {
                 topic.option.map((op, key) => (
                   <Option key={key} value={op.value} className={op.ischildren ? styles.ischildren : ''}>{op.label}</Option>
