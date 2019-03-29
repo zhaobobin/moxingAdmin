@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'dva';
+import {routerRedux} from 'dva/router';
 import moment from 'moment';
 import {
   Row, Col, Form, Input, InputNumber, Avatar, Button, Icon,
@@ -146,12 +147,9 @@ export default class ArticleForm extends React.Component {
   save = (values) => {
     const {action, detail} = this.props;
     const api = action === 'add' ? '/api/portal/portal_add' : '/api/portal/portal_edit';
-    let data = {
-      title: values.title,
-      image: values.image || '',
-    };
+    let data = values;
     if (action === 'edit') {
-      data.portal_id = detail.id;
+      data.id = detail.id;
     }
     this.props.dispatch({
       type: 'global/post',
@@ -162,7 +160,7 @@ export default class ArticleForm extends React.Component {
           this.ajaxFlag = true
         }, 500);
         if (res.code === '0') {
-          this.props.dispatch(routerRedux.push('/content/article'))
+          history.go(-1)
         }
       }
     });
@@ -243,7 +241,7 @@ export default class ArticleForm extends React.Component {
                         initialValue: detail.cateArr,
                         validateFirst: true,
                         rules: [
-                          {required: true, message: '请选择文章所属分类'},
+                          // {required: true, message: '请选择文章所属分类'},
                         ],
                       })(
                       <Select
@@ -339,6 +337,18 @@ export default class ArticleForm extends React.Component {
                             }
                           </ul>
                       }
+                  </FormItem>
+
+                  <FormItem {...btnItemLayout}>
+                    <div className={styles.btns}>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                      >
+                        提交
+                      </Button>
+                      <Button htmlType="reset">取消</Button>
+                    </div>
                   </FormItem>
 
                 </Col>

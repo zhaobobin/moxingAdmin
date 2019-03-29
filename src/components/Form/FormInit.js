@@ -15,8 +15,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form, Input, InputNumber, Button, Row, Col, Card, Select, DatePicker, Modal, Icon } from 'antd';
-
 import styles from './FormInit.less';
+
+import UploadImage from '@/components/Form/UploadImage'
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -88,6 +89,13 @@ export default class FormInit extends PureComponent {
     e.preventDefault();
     this.props.form.resetFields();
     this.props.callback({})
+  };
+
+  //上传图片回调
+  uploadCallback = (key, img) => {
+    let data = {};
+    data[key] = img.url;
+    this.props.form.setFieldsValue(data);
   };
 
   //依据表单类型，返回相应的html
@@ -167,6 +175,19 @@ export default class FormInit extends PureComponent {
                 ))
               }
             </Select>
+          )}
+        </FormItem>;
+        break;
+
+      case 'Upload':
+        html = <FormItem {...formItemLayout} label={topic.label}>
+          {getFieldDecorator(topic.key, {
+            initialValue: topic.value ? topic.value : undefined,
+            rules: topic.rules ? topic.rules : undefined
+          })(
+            <div style={topic.style || null}>
+              <UploadImage type="card" defaultUrl={topic.value} callback={(img) => this.uploadCallback(topic.key, img)}/>
+            </div>
           )}
         </FormItem>;
         break;

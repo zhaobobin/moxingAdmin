@@ -250,8 +250,8 @@ export default class TicketForm extends React.Component {
   };
 
   //上传图片回调
-  uploadCallback = (url) => {
-    if(url) this.props.form.setFieldsValue({'image': url});
+  uploadCallback = (img) => {
+    if(img) this.props.form.setFieldsValue({'image': img.img_url});
   };
 
   //富文本

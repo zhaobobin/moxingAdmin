@@ -247,7 +247,7 @@ export default class ArticleCategory extends React.Component {
                   <a onClick={() => this.add(item)}>添加子分类</a>
                 </span>
                 :
-                null
+                '--'
             }
           </div>
         )

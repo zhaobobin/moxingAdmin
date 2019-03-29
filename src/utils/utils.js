@@ -12,7 +12,7 @@ export const ENV = {
 
   api: {
     dev: 'http://47.94.100.232',
-    pro: 'http://47.94.100.232',
+    pro: 'http://39.106.123.241',
   },
 
   appname: '趣族',

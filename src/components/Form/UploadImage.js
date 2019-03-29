@@ -64,7 +64,7 @@ export default class UploadImage extends React.Component {
             loading: false,
             imageUrl: res.data[0].img_url
           });
-          this.props.callback(res.data[0].img_url);                   //将url传给父组件
+          this.props.callback(res.data[0]);                   //将url传给父组件
         }else{
           this.setState({loading: false});
           notification.error({
@@ -78,8 +78,9 @@ export default class UploadImage extends React.Component {
 
   render(){
 
-    let currentUrl = this.props.defaultUrl;
     const { loading, imageUrl } = this.state;
+    const { type } = this.props;
+    let currentUrl = this.props.defaultUrl;
 
     if(imageUrl) currentUrl = imageUrl;
 
@@ -88,17 +89,23 @@ export default class UploadImage extends React.Component {
         <img src={currentUrl} width="100%" height="auto" alt="imgUrl"/>
       </div>
       :
-      <div style={{padding: '50px'}}>
-        <p className="ant-upload-drag-icon">
-          <Icon type={loading ? 'loading' : 'inbox'} />
-        </p>
-        <p className="ant-upload-text">选择图片进行上传</p>
-        <p className="ant-upload-hint">只能上传单张不超过2mb的jpg、png图片</p>
-      </div>;
+      type === 'card' ?
+        <div style={{height: '100%'}}>
+          <Icon type={loading ? 'loading' : 'plus'} />
+        </div>
+        :
+        <div style={{padding: '50px'}}>
+          <p className="ant-upload-drag-icon">
+            <Icon type={loading ? 'loading' : 'inbox'} />
+          </p>
+          <p className="ant-upload-text">选择图片进行上传</p>
+          <p className="ant-upload-hint">只能上传单张不超过2mb的jpg、png图片</p>
+        </div>;
 
     return(
-      <div className={styles.uploadImg}>
+      <div className={`${styles.uploadImg} ${styles.card}`}>
         <Upload
+          listType={type === 'card' ? 'picture-card' : null}
           name="image"
           accept=".jpeg,.png"
           showUploadList={false}

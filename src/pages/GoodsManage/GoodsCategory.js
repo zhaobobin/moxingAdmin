@@ -137,6 +137,7 @@ export default class GoodsCategory extends React.Component {
   //modal回调
   modalCallback = (values) => {
     if(values){
+      //console.log(values)
       this.save(values)
     }else{
       this.setState({
@@ -165,27 +166,60 @@ export default class GoodsCategory extends React.Component {
           ],
         },
         {
-          key: 'sort',
-          label: '排序',
-          type: 'Input',
-          inputType: 'Input',
-          value: modalValues ? modalValues.sort : undefined,
-          placeholder: '请输入排序',
-          rules: [
-            { pattern: /^[0-9]+$/, message: '只能输入数值' },
-          ],
-        },
-        {
           key: 'pid',
           label: '父级分类',
           type: 'Select',
-          value: modalValues ? modalValues.pid.toString() : '0',
+          value: modalValues && modalValues.pid ? modalValues.pid.toString() : '0',
           placeholder: '请选择',
           disabled: pidDisabled,
           option: pidOptions,
           rules: [
             { required: true, message: '请选择父级分类' },
           ],
+        },
+        {
+          key: 'sort',
+          label: '排序',
+          type: 'Input',
+          inputType: 'Input',
+          value: modalValues && modalValues.sort ? modalValues.sort.toString() : undefined,
+          placeholder: '请输入排序',
+          rules: [
+            { pattern: /^[0-9]+$/, message: '只能输入数值' },
+          ],
+        },
+        {
+          key: 'is_head',
+          label: '顶部展示',
+          type: 'Select',
+          value: modalValues && modalValues.is_head ? modalValues.is_head.toString() : '0',
+          placeholder: '请选择',
+          option: [
+            {label: '不显示', value: '0'},
+            {label: '显示', value: '1'},
+          ],
+          rules: [],
+        },
+        {
+          key: 'is_show',
+          label: '标签展示',
+          type: 'Select',
+          value: modalValues && modalValues.is_show ? modalValues.is_show.toString() : '0',
+          placeholder: '请选择',
+          option: [
+            {label: '不显示', value: '0'},
+            {label: '显示', value: '1'},
+          ],
+          rules: [],
+        },
+        {
+          key: 'icon',
+          label: '图标',
+          type: 'Upload',
+          value: modalValues ? modalValues.icon : '',
+          placeholder: '',
+          rules: [],
+          style: {width: '100px', height: '100px', position: 'relative'},
         },
       ]
     ];
@@ -239,7 +273,7 @@ export default class GoodsCategory extends React.Component {
                   <a onClick={() => this.add(item)}>添加子分类</a>
                 </span>
                 :
-                null
+                '--'
             }
           </div>
         )

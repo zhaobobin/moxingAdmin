@@ -12,21 +12,44 @@
       cursor: pointer;
       -webkit-transition: border-color .3s;
       transition: border-color .3s;
-      &:hover{
-        border: 1px dashed #40a9ff;
-      }
 
       i{
         margin-bottom: 30px;
-        color: #40a9ff;
+        color: #d9d9d9;
         font-size: 60px;
       }
       p{
         line-height: 2em;
       }
+
+      &:hover{
+        border: 1px dashed #40a9ff;
+      }
+      &:hover i{
+        color: #40a9ff;
+      }
+
     }
   }
 
+  &.card{
+    width: 100%;
+    height: 100%;
+    position:absolute;
+    left:0;
+    top:0;
+    overflow: hidden;
 
+    :global{
+      i{
+        margin: 0;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -30px;
+        margin-top: -30px;
+      }
+    }
+  }
 
 }

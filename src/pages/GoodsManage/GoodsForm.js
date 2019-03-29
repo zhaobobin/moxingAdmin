@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'dva';
+import {routerRedux} from 'dva/router';
 import moment from 'moment';
 import {
   Row, Col, Form, Input, InputNumber, Avatar, Button, Icon,
@@ -7,7 +8,7 @@ import {
 } from 'antd'
 import styles from './GoodsForm.less'
 
-import UploadImage from '@/components/Form/UploadImage'
+import UploadImageList from '@/components/Form/UploadImageList'
 import Ueditor from '@/components/Form/Ueditor'
 
 const FormItem = Form.Item;
@@ -76,8 +77,8 @@ export default class ArticleForm extends React.Component {
   }
 
   //上传图片回调
-  uploadCallback = (url) => {
-    if(url) this.props.form.setFieldsValue({'image': url});
+  uploadCallback = (list) => {
+    console.log(list)
   };
 
   //重置表单
@@ -107,12 +108,10 @@ export default class ArticleForm extends React.Component {
   save = (values) => {
     const {action, detail} = this.props;
     const api = action === 'add' ? '/api/goods/goods_add' : '/api/goods/goods_edit';
-    let data = {
-      title: values.title,
-      image: values.image || '',
-    };
+    values.image = JSON.stringify(values.image);
+    let data = values;
     if (action === 'edit') {
-      data.portal_id = detail.id;
+      data.id = detail.id;
     }
     this.props.dispatch({
       type: 'global/post',
@@ -123,7 +122,7 @@ export default class ArticleForm extends React.Component {
           this.ajaxFlag = true
         }, 500);
         if (res.code === '0') {
-          this.props.dispatch(routerRedux.push('/content/article'))
+          this.props.dispatch(routerRedux.push('/goods/list'))
         }
       }
     });
@@ -190,28 +189,7 @@ export default class ArticleForm extends React.Component {
                           {required: true, message: '请选择商品图片'},
                         ],
                       })(
-                      <div>
-                        <ul className={styles.imgList}>
-                          {
-                            detail.image.map((item, index) => (
-                              <li key={index}>
-                                <div className={styles.box}>
-                                  <div className={styles.box2}>
-                                    <img src={item.image} alt="image"/>
-                                  </div>
-                                </div>
-                              </li>
-                            ))
-                          }
-                          {/*<li>*/}
-                            {/*<div className={styles.box}>*/}
-                              {/*<div className={styles.box2}>*/}
-                                {/*<UploadImage callback={this.uploadCallback}/>*/}
-                              {/*</div>*/}
-                            {/*</div>*/}
-                          {/*</li>*/}
-                        </ul>
-                      </div>
+                      <UploadImageList photoList={detail.image} callback={this.uploadCallback}/>
                     )}
                   </FormItem>
 
@@ -269,6 +247,18 @@ export default class ArticleForm extends React.Component {
                         <Option value={'10'}>违规</Option>
                       </Select>
                     )}
+                  </FormItem>
+
+                  <FormItem {...btnItemLayout}>
+                    <div className={styles.btns}>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                      >
+                        提交
+                      </Button>
+                      <Button htmlType="reset">取消</Button>
+                    </div>
                   </FormItem>
 
                 </Col>

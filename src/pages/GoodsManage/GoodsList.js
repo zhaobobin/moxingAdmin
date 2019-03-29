@@ -231,17 +231,10 @@ export default class GoodsList extends React.Component {
         render: (text, item) => (
           <div>
             <a onClick={() => this.detail(item.id)}>查看</a>
-            {
-              currentUser.role === '超级管理员' ?
-                <span>
-                  <span> | </span>
-                  <Popconfirm title="确定下架该商品？" onClick={() => this.down(item.id)}>
-                    <a>下架</a>
-                  </Popconfirm>
-                </span>
-                :
-                null
-            }
+            <span> | </span>
+            <Popconfirm title="确定下架该商品？" onClick={() => this.down(item.id)}>
+              <a>下架</a>
+            </Popconfirm>
           </div>
         )
       },

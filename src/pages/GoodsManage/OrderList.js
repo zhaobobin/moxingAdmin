@@ -140,16 +140,9 @@ export default class OrderList extends React.Component {
         key: 'action',
         align: 'center',
         render: (text, item) => (
-          <div>
-            {
-              currentUser.role === '超级管理员' ?
-                <span>
-                  <a onClick={() => this.detail(item.id)}>查看</a>
-                </span>
-                :
-                null
-            }
-          </div>
+          <span>
+            <a onClick={() => this.detail(item.id)}>查看</a>
+          </span>
         )
       },
     ];

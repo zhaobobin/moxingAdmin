@@ -179,19 +179,9 @@ export default class ExhibitionList extends React.Component {
         align: 'center',
         render: (text, item) => (
           <div>
-            {
-              currentUser.role === '超级管理员' ?
-                <span>
-                  <a onClick={() => this.edit(item.id)}>编辑</a>
-                  <span> | </span>
-                  <Link to={`/ticket/list/${item.id}`}>统计</Link>
-                  {/*<Popconfirm title="确定删除该展会？" onConfirm={() => this.del(item.id)}>*/}
-                    {/*<a>删除</a>*/}
-                  {/*</Popconfirm>*/}
-                </span>
-                :
-                null
-            }
+            <a onClick={() => this.edit(item.id)}>编辑</a>
+            <span> | </span>
+            <Link to={`/ticket/list/${item.id}`}>统计</Link>
           </div>
         )
       },
