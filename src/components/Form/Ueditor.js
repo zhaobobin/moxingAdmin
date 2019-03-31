@@ -114,6 +114,9 @@ export default class Ueditor extends React.Component {
               .home-toolbar a{
                 color: #333;
               }
+              .home-toolbar .rdw-image-modal-btn{
+                line-height: 26px;
+              }
               .rdw-option-wrapper{
                 min-width: 30px;
                 height: 30px;
