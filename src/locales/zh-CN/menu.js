@@ -21,6 +21,9 @@ export default {
   'menu.ticket.ticket-list': '展会票务统计',
   'menu.ticket.ticket-add': '添加展会票',
   'menu.ticket.ticket-edit': '编辑展会票',
+  'menu.ticket.activity-list': '活动列表',
+  'menu.ticket.activity-add': '创建活动',
+  'menu.ticket.activity-edit': '编辑活动',
 
   'menu.goods': '商品管理',
   'menu.goods.goods-category': '商品分类',

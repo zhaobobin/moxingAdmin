@@ -150,6 +150,27 @@ export default [
             component: './TicketManage/TicketEdit',
           },
 
+          {
+            name: '活动列表',
+            path: 'activity',
+            key: 'activity-list',
+            component: './TicketManage/ActivityList',
+          },
+          {
+            name: '创建活动',
+            path: 'activity-add',
+            key: 'activity-add',
+            hideInMenu: true,
+            component: './TicketManage/ActivityAdd',
+          },
+          {
+            name: '编辑活动',
+            path: 'activity-edit/:id',
+            key: 'activity-edit',
+            hideInMenu: true,
+            component: './TicketManage/ActivityEdit',
+          },
+
         ]
       },
 

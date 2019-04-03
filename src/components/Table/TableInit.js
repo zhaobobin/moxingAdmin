@@ -104,6 +104,7 @@ export default class TableInit extends React.Component {
           columns={columns}
           dataSource={list}
           onChange={this.handleTableChange}
+          rowSelection={this.props.rowSelection}
           pagination={{
             total: total,
             current: queryParams.page,

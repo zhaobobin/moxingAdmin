@@ -118,7 +118,7 @@ export default class ArticleCategory extends React.Component {
     setTimeout(() => {this.ajaxFlag = true}, 500);
   };
 
-  //表格回调，初始化商品分类Options
+  //表格回调，初始化分类Options
   tableCallback = (values) => {
     if(!values ) return;
     let pidOptions = [

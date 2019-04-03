@@ -44,7 +44,7 @@ export default class OrderList extends React.Component {
             let item = {
               label: res.data[i].name,
               value: res.data[i].state
-            }
+            };
             arr.push(item)
           }
           this.setState({
