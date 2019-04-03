@@ -46,7 +46,10 @@ export default class GaodeMap extends React.Component {
       lnglat = [position.longitude, position.latitude];
     geocoder.getAddress(lnglat, function(status, result) {
       if (result && result.info === 'OK') {
-        _this.props.callback(result.regeocode.formattedAddress);
+        _this.props.callback({
+          place: result.regeocode.formattedAddress,
+          position: {lng: o.lnglat.lng, lat: o.lnglat.lat}
+        });
       }
     });
   };
@@ -88,7 +91,10 @@ export default class GaodeMap extends React.Component {
           // 获取用户当前的精确位置信息
           o.getCurrentPosition((status, result) => {
             if (result && result.position) {
-              this.props.callback(result.formattedAddress);   //依据浏览器定位取得当前默认地址
+              this.props.callback({
+                place: result.formattedAddress,
+                position: {lng: result.position.lng, lat: result.position.lat}
+              });   //依据浏览器定位取得当前默认地址
             }
           })
         },

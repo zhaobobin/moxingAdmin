@@ -102,8 +102,10 @@ export default class UploadImage extends React.Component {
           <p className="ant-upload-hint">只能上传单张不超过2mb的jpg、png图片</p>
         </div>;
 
+    const className = type === 'card' ? `${styles.uploadImg} ${styles.card}` : `${styles.uploadImg}`;
+
     return(
-      <div className={`${styles.uploadImg} ${styles.card}`}>
+      <div className={className}>
         <Upload
           listType={type === 'card' ? 'picture-card' : null}
           name="image"

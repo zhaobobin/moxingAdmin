@@ -179,7 +179,7 @@ export default class TicketForm extends React.Component {
   //地图回调
   mapCallback = (value) => {
     this.setState({
-      mapAddress: value,
+      mapAddress: value.place,
     });
   };
 
