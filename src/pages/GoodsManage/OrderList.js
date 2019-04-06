@@ -18,8 +18,6 @@ export default class OrderList extends React.Component {
       queryParams: {},                //查询参数
       pageTitle: '订单列表',
       apiList: '/api/order/order',
-      apiAdd: '/api/order/order_add',
-      apiEdit: '/api/order/order_edit',
       modalTitle: '订单',
 
       stateOptions: [],                   //状态下拉列表
@@ -223,15 +221,6 @@ export default class OrderList extends React.Component {
             <div>
 
               <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
-
-              {
-                currentUser.role === '超级管理员' ?
-                  <div style={{padding: '20px 0'}}>
-                    <Button type="primary" onClick={this.add}>添加{modalTitle}</Button>
-                  </div>
-                  :
-                  null
-              }
 
               <TableInit
                 onRef={ref => this.tableInit = ref}

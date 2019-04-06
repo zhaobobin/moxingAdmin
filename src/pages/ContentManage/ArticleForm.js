@@ -10,7 +10,6 @@ import styles from './ArticleForm.less'
 
 //import UploadImage from '@/components/Form/UploadImage'
 import Ueditor from '@/components/Form/Ueditor'
-import TableInit from '@/components/Table/TableInit'
 
 const FormItem = Form.Item;
 const {TextArea} = Input;
@@ -236,8 +235,9 @@ export default class ArticleForm extends React.Component {
 
   render() {
 
-    const {detail, modalVisible, currentCategoryNames, currentCategoryIds, currentCategoryIdsBeifen, category} = this.state;
-    const {action, getFieldDecorator, getFieldValue, getFieldsError} = this.props.form;
+    const { action } = this.props;
+    const { detail, modalVisible, currentCategoryNames, currentCategoryIds, currentCategoryIdsBeifen, category } = this.state;
+    const { getFieldDecorator, getFieldValue, getFieldsError } = this.props.form;
 
     const children = [];
     for (let i = 10; i < 36; i++) {
@@ -277,7 +277,7 @@ export default class ArticleForm extends React.Component {
       <div className={styles.container}>
 
         {
-          action === 'edit' && detail === '' ?
+          action === 'edit' && !detail ?
             null
             :
             <Form
@@ -291,7 +291,7 @@ export default class ArticleForm extends React.Component {
                   <FormItem {...formItemLayout} label="审核">
                     {getFieldDecorator('status',
                       {
-                        initialValue: detail ? detail.status.toString() : '0',
+                        initialValue: detail && detail.status ? detail.status.toString() : '0',
                         validateFirst: true,
                         rules: [],
                       })(

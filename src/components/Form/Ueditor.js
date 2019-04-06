@@ -29,7 +29,8 @@ export default class Ueditor extends React.Component {
     const { content } = this.props;
     if(!content) return;
     let html = content.replace('↵', '');
-    html = '<div>' + html + '</div>';
+    // html = '<div>' + html + '</div>';
+    // console.log(html)
     const blocksFromHtml = htmlToDraft(html);
     const { contentBlocks, entityMap } = blocksFromHtml;
     const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
@@ -81,7 +82,7 @@ export default class Ueditor extends React.Component {
 
   render(){
 
-    const { height } = this.props
+    const { height } = this.props;
     const { editorState } = this.state;
 
     return(

@@ -66,7 +66,7 @@ const cachedSave = (response, hashcode) => {
 export default function request(url, option) {
 
   if(process.env.NODE_ENV === 'production'){
-    url = ENV.api.pro + url;
+    url = ENV.api.dev + url;
   }
 
   const options = {

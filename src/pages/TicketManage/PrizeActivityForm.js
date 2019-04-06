@@ -2,10 +2,9 @@ import React from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router'
 import moment from 'moment';
-import { Row, Col, Form, Input, InputNumber, Button, Icon, Select, Checkbox, DatePicker, Radio, Modal } from 'antd'
-import styles from './ActivityForm.less'
+import { Row, Col, Form, Input, InputNumber, Button, Icon, Select, Checkbox, DatePicker, Radio, Switch } from 'antd'
+import styles from './PrizeActivityForm.less'
 
-import GaodeMap from '@/components/Map/GaodeMap'
 import UploadImage from '@/components/Form/UploadImage'
 import Ueditor from '@/components/Form/Ueditor'
 
@@ -79,7 +78,7 @@ const btnItemLayout2 = {
 //获取日期范围
 function getAllDate(beginDate, endDate){			// 开始日期和结束日期
   if(!beginDate || !endDate){			// 去除空的可能性
-                                   //console.log('时间不能为空');
+    //console.log('时间不能为空');
     return false;
   }
   let begin = beginDate.split(' ')[0], beginTime = beginDate.split(' ')[1],
@@ -110,7 +109,7 @@ function getAllDate(beginDate, endDate){			// 开始日期和结束日期
   global,
 }))
 @Form.create()
-export default class ActivityForm extends React.Component {
+export default class PrizeActivityForm extends React.Component {
 
   constructor(props){
     super(props);
@@ -134,43 +133,9 @@ export default class ActivityForm extends React.Component {
     })
   }
 
-  //显示地图
-  showMap = () => {
-    this.setState({
-      mapVisible: true
-    })
-  };
-
-  //隐藏地图
-  hideMap = () => {
-    this.setState({
-      mapVisible: false
-    })
-  };
-
-  handleMapSubmit = () => {
-    this.props.form.setFieldsValue({'place': this.state.mapAddress});
-    this.hideMap();
-  };
-
-  handleMapCancel = () => {
-    this.hideMap();
-  };
-
-  //地图回调
-  mapCallback = (value) => {
-    this.setState({
-      mapAddress: value.place,
-      mapPosition: value.position,
-    });
-  };
-
-  //监控展会地址
-  changeAddress = (e) => {
-    let mapAddress = e.target.value;
-    this.setState({
-      mapAddress
-    })
+  //抽奖状态
+  onChangeState = (value) => {
+    this.props.form.setFieldsValue({'state': value});
   };
 
   //修改限购数量
@@ -203,10 +168,6 @@ export default class ActivityForm extends React.Component {
 
     this.props.form.validateFields('', (err, values) => {
       if (!err) {
-        values.start_time = moment(values.time[0]._d).format('YYYY-MM-DD HH:mm'); //展会开始时间
-        values.end_time = moment(values.time[1]._d).format('YYYY-MM-DD HH:mm');   //展会结束时间
-        values.out_time = moment(values.out_time._d).format('YYYY-MM-DD HH:mm');   //退款期限
-
         this.save(values);
       }
     });
@@ -217,18 +178,12 @@ export default class ActivityForm extends React.Component {
   save = (values) => {
     const { action, detail } = this.props;
     const { mapPosition } = this.state;
-    const api = action === 'add' ? '/api/activity/activity_add' : '/api/activity/activity_edit';
+    const api = action === 'add' ? '/api/prize/prize_add' : '/api/prize/prize_edit';
     let data = {
       name: values.name,
       image: values.image || '',
-      start_time: values.start_time,
-      end_time: values.end_time,
-      place: values.place,
-      coordinate: mapPosition ? JSON.stringify(mapPosition) : '',
       num: values.num,
-      price: values.price,
-      is_out: values.is_out,
-      out_time: values.out_time || '',
+      invitation: values.invitation,
       content: values.content,
     };
     if(action === 'edit'){
@@ -242,7 +197,7 @@ export default class ActivityForm extends React.Component {
       callback: (res) => {
         setTimeout(() => {this.ajaxFlag = true}, 500);
         if(res.code === '0'){
-          this.props.dispatch(routerRedux.push('/ticket/activity'))
+          this.props.dispatch(routerRedux.push('/ticket/prize-activity'))
         }
       }
     });
@@ -251,7 +206,7 @@ export default class ActivityForm extends React.Component {
   render(){
 
     const { action } = this.props;
-    const { detail, mapVisible, mapAddress } = this.state;
+    const { detail } = this.state;
     const { getFieldDecorator, getFieldValue, getFieldsError } = this.props.form;
 
     return(
@@ -286,57 +241,6 @@ export default class ActivityForm extends React.Component {
                     )}
                   </FormItem>
 
-                  <FormItem {...formItemLayout} label="活动时间">
-                    {getFieldDecorator('time',
-                      {
-                        initialValue:
-                          detail.start_time && detail.end_time ?
-                            [moment(detail.start_time, 'YYYY-MM-DD HH:mm'), moment(detail.end_time, 'YYYY-MM-DD HH:mm')]
-                            :
-                            '',
-                        validateFirst: true,
-                        rules: [
-                          { required: true, message: '请选择活动时间' },
-                        ],
-                      })(
-                      <RangePicker
-                        style={{width: '100%'}}
-                        format="YYYY-MM-DD HH:mm"
-                        showTime={{
-                          defaultValue: [moment('09:00', 'HH:mm'), moment('20:00', 'HH:mm')]
-                        }}
-                      />
-                    )}
-                  </FormItem>
-
-                  <FormItem {...formItemLayout} label="活动地点">
-                    {getFieldDecorator('place',
-                      {
-                        initialValue: detail.place || '',
-                        validateFirst: true,
-                        rules: [
-                          { required: true, message: '请输入活动地点' },
-                        ],
-                      })(
-                      <Input
-                        autoComplete="off"
-                        allowClear={true}
-                        placeholder="请输入活动地点"
-                        onChange={this.changeAddress}
-                      />
-                    )}
-                    <div className={styles.mapAction}>
-                      <a className={styles.mapBtn} onClick={this.showMap}>地图</a>
-                      {
-                        getFieldValue('place') ?
-                          <span className={styles.green}>(已标记)</span>
-                          :
-                          <span className={styles.red}>(未标记)</span>
-                      }
-                    </div>
-
-                  </FormItem>
-
                   <FormItem {...formItemLayout} label="活动主图">
                     {getFieldDecorator('image',
                       {
@@ -346,68 +250,39 @@ export default class ActivityForm extends React.Component {
                     )}
                   </FormItem>
 
-                  <FormItem {...formItemLayout} label="限制人数">
-                    {getFieldDecorator('num',
+                  <FormItem {...formItemLayout} label="抽奖状态">
+                    {getFieldDecorator('state',
                       {
-                        initialValue: detail.num || '0',
-                      })(
-                      <RadioGroup name="limit">
-                        <Radio value={'0'}>不限购</Radio>
-                        <Radio value={'1'}>
-                          限购
-                          {
-                            getFieldValue('num') === '0' ?
-                              null
-                              :
-                              <InputNumber
-                                min={1}
-                                defaultValue={detail && detail.num || 100}
-                                style={{marginLeft: '10px'}}
-                                onChange={this.onChangeLimit}
-                              />
-                          }
-                        </Radio>
-                      </RadioGroup>
-                    )}
-                  </FormItem>
-
-                  <FormItem {...formItemLayout} label="退票正常">
-                    {getFieldDecorator('is_out',
-                      {
-                        initialValue: detail.is_out || '0',
-                      })(
-                      <RadioGroup name="refund">
-                        <Radio value={'0'}>不支持</Radio>
-                        <Radio value={'1'}>支持</Radio>
-                      </RadioGroup>
-                    )}
-                  </FormItem>
-
-                  <FormItem {...formItemLayout} label="报名费">
-                    {getFieldDecorator('price',
-                      {
-                        initialValue: detail.price || '',
+                        initialValue: detail.state || '',
                         validateFirst: true,
                         rules: [
-                          { required: true, message: '请输入报名费' },
-                          { pattern: /^[0-9.]+$/, message: '只能输入数值' },
+
                         ],
                       })(
-                      <Input
-                        autoComplete="off"
-                        placeholder="请输入销售票价"
-                        allowClear={true}
-                        suffix="￥"
+                      <Switch
+                        checkedChildren="开启"
+                        unCheckedChildren="关闭"
+                        defaultChecked={detail.state === 1}
+                        onChange={this.onChangeState}
                       />
                     )}
                   </FormItem>
 
-                  <FormItem {...formItemLayout} label="退款期限">
-                    {getFieldDecorator('out_time',
+                  <FormItem {...formItemLayout} label="限制抽奖次数">
+                    {getFieldDecorator('num',
                       {
-                        initialValue: detail.out_time ? moment(detail.out_time, 'YYYY-MM-DD HH:mm') : '',
+                        initialValue: detail.num || 1,
                       })(
-                      <DatePicker style={{width: '100%'}} format="YYYY-MM-DD HH:mm"/>
+                      <InputNumber autoComplete="off" style={{width: '100%'}} min={1} />
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="邀请奖励人数">
+                    {getFieldDecorator('invitation',
+                      {
+                        initialValue: detail.invitation || 10,
+                      })(
+                      <InputNumber autoComplete="off" style={{width: '100%'}} min={1} />
                     )}
                   </FormItem>
 
@@ -441,30 +316,6 @@ export default class ActivityForm extends React.Component {
               <Col xs={0} sm={0} md={0} lg={10}/>
             </Row>
         }
-
-        <Modal
-          title="点击地图选取地址"
-          width={800}
-          centered={true}
-          destroyOnClose={true}
-          visible={mapVisible}
-          onOk={this.handleMapSubmit}
-          onCancel={this.handleMapCancel}
-        >
-          <div
-            id="app"
-            style={{width:'100%', height: '500px', padding: '0 0 20px'}}
-          >
-            <GaodeMap defaultAddress={mapAddress} callback={this.mapCallback}/>
-            <p
-              className={styles.currentAddress}
-              style={{padding: '5px 0'}}
-            >
-              <strong>当前地址：</strong>
-              <span>{mapAddress}</span>
-            </p>
-          </div>
-        </Modal>
 
       </div>
     )

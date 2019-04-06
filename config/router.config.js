@@ -171,6 +171,49 @@ export default [
             component: './TicketManage/ActivityEdit',
           },
 
+          {
+            name: '抽奖活动',
+            path: 'prize-activity',
+            key: 'prize-activity-list',
+            component: './TicketManage/PrizeActivityList',
+          },
+          {
+            name: '创建抽奖活动',
+            path: 'prize-activity-add',
+            key: 'prize-activity-add',
+            hideInMenu: true,
+            component: './TicketManage/PrizeActivityAdd',
+          },
+          {
+            name: '编辑抽奖活动',
+            path: 'prize-activity-edit/:id',
+            key: 'prize-activity-edit',
+            hideInMenu: true,
+            component: './TicketManage/PrizeActivityEdit',
+          },
+
+          {
+            name: '奖项列表',
+            path: 'prize-list/:id',
+            key: 'prize-list',
+            hideInMenu: true,
+            component: './TicketManage/PrizeList',
+          },
+          {
+            name: '添加奖项',
+            path: 'prize-add',
+            key: 'prize-add',
+            hideInMenu: true,
+            component: './TicketManage/PrizeAdd',
+          },
+          {
+            name: '编辑奖项',
+            path: 'prize-edit/:id',
+            key: 'prize-edit',
+            hideInMenu: true,
+            component: './TicketManage/PrizeEdit',
+          },
+
         ]
       },
 

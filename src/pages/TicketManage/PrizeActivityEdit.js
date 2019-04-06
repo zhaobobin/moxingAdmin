@@ -2,12 +2,12 @@ import React from 'react';
 import { connect } from 'dva';
 
 import Loading from '@/components/Common/Loading'
-import ActivityForm from './ActivityForm'
+import PrizeActivityForm from './PrizeActivityForm'
 
 @connect(({ global }) => ({
   global,
 }))
-export default class ExhibitionEdit extends React.Component {
+export default class PrizeActivityEdit extends React.Component {
 
   constructor(props){
     super(props);
@@ -32,7 +32,7 @@ export default class ExhibitionEdit extends React.Component {
   queryDetail(id){
     this.props.dispatch({
       type: 'global/post',
-      url: '/api/activity/activity_edit',
+      url: '/api/prize/prize_edit',
       payload: {
         id,
       },
@@ -58,7 +58,7 @@ export default class ExhibitionEdit extends React.Component {
           loading && !detail ?
             <Loading/>
             :
-            <ActivityForm detail={detail} action="edit"/>
+            <PrizeActivityForm detail={detail} action="edit"/>
         }
       </div>
     )

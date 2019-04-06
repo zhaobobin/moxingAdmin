@@ -275,8 +275,11 @@ export default class TicketForm extends React.Component {
     this.props.form.validateFields('', (err, values) => {
       if (!err) {
         let {ticketForm} = this.state;
+        //console.log(ticketForm)
         for(let i in ticketForm){
-          if(ticketForm[i].choose) ticketForm[i].choose = ticketForm[i].choose.join(',')
+          if(ticketForm[i].choose) {
+            ticketForm[i].choose = ticketForm[i].choose.join(',')
+          }
         }
         values.ticket = JSON.stringify(ticketForm);
         values.start_time = moment(values.time[0]._d).format('YYYY-MM-DD HH:mm'); //展会开始时间
@@ -322,8 +325,8 @@ export default class TicketForm extends React.Component {
 
   render(){
 
-    const {detail, mapVisible, mapAddress, ticketForm, ticketTimeArr} = this.state;
-
+    const { action } = this.props;
+    const { detail, mapVisible, mapAddress, ticketForm, ticketTimeArr } = this.state;
     const { getFieldDecorator, getFieldValue, getFieldsError } = this.props.form;
 
     // console.log(ticketForm)
@@ -433,7 +436,9 @@ export default class TicketForm extends React.Component {
       <div className={styles.container}>
 
         {
-          detail ?
+          action === 'edit' && !detail ?
+            null
+            :
             <Row>
               <Col xs={24} sm={24} md={24} lg={14}>
                 <Form
@@ -602,8 +607,6 @@ export default class TicketForm extends React.Component {
               </Col>
               <Col xs={0} sm={0} md={0} lg={10}/>
             </Row>
-            :
-            null
         }
 
         <Modal

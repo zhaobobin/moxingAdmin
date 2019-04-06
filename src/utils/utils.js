@@ -11,8 +11,8 @@ export const ENV = {
   apiName: '',                                      // 生产项目接口名称
 
   api: {
-    dev: 'http://47.94.100.232',
-    pro: 'http://39.106.123.241',
+    dev: 'http://datatest.moxinga.com',
+    pro: 'https://data.moxinga.com',
   },
 
   appname: '趣族',
@@ -125,7 +125,7 @@ export function readFile(file, cb) {
   reader.readAsDataURL(file);
   reader.onload = function (e) {
     let image = e.target.result;
-    console.log(image);
+    //console.log(image);
     return cb(image);
   };
 }

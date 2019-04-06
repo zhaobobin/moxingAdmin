@@ -24,6 +24,12 @@ export default {
   'menu.ticket.activity-list': '活动列表',
   'menu.ticket.activity-add': '创建活动',
   'menu.ticket.activity-edit': '编辑活动',
+  'menu.ticket.prize-activity-list': '抽奖活动',
+  'menu.ticket.prize-activity-add': '添加抽奖活动',
+  'menu.ticket.prize-activity-edit': '编辑抽奖活动',
+  'menu.ticket.prize-list': '奖项列表',
+  'menu.ticket.prize-add': '添加奖项',
+  'menu.ticket.prize-edit': '编辑奖项',
 
   'menu.goods': '商品管理',
   'menu.goods.goods-category': '商品分类',

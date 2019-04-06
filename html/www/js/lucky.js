@@ -79,7 +79,7 @@ $(function() {
     // $('.cover_fuck').hide();
     time--;
     if(time <=0) {
-      console.log("covers3");
+      //console.log("covers3");
       $(".cover,.covers3").show();
     }else {
       var item = 3;

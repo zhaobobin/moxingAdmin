@@ -9,18 +9,16 @@ import TableInit from '@/components/Table/TableInit'
 @connect(({ global }) => ({
   global,
 }))
-export default class ActivityList extends React.Component {
+export default class PrizeActivityList extends React.Component {
 
   constructor(props){
     super(props);
     this.ajaxFlag = true;
     this.state = {
       queryParams: {},                //查询参数
-      pageTitle: '活动列表',
-      apiList: '/api/activity/index',
-      apiAdd: '/api/activity/activity_add',
-      apiEdit: '/api/activity/activity_edit',
-      modalTitle: '活动',
+      pageTitle: '抽奖活动列表',
+      apiList: '/api/prize/index',
+      modalTitle: '抽奖活动',
 
       stateOptions: [],                   //状态下拉列表
 
@@ -36,12 +34,17 @@ export default class ActivityList extends React.Component {
 
   //创建
   add = () => {
-    this.props.dispatch(routerRedux.push('/ticket/activity-add'))
+    this.props.dispatch(routerRedux.push('/ticket/prize-activity-add'))
   };
 
   //编辑
   edit = (id) => {
-    this.props.dispatch(routerRedux.push(`/ticket/activity-edit/${id}`))
+    this.props.dispatch(routerRedux.push(`/ticket/prize-activity-edit/${id}`))
+  };
+
+  //奖项
+  prize = (id) => {
+    this.props.dispatch(routerRedux.push(`/ticket/prize-list/${id}`))
   };
 
   render(){
@@ -53,24 +56,16 @@ export default class ActivityList extends React.Component {
       [
         {
           key: 'name',
-          label: '活动名称',
+          label: '抽奖名称',
           type: 'Input',
           inputType: 'number',
           value: '',
-          placeholder: '请输入订单编号',
-          rules: [],
-        },
-        {
-          key: 'start_time',
-          label: '开始时间',
-          type: 'DatePicker',
-          value: '',
-          placeholder: '请选择',
+          placeholder: '请输入抽奖活动名称',
           rules: [],
         },
         {
           key: 'state',
-          label: '活动状态',
+          label: '抽奖状态',
           type: 'Select',
           value: '',
           placeholder: '请选择',
@@ -100,21 +95,15 @@ export default class ActivityList extends React.Component {
 
     const columns = [
       {
-        title: '活动名称',
+        title: '抽奖名称',
         dataIndex: 'name',
         key: 'name',
         align: 'center',
       },
       {
-        title: '已报名人数',
+        title: '已抽奖人数',
         dataIndex: 'salenum',
         key: 'salenum',
-        align: 'center',
-      },
-      {
-        title: '剩余报名人数',
-        dataIndex: 'num',
-        key: 'num',
         align: 'center',
       },
       {
@@ -127,39 +116,14 @@ export default class ActivityList extends React.Component {
         )
       },
       {
-        title: '报名金额',
-        dataIndex: 'price',
-        key: 'price',
-        align: 'center',
-      },
-      {
-        title: '是否支持退款',
-        dataIndex: 'is_out',
-        key: 'is_out',
-        align: 'center',
-        render: (is_out) => (
-          <span>{is_out === 1 ? '支持' : '不支持'}</span>
-        )
-      },
-      {
-        title: '开始时间',
-        dataIndex: 'start_time',
-        key: 'start_time',
-        align: 'center',
-      },
-      {
-        title: '结束时间',
-        dataIndex: 'end_time',
-        key: 'end_time',
-        align: 'center',
-      },
-      {
         title: '操作',
         dataIndex: 'action',
         key: 'action',
         align: 'center',
         render: (text, item) => (
           <span>
+            <a onClick={() => this.prize(item.id)}>奖项</a>
+            <span> | </span>
             <a onClick={() => this.edit(item.id)}>查看</a>
           </span>
         )
