@@ -68,13 +68,16 @@ export default class PrizeActivityList extends React.Component {
     if(!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
-    let {apiAdd, apiEdit, modalAction, modalValues} = this.state;
+    let {apiAdd, apiEdit, queryParams, modalAction, modalValues} = this.state;
 
     let api = modalAction === '添加' ? apiAdd : apiEdit;
 
     let data = {...values};
-    data.uid = this.props.global.currentUser.uid;
-    if(modalAction !== '添加') data.id = modalValues.id;
+    if(modalAction === '添加') {
+      data.prize_id = queryParams.prize_id;
+    }else{
+      data.id = modalValues.id;
+    }
 
     this.props.dispatch({
       type: 'global/post',
@@ -82,10 +85,11 @@ export default class PrizeActivityList extends React.Component {
       payload: data,
       callback: (res) => {
         if(res.code === '0'){
-          this.tableInit.refresh({});
+          this.tableInit.refresh(queryParams);
           this.setState({
             modalVisible: false,
             modalValues: '',
+            queryParams,
           })
         }
       }
@@ -98,7 +102,7 @@ export default class PrizeActivityList extends React.Component {
     if(!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
-    let {apiDel} = this.state;
+    let {queryParams, apiDel} = this.state;
 
     this.props.dispatch({
       type: 'global/post',
@@ -108,7 +112,7 @@ export default class PrizeActivityList extends React.Component {
       },
       callback: (res) => {
         if(res.code === '0'){
-          this.tableInit.refresh({})
+          this.tableInit.refresh(queryParams)
         }
       }
     });
@@ -243,7 +247,7 @@ export default class PrizeActivityList extends React.Component {
         align: 'center',
         render: (text, item) => (
           <span>
-            <a onClick={() => this.edit(item.id)}>查看</a>
+            <a onClick={() => this.edit(item)}>查看</a>
           </span>
         )
       },

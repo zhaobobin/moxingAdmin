@@ -138,29 +138,20 @@ export default class MemberList extends React.Component {
           rules: [],
         },
         {
-          key: 'create_time',
-          label: '创建时间',
-          type: 'DatePicker',
+          key: 'nickname',
+          label: '昵称',
+          type: 'Input',
           value: '',
-          placeholder: '请选择',
+          placeholder: '请输入昵称',
           rules: [],
         },
         {
-          key: 'type',
-          label: '分类名称',
-          type: 'Select',
+          key: 'mobile',
+          label: '手机号',
+          type: 'Input',
           value: '',
-          placeholder: '请选择',
-          option: [
-            {
-              label: '会员',
-              value: 1
-            },
-            {
-              label: '店铺',
-              value: 2
-            }
-          ]
+          placeholder: '请输入手机号',
+          rules: [],
         },
       ],
       [

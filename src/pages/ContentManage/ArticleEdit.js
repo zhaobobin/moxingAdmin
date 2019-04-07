@@ -51,6 +51,7 @@ export default class ArticleEdit extends React.Component {
   render(){
 
     const { loading, detail } = this.state;
+    const type = this.props.match.params.type;
 
     return(
       <div>
@@ -58,7 +59,7 @@ export default class ArticleEdit extends React.Component {
           loading && !detail ?
             <Loading/>
             :
-            <ArticleForm detail={detail} action="edit"/>
+            <ArticleForm detail={detail} action="edit" type={type}/>
         }
       </div>
     )

@@ -72,7 +72,7 @@ export default [
           },
           {
             name: '编辑文章',
-            path: 'article-edit/:id',
+            path: 'article-edit/:type/:id',
             key: 'article-edit',
             hideInMenu: true,
             component: './ContentManage/ArticleEdit',

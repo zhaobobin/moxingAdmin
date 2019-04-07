@@ -305,6 +305,7 @@ export default class TicketForm extends React.Component {
       limit: values.limit,
       refund: values.refund,
       content: values.content || '',
+      state: '1',
     };
     if(action === 'edit'){
       data.id = detail.id;

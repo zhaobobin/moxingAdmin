@@ -235,7 +235,7 @@ export default class ArticleForm extends React.Component {
 
   render() {
 
-    const { action } = this.props;
+    const { action, type } = this.props;
     const { detail, modalVisible, currentCategoryNames, currentCategoryIds, currentCategoryIdsBeifen, category } = this.state;
     const { getFieldDecorator, getFieldValue, getFieldsError } = this.props.form;
 
@@ -358,6 +358,7 @@ export default class ArticleForm extends React.Component {
                       })(
                       <Ueditor
                         height={400}
+                        type={type}
                         content={detail.content}
                         callback={this.editorCallback}
                       />
@@ -365,7 +366,7 @@ export default class ArticleForm extends React.Component {
                   </FormItem>
 
                   {
-                    action === 'edit' ?
+                    action === 'edit' && detail.portal ?
                       <FormItem {...formItemLayout} label="评论" className={styles.comments}>
                         {
                           detail.reply === '0' ?

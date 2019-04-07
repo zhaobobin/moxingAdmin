@@ -47,7 +47,7 @@ export default class ArticleList extends React.Component {
 
   //编辑
   edit = (id) => {
-    this.props.dispatch(routerRedux.push(`/content/article-edit/${id}`))
+    this.props.dispatch(routerRedux.push(`/content/article-edit/article/${id}`))
   };
 
   del = (id) => {

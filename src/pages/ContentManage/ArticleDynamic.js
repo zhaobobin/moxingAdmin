@@ -47,7 +47,7 @@ export default class ArticleDynamic extends React.Component {
 
   //编辑
   edit = (id) => {
-    this.props.dispatch(routerRedux.push(`/content/article-edit/${id}`))
+    this.props.dispatch(routerRedux.push(`/content/article-edit/dynamic/${id}`))
   };
 
   del = (id) => {

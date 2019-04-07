@@ -132,7 +132,6 @@ export default class FormInit extends PureComponent {
             <InputNumber
               autoComplete="off"
               min={0}
-              max={9}
               placeholder={topic.placeholder} style={style}
               allowClear={true}
             />
