@@ -98,6 +98,10 @@ export default class OrderList extends React.Component {
           placeholder: '请选择',
           option: stateOptions
         },
+      ],
+      [
+        {},
+        {},
         {
           key: 'btn',
           type: 'BtnGroup',
@@ -114,7 +118,7 @@ export default class OrderList extends React.Component {
             },
           ]
         },
-      ],
+      ]
     ];
 
     const columns = [
@@ -123,12 +127,14 @@ export default class OrderList extends React.Component {
         dataIndex: 'order_no',
         key: 'order_no',
         align: 'center',
+        width: 150
       },
       {
         title: '收件人',
         dataIndex: 'realname',
         key: 'realname',
         align: 'center',
+        width: 150
       },
       {
         title: '联系方式',

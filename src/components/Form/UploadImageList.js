@@ -89,6 +89,7 @@ export default class UploadImageList extends React.Component {
 
   render(){
 
+    const { disabled } = this.props;
     const { loading, photoList } = this.state;
 
     const uploadButton = (
@@ -115,7 +116,9 @@ export default class UploadImageList extends React.Component {
               null
           }
           {
-            photoList.length < 9 ?
+            photoList.length >= 9 || disabled  ?
+              null
+              :
               <li>
                 <div className={styles.box}>
                   <div className={styles.box2}>
@@ -133,8 +136,6 @@ export default class UploadImageList extends React.Component {
                   </div>
                 </div>
               </li>
-              :
-              null
           }
         </ul>
       </div>

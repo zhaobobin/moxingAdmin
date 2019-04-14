@@ -235,9 +235,15 @@ export default class ArticleSource extends React.Component {
         render: (text, item) => (
           <span>
             <a onClick={() => this.edit(item.id)}>编辑</a>
-            {/*<Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>*/}
-            {/*<a>删除</a>*/}
-            {/*</Popconfirm>*/}
+            {
+              currentUser.role === '超级管理员' ?
+                <Popconfirm title="确定删除该文章？" onConfirm={() => this.del(item.id)}>
+                  <span> | </span>
+                  <a>删除</a>
+                </Popconfirm>
+                :
+                null
+            }
           </span>
         )
       },

@@ -346,22 +346,41 @@ export default class ActivityForm extends React.Component {
                     )}
                   </FormItem>
 
-                  <FormItem {...formItemLayout} label="限制人数">
+                  <FormItem {...formItemLayout} label="报名总量">
+                    {getFieldDecorator('total',
+                      {
+                        initialValue: detail.total ? detail.total.toString() : '',
+                        validateFirst: true,
+                        rules: [
+                          { required: true, message: '请输入报名总量' },
+                          { pattern: /^[0-9]+$/, message: '只能输入数值' },
+                        ],
+                      })(
+                      <InputNumber
+                        autoComplete="off"
+                        placeholder="请输入报名总量"
+                        allowClear={true}
+                        style={{width: '100%'}}
+                      />
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="单人限制次数">
                     {getFieldDecorator('num',
                       {
                         initialValue: detail.num || '0',
                       })(
                       <RadioGroup name="limit">
-                        <Radio value={'0'}>不限购</Radio>
+                        <Radio value={'0'}>不限制</Radio>
                         <Radio value={'1'}>
-                          限购
+                          限制
                           {
                             getFieldValue('num') === '0' ?
                               null
                               :
                               <InputNumber
                                 min={1}
-                                defaultValue={detail && detail.num || 100}
+                                defaultValue={detail && detail.num || 6}
                                 style={{marginLeft: '10px'}}
                                 onChange={this.onChangeLimit}
                               />
@@ -383,10 +402,34 @@ export default class ActivityForm extends React.Component {
                     )}
                   </FormItem>
 
+                  <FormItem {...formItemLayout} label="实名认证">
+                    {getFieldDecorator('shiming',
+                      {
+                        initialValue: detail.shiming || '1',
+                      })(
+                      <RadioGroup name="refund">
+                        <Radio value={'1'}>需要</Radio>
+                        <Radio value={'0'}>不需要</Radio>
+                      </RadioGroup>
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="姓名/手机号">
+                    {getFieldDecorator('xingming',
+                      {
+                        initialValue: detail.xingming || '1',
+                      })(
+                      <RadioGroup name="refund">
+                        <Radio value={'1'}>需要</Radio>
+                        <Radio value={'0'}>不需要</Radio>
+                      </RadioGroup>
+                    )}
+                  </FormItem>
+
                   <FormItem {...formItemLayout} label="报名费">
                     {getFieldDecorator('price',
                       {
-                        initialValue: detail.price || '',
+                        initialValue: detail.price !== undefined ? detail.price.toString() : '',
                         validateFirst: true,
                         rules: [
                           { required: true, message: '请输入报名费' },

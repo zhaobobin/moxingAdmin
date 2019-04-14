@@ -30,6 +30,8 @@ export default class ArticleList extends React.Component {
       apiDel: '/api/portal/portal_del',
       title: '文章',
 
+      selectedRowKeys: [],
+
     }
   }
 
@@ -71,10 +73,16 @@ export default class ArticleList extends React.Component {
     });
   };
 
+  // 批量选择
+  onSelectChange = (selectedRowKeys) => {
+    console.log(selectedRowKeys)
+    this.setState({ selectedRowKeys: selectedRowKeys});
+  };
+
   render(){
 
     const {currentUser} = this.props.global;
-    const {apiList, queryParams, title} = this.state;
+    const {apiList, queryParams, title, selectedRowKeys} = this.state;
 
     const searchParams = [
       [
@@ -235,9 +243,15 @@ export default class ArticleList extends React.Component {
         render: (text, item) => (
           <span>
             <a onClick={() => this.edit(item.id)}>编辑</a>
-            {/*<Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>*/}
-              {/*<a>删除</a>*/}
-            {/*</Popconfirm>*/}
+            {
+              currentUser.role === '超级管理员' ?
+                <Popconfirm title="确定删除该文章？" onConfirm={() => this.del(item.id)}>
+                  <span> | </span>
+                  <a>删除</a>
+                </Popconfirm>
+                :
+                null
+            }
           </span>
         )
       },
@@ -258,11 +272,16 @@ export default class ArticleList extends React.Component {
         }
 
         <TableInit
+          rowKey="id"
           onRef={ref => this.tableInit = ref}
           params={{
             api: apiList,
             columns,
             queryParams,
+          }}
+          rowSelection={{
+            selectedRowKeys: selectedRowKeys,
+            onChange: this.onSelectChange,
           }}
         />
 

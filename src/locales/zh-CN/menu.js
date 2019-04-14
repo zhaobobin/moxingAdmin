@@ -10,6 +10,7 @@ export default {
   'menu.content.article': '文章管理',
   'menu.content.article-add': '添加文章',
   'menu.content.article-edit': '编辑文章',
+  'menu.content.article-dynamic-edit': '编辑动态',
   'menu.content.article-dynamic': '动态管理',
   'menu.content.article-source': '数据源管理',
   'menu.content.article-comment': '评论管理',
@@ -42,6 +43,9 @@ export default {
   'menu.users': '管理员管理',
   'menu.users.list': '管理员列表',
   'menu.users.detail': '管理员详情',
+  'menu.users.role': '角色管理',
+
+  'menu.app': 'app版本管理',
 
   'menu.form': '表单页',
   'menu.form.basicform': '基础表单',

@@ -78,6 +78,13 @@ export default [
             component: './ContentManage/ArticleEdit',
           },
           {
+            name: '编辑动态',
+            path: 'article-dynamic-edit/:type/:id',
+            key: 'article-dynamic-edit',
+            hideInMenu: true,
+            component: './ContentManage/ArticleDynamicEdit',
+          },
+          {
             name: '评论管理',
             path: 'article-comment/:id',
             key: 'article-comment',
@@ -282,10 +289,18 @@ export default [
           {
             name: '角色列表',
             path: 'role',
-            key: 'sole',
+            key: 'role',
             component: './UserManage/RoleList',
           },
         ]
+      },
+
+      {
+        name: 'App版本管理',
+        icon: 'mobile',
+        path: 'app',
+        key: 'app',
+        component: './AppManage/AppManage',
       },
 
       // forms

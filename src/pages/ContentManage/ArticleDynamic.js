@@ -28,7 +28,7 @@ export default class ArticleDynamic extends React.Component {
       },                //查询参数
       apiList: '/api/portal/get_portal',
       apiDel: '/api/portal/portal_del',
-      title: '文章',
+      title: '动态',
 
     }
   }
@@ -47,7 +47,7 @@ export default class ArticleDynamic extends React.Component {
 
   //编辑
   edit = (id) => {
-    this.props.dispatch(routerRedux.push(`/content/article-edit/dynamic/${id}`))
+    this.props.dispatch(routerRedux.push(`/content/article-dynamic-edit/dynamic/${id}`))
   };
 
   del = (id) => {
@@ -79,14 +79,6 @@ export default class ArticleDynamic extends React.Component {
     const searchParams = [
       [
         {
-          key: 'title',
-          label: '文章标题',
-          type: 'Input',
-          value: '',
-          placeholder: '请输入文章标题',
-          rules: [],
-        },
-        {
           key: 'published_time',
           label: '发布时间',
           type: 'DatePicker',
@@ -102,19 +94,9 @@ export default class ArticleDynamic extends React.Component {
           placeholder: '请输入用户名称',
           rules: [],
         },
-      ],
-      [
-        {
-          key: 'category_name',
-          label: '文章分类',
-          type: 'Input',
-          value: '',
-          placeholder: '请输入文章分类',
-          rules: [],
-        },
         {
           key: 'status',
-          label: '文章状态',
+          label: '状态',
           type: 'Select',
           value: '',
           placeholder: '请选择',
@@ -133,6 +115,10 @@ export default class ArticleDynamic extends React.Component {
             },
           ]
         },
+      ],
+      [
+        {},
+        {},
         {
           key: 'btn',
           type: 'BtnGroup',
@@ -153,25 +139,6 @@ export default class ArticleDynamic extends React.Component {
     ];
 
     const columns = [
-      {
-        title: '文章标题',
-        dataIndex: 'title',
-        key: 'title',
-        render: (title) => (
-          <div style={titleStyle}>
-            {title || '--'}
-          </div>
-        )
-      },
-      {
-        title: '分类',
-        dataIndex: 'category_name',
-        key: 'category_name',
-        align: 'center',
-        render: (category_name) => (
-          <span>{category_name || '--'}</span>
-        )
-      },
       {
         title: '发布时间',
         dataIndex: 'published_time',
@@ -213,6 +180,9 @@ export default class ArticleDynamic extends React.Component {
         dataIndex: 'author',
         key: 'author',
         align: 'center',
+        render: (author) => (
+          <span>{author || '--'}</span>
+        )
       },
       {
         title: '状态',
@@ -235,9 +205,15 @@ export default class ArticleDynamic extends React.Component {
         render: (text, item) => (
           <span>
             <a onClick={() => this.edit(item.id)}>编辑</a>
-            {/*<Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>*/}
-            {/*<a>删除</a>*/}
-            {/*</Popconfirm>*/}
+            {
+              currentUser.role === '超级管理员' ?
+                <Popconfirm title="确定删除该文章？" onConfirm={() => this.del(item.id)}>
+                  <span> | </span>
+                  <a>删除</a>
+                </Popconfirm>
+                :
+                null
+            }
           </span>
         )
       },
@@ -248,14 +224,14 @@ export default class ArticleDynamic extends React.Component {
 
         <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
 
-        {
-          currentUser.role === '超级管理员' ?
-            <div style={{padding: '20px 0'}}>
-              <Button type="primary" onClick={this.add}>添加{title}</Button>
-            </div>
-            :
-            null
-        }
+        {/*{*/}
+          {/*currentUser.role === '超级管理员' ?*/}
+            {/*<div style={{padding: '20px 0'}}>*/}
+              {/*<Button type="primary" onClick={this.add}>添加{title}</Button>*/}
+            {/*</div>*/}
+            {/*:*/}
+            {/*null*/}
+        {/*}*/}
 
         <TableInit
           onRef={ref => this.tableInit = ref}

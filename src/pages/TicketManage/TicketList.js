@@ -61,6 +61,10 @@ export default class TicketList extends React.Component {
             }
           ]
         },
+      ],
+      [
+        {},
+        {},
         {
           key: 'btn',
           type: 'BtnGroup',
@@ -77,7 +81,7 @@ export default class TicketList extends React.Component {
             },
           ]
         },
-      ],
+      ]
     ];
 
     const columns = [

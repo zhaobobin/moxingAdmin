@@ -8,7 +8,7 @@ import {
 } from 'antd'
 import styles from './ArticleForm.less'
 
-//import UploadImage from '@/components/Form/UploadImage'
+import UploadImageList from '@/components/Form/UploadImageList'
 import Ueditor from '@/components/Form/Ueditor'
 
 const FormItem = Form.Item;
@@ -52,7 +52,7 @@ const btnItemLayout = {
   global,
 }))
 @Form.create()
-export default class ArticleForm extends React.Component {
+export default class ArticleDynamicForm extends React.Component {
 
   constructor(props) {
     super(props);
@@ -309,50 +309,6 @@ export default class ArticleForm extends React.Component {
                     )}
                   </FormItem>
 
-                  <FormItem {...formItemLayout} label="标题">
-                    {getFieldDecorator('title',
-                      {
-                        initialValue: detail.title || undefined,
-                        validateFirst: true,
-                        rules: [
-                          {required: true, message: '请输入文章标题'},
-                        ],
-                      })(
-                      <Input autoComplete="off" placeholder="文章资讯标题"/>
-                    )}
-                  </FormItem>
-
-                  {
-                    detail.type === '3' ?
-                      <FormItem {...formItemLayout} label="来源">
-                        {getFieldDecorator('source_url',
-                          {
-                            initialValue: detail.source_url || undefined,
-                            validateFirst: true,
-                            rules: [
-                              {required: true, message: '请输入原文来源'},
-                            ],
-                          })(
-                          <Input autoComplete="off" placeholder="原文抓取地址" disabled={detail.source_url !== ''}/>
-                        )}
-                      </FormItem>
-                      :
-                      null
-                  }
-
-                  <FormItem {...formItemLayout} label="分类">
-                    {getFieldDecorator('category',
-                      {
-                        initialValue: currentCategoryNames || undefined,
-                        validateFirst: true,
-                        rules: [
-                          // {required: true, message: '请选择文章所属分类'},
-                        ],
-                      })(
-                      <Input autoComplete="off" onClick={this.onShowCategory} placeholder="文章所属分类"/>
-                    )}
-                  </FormItem>
-
                   <FormItem {...formItemLayout} label="内容" className={styles.ueditor}>
                     {getFieldDecorator('content',
                       {
@@ -362,12 +318,20 @@ export default class ArticleForm extends React.Component {
                           {required: true, message: '请输入内容'},
                         ],
                       })(
-                      <Ueditor
-                        height={400}
-                        type={type}
-                        content={detail.content}
-                        callback={this.editorCallback}
-                      />
+                      <TextArea disabled={true} autosize={{ minRows: 4, maxRows: 8 }} />
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="图片">
+                    {getFieldDecorator('image',
+                      {
+                        initialValue: detail.image,
+                        validateFirst: true,
+                        rules: [
+                          {required: true, message: '请选择商品图片'},
+                        ],
+                      })(
+                      <UploadImageList photoList={detail.image} disabled={true} callback={this.uploadCallback}/>
                     )}
                   </FormItem>
 
@@ -492,6 +456,7 @@ export default class ArticleForm extends React.Component {
           className={styles.articleCategory}
         >
           <Table
+            rowKey="id"
             columns={columns}
             dataSource={category}
             pagination={{

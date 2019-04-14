@@ -258,13 +258,10 @@ export default class MemberList extends React.Component {
 
     const columns = [
       {
-        title: '姓名',
-        dataIndex: 'name',
-        key: 'name',
+        title: 'User ID',
+        dataIndex: 'id',
+        key: 'id',
         align: 'center',
-        render: (name) => (
-          <span>{name || '--'}</span>
-        )
       },
       {
         title: '昵称',
@@ -304,6 +301,15 @@ export default class MemberList extends React.Component {
         )
       },
       {
+        title: '注册方式',
+        dataIndex: 'create_method',
+        key: 'create_method',
+        align: 'center',
+        render: (create_method) => (
+          <span>{create_method || '--'}</span>
+        )
+      },
+      {
         title: '注册时间',
         dataIndex: 'create_time',
         key: 'create_time',
@@ -312,19 +318,20 @@ export default class MemberList extends React.Component {
           <span>{create_time}</span>
         )
       },
-      // {
-      //   title: '状态',
-      //   dataIndex: 'user_status',
-      //   key: 'user_status',
-      //   align: 'center',
-      //   render: (user_status) => (
-      //     <span>
-      //       {user_status === 0 ? '禁用' : null}
-      //       {user_status === 1 ? '正常' : null}
-      //       {user_status === 2 ? '未验证' : null}
-      //     </span>
-      //   )
-      // },
+      {
+        title: '状态',
+        dataIndex: 'user_status',
+        key: 'user_status',
+        align: 'center',
+        render: (user_status) => (
+          <span>
+            {user_status === 0 ? '禁用' : null}
+            {user_status === 1 ? '正常' : null}
+            {user_status === 2 ? '未验证' : null}
+            {!user_status ? '--' : null}
+          </span>
+        )
+      },
       {
         title: '操作',
         dataIndex: 'action',
@@ -335,17 +342,17 @@ export default class MemberList extends React.Component {
             <a onClick={() => this.detail(item.id)}>详情</a>
             <span> | </span>
             <a onClick={() => this.edit(item)}>编辑</a>
-            {
-              currentUser.role === '超级管理员' ?
-                <span>
-                  <Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>
-                    <span> | </span>
-                    <a>删除</a>
-                  </Popconfirm>
-                </span>
-                :
-                null
-            }
+            {/*{*/}
+              {/*currentUser.role === '超级管理员' ?*/}
+                {/*<span>*/}
+                  {/*<Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>*/}
+                    {/*<span> | </span>*/}
+                    {/*<a>删除</a>*/}
+                  {/*</Popconfirm>*/}
+                {/*</span>*/}
+                {/*:*/}
+                {/*null*/}
+            {/*}*/}
           </div>
         )
       },

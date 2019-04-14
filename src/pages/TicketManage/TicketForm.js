@@ -142,7 +142,7 @@ export default class TicketForm extends React.Component {
     let ticketTimeArr = getAllDate(detail.start_time, detail.end_time);
     for(let i in ticketForm){
       if(ticketForm[i].choose){
-        ticketForm[i].choose = ticketForm[i].choose.split(',')
+        ticketForm[i].choose = ticketForm[i].choose.split(',');
       }
     }
     this.setState({
@@ -239,6 +239,13 @@ export default class TicketForm extends React.Component {
     this.setState({
       ticketForm
     })
+  };
+
+  changeTicketBlur = (e, index) => {
+    let value = e.target.value;
+    let k = `ticket-price-${index}`;
+    value = parseFloat(value).toFixed(2);
+    this.props.form.setFieldsValue({[k]: value});
   };
 
   changeTicketTime = (checkedValues, key) => {
@@ -382,7 +389,7 @@ export default class TicketForm extends React.Component {
           <FormItem {...formItemLayout2} label="销售票价">
             {getFieldDecorator(`ticket-price-${index}`,
               {
-                initialValue: detail && item.price || '',
+                initialValue: detail && item.price ? parseFloat(item.price).toFixed(2) : '',
                 validateFirst: true,
                 rules: [
                   { required: true, message: '请输入销售票价' },
@@ -395,10 +402,11 @@ export default class TicketForm extends React.Component {
                 allowClear={true}
                 suffix="￥"
                 onChange={ e => this.changeTicketForm(e, index, 'price') }
+                onBlur={e => this.changeTicketBlur(e, index)}
               />
             )}
           </FormItem>
-          <FormItem {...formItemLayout2} label="销售数量">
+          <FormItem {...formItemLayout2} label="门票总量">
             {getFieldDecorator(`ticket-storage-${index}`,
               {
                 initialValue: detail && item.storage || '',
@@ -542,7 +550,7 @@ export default class TicketForm extends React.Component {
                     )}
                   </FormItem>
 
-                  <FormItem {...formItemLayout} label="限购数量">
+                  <FormItem {...formItemLayout} label="单人限购数量">
                     {getFieldDecorator('limit',
                       {
                         initialValue: detail.limit || '0',
@@ -557,7 +565,7 @@ export default class TicketForm extends React.Component {
                               :
                               <InputNumber
                                 min={1}
-                                defaultValue={detail && detail.limit || 100}
+                                defaultValue={detail && detail.limit || 6}
                                 style={{marginLeft: '10px'}}
                                 onChange={this.onChangeLimit}
                               />

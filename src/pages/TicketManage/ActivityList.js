@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
+import moment from 'moment'
 import { Link, routerRedux } from 'dva/router'
 import { Button, Popconfirm } from 'antd'
 
@@ -20,6 +21,7 @@ export default class ActivityList extends React.Component {
       apiList: '/api/activity/index',
       apiAdd: '/api/activity/activity_add',
       apiEdit: '/api/activity/activity_edit',
+      apiDel: '/api/activity/activity_delete',
       modalTitle: '活动',
 
       stateOptions: [],                   //状态下拉列表
@@ -42,6 +44,29 @@ export default class ActivityList extends React.Component {
   //编辑
   edit = (id) => {
     this.props.dispatch(routerRedux.push(`/ticket/activity-edit/${id}`))
+  };
+
+  //删除
+  del = (id) => {
+    if(!this.ajaxFlag) return;
+    this.ajaxFlag = false;
+
+    let {apiDel} = this.state;
+
+    this.props.dispatch({
+      type: 'global/post',
+      url: apiDel,
+      payload: {
+        id: id,
+      },
+      callback: (res) => {
+        if(res.code === '0'){
+          this.tableInit.refresh({})
+        }
+      }
+    });
+
+    setTimeout(() => {this.ajaxFlag = true}, 500);
   };
 
   render(){
@@ -79,6 +104,10 @@ export default class ActivityList extends React.Component {
             {label: '开启', value: '1'},
           ]
         },
+      ],
+      [
+        {},
+        {},
         {
           key: 'btn',
           type: 'BtnGroup',
@@ -95,7 +124,7 @@ export default class ActivityList extends React.Component {
             },
           ]
         },
-      ],
+      ]
     ];
 
     const columns = [
@@ -104,18 +133,34 @@ export default class ActivityList extends React.Component {
         dataIndex: 'name',
         key: 'name',
         align: 'center',
+        width: 200,
+      },
+      {
+        title: '报名总量',
+        dataIndex: 'total',
+        key: 'total',
+        align: 'center',
+        render: (total) => (
+          <span>{total || 0}</span>
+        )
       },
       {
         title: '已报名人数',
         dataIndex: 'salenum',
         key: 'salenum',
         align: 'center',
+        render: (salenum) => (
+          <span>{salenum || 0}</span>
+        )
       },
       {
         title: '剩余报名人数',
         dataIndex: 'num',
         key: 'num',
         align: 'center',
+        render: (num) => (
+          <span>{num || 0}</span>
+        )
       },
       {
         title: '活动状态',
@@ -146,12 +191,18 @@ export default class ActivityList extends React.Component {
         dataIndex: 'start_time',
         key: 'start_time',
         align: 'center',
+        render: (start_time) => (
+          <span>{start_time ? moment(start_time).format('YYYY-MM-DD') : '--'}</span>
+        )
       },
       {
         title: '结束时间',
         dataIndex: 'end_time',
         key: 'end_time',
         align: 'center',
+        render: (end_time) => (
+          <span>{end_time ? moment(end_time).format('YYYY-MM-DD') : '--'}</span>
+        )
       },
       {
         title: '操作',
@@ -161,6 +212,15 @@ export default class ActivityList extends React.Component {
         render: (text, item) => (
           <span>
             <a onClick={() => this.edit(item.id)}>查看</a>
+            {
+              currentUser.role === '超级管理员' ?
+                <Popconfirm title="确定删除该活动？" onConfirm={() => this.del(item.id)}>
+                  <span> | </span>
+                  <a>删除</a>
+                </Popconfirm>
+                :
+                null
+            }
           </span>
         )
       },

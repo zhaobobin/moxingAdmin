@@ -97,9 +97,7 @@ export default class TableInit extends React.Component {
     return(
       <div style={{padding: '20px 0'}}>
         <Table
-          rowKey={() => {
-            return 'id' + Math.random()
-          }}
+          rowKey={this.props.rowKey || 'id'}
           loading={loading}
           columns={columns}
           dataSource={list}
