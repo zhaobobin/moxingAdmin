@@ -143,7 +143,6 @@ export default class PrizeActivityList extends React.Component {
           key: 'name',
           label: '奖项名称',
           type: 'Input',
-          inputType: 'number',
           value: '',
           placeholder: '请输入奖项名称',
           rules: [],

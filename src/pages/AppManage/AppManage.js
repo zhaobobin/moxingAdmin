@@ -11,10 +11,9 @@ export default class AppManage extends React.Component {
 
     return(
       <div>
-
         <Tabs defaultActiveKey="1" animated={false}>
           <TabPane tab="Android" key="1">
-            <UploadFile accept=".apk,.png"/>
+            <UploadFile accept=".apk"/>
           </TabPane>
           <TabPane tab="iOS" key="2">
             <UploadFile accept=".deb,.ipa,.pxl"/>

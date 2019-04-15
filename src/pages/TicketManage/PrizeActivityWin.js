@@ -9,16 +9,20 @@ import TableInit from '@/components/Table/TableInit'
 @connect(({ global }) => ({
   global,
 }))
-export default class PrizeActivityList extends React.Component {
+export default class PrizeActivityWin extends React.Component {
 
   constructor(props){
     super(props);
     this.ajaxFlag = true;
     this.state = {
-      queryParams: {},                //查询参数
-      pageTitle: '抽奖活动列表',
-      apiList: '/api/prize/index',
-      modalTitle: '抽奖活动',
+      queryParams: {
+        prize_id: this.props.match.params.id,
+      },                //查询参数
+      pageTitle: '奖项列表',
+      apiList: '/api/prize/prize_arr',
+      apiAdd: '/api/prize/prize_arr_add',
+      apiEdit: '/api/prize/prize_arr_edit',
+      apiDel: '/api/prize/prize_arr_delete',
 
       stateOptions: [],                   //状态下拉列表
 
@@ -28,53 +32,54 @@ export default class PrizeActivityList extends React.Component {
   //表单回调
   formCallback = (values) => {
     this.setState({
+      prize_id: this.queryParams.prize_id,
       queryParams: values,
     })
-  };
-
-  //创建
-  add = () => {
-    this.props.dispatch(routerRedux.push('/ticket/prize-activity-add'))
-  };
-
-  //编辑
-  edit = (id) => {
-    this.props.dispatch(routerRedux.push(`/ticket/prize-activity-edit/${id}`))
-  };
-
-  //奖项
-  prize = (id) => {
-    this.props.dispatch(routerRedux.push(`/ticket/prize-list/${id}`))
-  };
-
-  //获奖列表
-  winList = (id) => {
-    this.props.dispatch(routerRedux.push(`/ticket/prize-activity-win/${id}`))
   };
 
   render(){
 
     const {currentUser} = this.props.global;
-    const {apiList, queryParams, modalTitle} = this.state;
+    const {apiList, queryParams} = this.state;
 
     const searchParams = [
       [
         {
           key: 'name',
-          label: '抽奖名称',
+          label: '奖项名称',
           type: 'Input',
           value: '',
-          placeholder: '请输入抽奖活动名称',
+          placeholder: '请输入奖项名称',
           rules: [],
         },
         {
+          key: 'tel',
+          label: '手机号码',
+          type: 'Input',
+          inputType: 'number',
+          value: '',
+          placeholder: '请输入手机号码',
+          rules: [],
+        },
+        {
+          key: 'no',
+          label: '兑奖吗',
+          type: 'Input',
+          inputType: 'number',
+          value: '',
+          placeholder: '请输入兑奖吗',
+          rules: [],
+        },
+      ],
+      [
+        {
           key: 'state',
-          label: '抽奖状态',
+          label: '奖项状态',
           type: 'Select',
           value: '',
           placeholder: '请选择',
           option: [
-            {label: '关闭', value: '0'},
+            {label: '删除', value: '0'},
             {label: '开启', value: '1'},
           ]
         },
@@ -94,20 +99,21 @@ export default class PrizeActivityList extends React.Component {
             },
           ]
         },
-      ],
+        {},
+      ]
     ];
 
     const columns = [
       {
-        title: '抽奖名称',
+        title: '奖项名称',
         dataIndex: 'name',
         key: 'name',
         align: 'center',
       },
       {
-        title: '已抽奖人数',
-        dataIndex: 'salenum',
-        key: 'salenum',
+        title: '奖项数量',
+        dataIndex: 'num',
+        key: 'num',
         align: 'center',
       },
       {
@@ -116,7 +122,7 @@ export default class PrizeActivityList extends React.Component {
         key: 'state',
         align: 'center',
         render: (state) => (
-          <span>{state === 1 ? '开启' : '关闭'}</span>
+          <span>{state === 1 ? '删除' : '关闭'}</span>
         )
       },
       {
@@ -126,11 +132,7 @@ export default class PrizeActivityList extends React.Component {
         align: 'center',
         render: (text, item) => (
           <span>
-            <a onClick={() => this.prize(item.id)}>奖项</a>
-            <span> | </span>
-            <a onClick={() => this.edit(item.id)}>编辑</a>
-            <span> | </span>
-            <a onClick={() => this.winList(item.id)}>名单</a>
+            <a onClick={() => this.edit(item)}>查看</a>
           </span>
         )
       },
@@ -140,15 +142,6 @@ export default class PrizeActivityList extends React.Component {
       <div>
 
         <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
-
-        {
-          currentUser.role === '超级管理员' ?
-            <div style={{padding: '20px 0'}}>
-              <Button type="primary" onClick={this.add}>添加{modalTitle}</Button>
-            </div>
-            :
-            null
-        }
 
         <TableInit
           onRef={ref => this.tableInit = ref}

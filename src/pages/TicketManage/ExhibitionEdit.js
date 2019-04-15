@@ -41,7 +41,7 @@ export default class ExhibitionEdit extends React.Component {
         if(res.code === '0'){
           this.setState({
             loading: false,
-            detail: res.data
+            detail: res.data.length > 0 ? res.data : ''
           })
         }
       }

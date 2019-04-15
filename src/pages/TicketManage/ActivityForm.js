@@ -175,7 +175,7 @@ export default class ActivityForm extends React.Component {
 
   //修改限购数量
   onChangeLimit = (value) => {
-    this.props.form.setFieldsValue({'num': value});
+    this.props.form.setFieldsValue({'limit': value});
   };
 
   //上传图片回调
@@ -347,9 +347,9 @@ export default class ActivityForm extends React.Component {
                   </FormItem>
 
                   <FormItem {...formItemLayout} label="报名总量">
-                    {getFieldDecorator('total',
+                    {getFieldDecorator('num',
                       {
-                        initialValue: detail.total ? detail.total.toString() : '',
+                        initialValue: detail.num ? detail.num.toString() : '',
                         validateFirst: true,
                         rules: [
                           { required: true, message: '请输入报名总量' },
@@ -366,21 +366,21 @@ export default class ActivityForm extends React.Component {
                   </FormItem>
 
                   <FormItem {...formItemLayout} label="单人限制次数">
-                    {getFieldDecorator('num',
+                    {getFieldDecorator('limit',
                       {
-                        initialValue: detail.num || '0',
+                        initialValue: detail.limit ? detail.limit.toString() : '0',
                       })(
                       <RadioGroup name="limit">
                         <Radio value={'0'}>不限制</Radio>
                         <Radio value={'1'}>
                           限制
                           {
-                            getFieldValue('num') === '0' ?
+                            getFieldValue('limit') === '0' ?
                               null
                               :
                               <InputNumber
                                 min={1}
-                                defaultValue={detail && detail.num || 6}
+                                defaultValue={detail.limit || 6}
                                 style={{marginLeft: '10px'}}
                                 onChange={this.onChangeLimit}
                               />
@@ -393,7 +393,7 @@ export default class ActivityForm extends React.Component {
                   <FormItem {...formItemLayout} label="退票正常">
                     {getFieldDecorator('is_out',
                       {
-                        initialValue: detail.is_out || '0',
+                        initialValue: detail.is_out ? detail.is_out.toString() : '0',
                       })(
                       <RadioGroup name="refund">
                         <Radio value={'0'}>不支持</Radio>
@@ -405,7 +405,7 @@ export default class ActivityForm extends React.Component {
                   <FormItem {...formItemLayout} label="实名认证">
                     {getFieldDecorator('shiming',
                       {
-                        initialValue: detail.shiming || '1',
+                        initialValue: detail.shiming ? detail.shiming.toString() : '1',
                       })(
                       <RadioGroup name="refund">
                         <Radio value={'1'}>需要</Radio>
@@ -417,7 +417,7 @@ export default class ActivityForm extends React.Component {
                   <FormItem {...formItemLayout} label="姓名/手机号">
                     {getFieldDecorator('xingming',
                       {
-                        initialValue: detail.xingming || '1',
+                        initialValue: detail.xingming ? detail.xingming.toString() : '1',
                       })(
                       <RadioGroup name="refund">
                         <Radio value={'1'}>需要</Radio>

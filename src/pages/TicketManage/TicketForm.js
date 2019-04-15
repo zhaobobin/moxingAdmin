@@ -341,7 +341,7 @@ export default class TicketForm extends React.Component {
     // console.log(ticketTimeArr)
 
     //门票信息表单
-    const ticketFormList = (
+    const ticketFormList = detail ?
       ticketForm.map((item, index) => (
         <div key={index} className={styles.ticketFormItem}>
           <FormItem {...formItemLayout2} label="票面名称">
@@ -438,7 +438,8 @@ export default class TicketForm extends React.Component {
           }
         </div>
       ))
-    );
+      :
+      [];
     // 门票信息表单 end
 
     return(
@@ -446,7 +447,7 @@ export default class TicketForm extends React.Component {
 
         {
           action === 'edit' && !detail ?
-            null
+            '暂无数据'
             :
             <Row>
               <Col xs={24} sm={24} md={24} lg={14}>

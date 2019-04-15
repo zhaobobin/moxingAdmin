@@ -46,6 +46,11 @@ export default class ActivityList extends React.Component {
     this.props.dispatch(routerRedux.push(`/ticket/activity-edit/${id}`))
   };
 
+  //统计
+  data = (id) => {
+    this.props.dispatch(routerRedux.push(`/ticket/activity-data/${id}`))
+  };
+
   //删除
   del = (id) => {
     if(!this.ajaxFlag) return;
@@ -140,8 +145,8 @@ export default class ActivityList extends React.Component {
         dataIndex: 'total',
         key: 'total',
         align: 'center',
-        render: (total) => (
-          <span>{total || 0}</span>
+        render: (text, record) => (
+          <span>{record.salenum + record.num}</span>
         )
       },
       {
@@ -154,7 +159,7 @@ export default class ActivityList extends React.Component {
         )
       },
       {
-        title: '剩余报名人数',
+        title: '可报名人数',
         dataIndex: 'num',
         key: 'num',
         align: 'center',
@@ -212,6 +217,8 @@ export default class ActivityList extends React.Component {
         render: (text, item) => (
           <span>
             <a onClick={() => this.edit(item.id)}>查看</a>
+            <span> | </span>
+            <a onClick={() => this.data(item.id)}>统计</a>
             {
               currentUser.role === '超级管理员' ?
                 <Popconfirm title="确定删除该活动？" onConfirm={() => this.del(item.id)}>

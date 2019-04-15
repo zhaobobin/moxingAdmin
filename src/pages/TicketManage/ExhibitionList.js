@@ -160,11 +160,11 @@ export default class ExhibitionList extends React.Component {
       },
       {
         title: '门票总数',
-        dataIndex: 'total',
-        key: 'total',
+        dataIndex: 'num',
+        key: 'num',
         align: 'center',
-        render: (total) => (
-          <span>{total || 0}</span>
+        render: (num) => (
+          <span>{num || 0}</span>
         )
       },
       {
@@ -178,11 +178,11 @@ export default class ExhibitionList extends React.Component {
       },
       {
         title: '可售数量',
-        dataIndex: 'num',
-        key: 'num',
+        dataIndex: 'storage',
+        key: 'storage',
         align: 'center',
-        render: (num) => (
-          <span>{num || 0}</span>
+        render: (storage) => (
+          <span>{storage || 0}</span>
         )
       },
       {

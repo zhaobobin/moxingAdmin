@@ -164,6 +164,13 @@ export default [
             component: './TicketManage/ActivityList',
           },
           {
+            name: '活动统计',
+            path: 'activity-data/:id',
+            key: 'activity-data',
+            hideInMenu: true,
+            component: './TicketManage/ActivityData',
+          },
+          {
             name: '创建活动',
             path: 'activity-add',
             key: 'activity-add',
@@ -183,6 +190,13 @@ export default [
             path: 'prize-activity',
             key: 'prize-activity-list',
             component: './TicketManage/PrizeActivityList',
+          },
+          {
+            name: '获奖名单',
+            path: 'prize-activity-win/:id',
+            key: 'prize-activity-win',
+            hideInMenu: true,
+            component: './TicketManage/PrizeActivityWin',
           },
           {
             name: '创建抽奖活动',
