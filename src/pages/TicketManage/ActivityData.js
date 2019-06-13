@@ -3,170 +3,71 @@
  */
 import React from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router'
-import { Button, Popconfirm } from 'antd'
-import moment from 'moment'
-import FormInit from '@/components/Form/FormInit'
-import TableInit from '@/components/Table/TableInit'
+import { Link } from 'dva/router';
+import { Button, Popconfirm } from 'antd';
+import moment from 'moment';
+import FormInit from '@/components/Form/FormInit';
+import TableInit from '@/components/Table/TableInit';
 
 @connect(({ global }) => ({
   global,
 }))
 export default class ActivityData extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.ajaxFlag = true;
     this.state = {
-      queryParams: {},                //查询参数
-      apiList: '/api/user/index',
-      apiAdd: '/api/user/user_add',
-      apiEdit: '/api/user/user_edit',
-      apiDel: '/api/user/user_del',
-
-      modalVisible: false,
-      modalAction: '',
-      modalTitle: '管理员',
-      modalValues: '',
-
-      roleOptions: [],                   //角色下拉列表
-
-    }
+      queryParams: {
+        id: this.props.match.params.id,
+      }, //查询参数
+      apiList: '/api/activity/statistics',
+    };
   }
 
-  componentDidMount(){
-    this.queryRoleList()
-  }
-
-  queryRoleList = () => {
-    this.props.dispatch({
-      type: 'global/post',
-      url: '/api/user/get_role',
-      payload: {},
-      callback: (res) => {
-        if(res.code === '0'){
-          let roleOptions = [];
-          for(let i in res.data){
-            roleOptions.push({
-              label: res.data[i].role_name,
-              value: res.data[i].id,
-            })
-          }
-          this.setState({
-            roleOptions
-          })
-        }
-      }
-    });
-  };
+  componentDidMount() {}
 
   //表单回调
-  formCallback = (values) => {
+  formCallback = values => {
+    values.id = this.state.queryParams.id;
     this.setState({
       queryParams: values,
-      modalVisible: false,
-    })
-  };
-
-  //添加
-  add = () => {
-    this.setState({
-      modalVisible: true,
-      modalAction: '添加',
-    })
-  };
-
-  //编辑
-  edit = (item) => {
-    this.setState({
-      modalVisible: true,
-      modalAction: '编辑',
-      modalValues: item
-    })
-  };
-
-  //保存
-  save = (values) => {
-
-    if(!this.ajaxFlag) return;
-    this.ajaxFlag = false;
-
-    let {apiAdd, apiEdit, modalAction} = this.state;
-    let api = modalAction === '添加' ? apiAdd : apiEdit;
-    this.props.dispatch({
-      type: 'global/post',
-      url: api,
-      payload: {
-        ...values,
-      },
-      callback: (res) => {
-        setTimeout(() => {this.ajaxFlag = true}, 500);
-        if(res.code === '0'){
-          this.tableInit.refresh({});
-          this.setState({
-            modalVisible: false,
-            modalValues: '',
-          })
-        }
-      }
     });
   };
 
-  del = (id) => {
-    if(!this.ajaxFlag) return;
+  //削票
+  check = id => {
+    if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
-
-    let {apiDel} = this.state;
 
     this.props.dispatch({
       type: 'global/post',
-      url: apiDel,
+      url: '/api/activity/operation',
       payload: {
         id,
       },
-      callback: (res) => {
-        setTimeout(() => {this.ajaxFlag = true}, 500);
-        if(res.code === '0'){
-          this.tableInit.refresh({})
+      callback: res => {
+        setTimeout(() => {
+          this.ajaxFlag = true;
+        }, 500);
+        if (res.code === '0') {
+          this.tableInit.refresh(this.state.queryParams);
         }
-      }
+      },
     });
   };
 
-  //modal回调
-  modalCallback = (values) => {
-    if(values){
-      this.save(values)
-    }else{
-      this.setState({
-        modalVisible: false,
-        modalValues: '',
-      })
-    }
-  };
-
-  render(){
-
-    const {currentUser} = this.props.global;
-    const {apiList, queryParams, modalVisible, modalAction, modalTitle, modalValues, roleOptions} = this.state;
+  render() {
+    const { apiList, queryParams } = this.state;
 
     const searchParams = [
       [
         {
-          key: 'name',
-          label: '用户名',
+          key: 'tel',
+          label: '手机号',
           type: 'Input',
-          inputType: 'Input',
+          inputType: 'number',
           value: '',
-          placeholder: '请输入用户名',
-          rules: [],
-        },
-        {
-          key: 'create_time',
-          label: '创建时间',
-          type: 'DatePicker',
-          value: '',
-          placeholder: '请选择',
+          placeholder: '请输入',
           rules: [],
         },
         {
@@ -183,149 +84,64 @@ export default class ActivityData extends React.Component {
               type: 'default',
               htmlType: 'reset',
             },
-          ]
+          ],
         },
-      ]
-    ];
-
-    const modalParams = [
-      [
-        {
-          key: 'user_name',
-          label: '用户名',
-          type: 'Input',
-          inputType: 'Input',
-          value: modalValues ? modalValues.user_name : undefined,
-          placeholder: '请输入用户名',
-          rules: [],
-        },
-        {
-          key: 'real_name',
-          label: '真实名称',
-          type: 'Input',
-          inputType: 'Input',
-          value: modalValues ? modalValues.real_name : undefined,
-          placeholder: '请输入用户名',
-          rules: [],
-        },
-        {
-          key: 'password',
-          label: '密码',
-          type: 'Input',
-          inputType: 'password',
-          value: '',
-          placeholder: '请输入密码',
-          rules: [],
-        },
-        {
-          key: 'role_id',
-          label: '角色',
-          type: 'Select',
-          value: modalValues ? modalValues.role_id : undefined,
-          placeholder: '请选择',
-          option: roleOptions
-        },
-      ]
+        {},
+      ],
     ];
 
     const columns = [
       {
-        title: '用户名',
-        dataIndex: 'user_name',
-        key: 'user_name',
+        title: '活动id',
+        dataIndex: 'activity_id',
+        key: 'activity_id',
         align: 'center',
       },
       {
-        title: '真实名称',
-        dataIndex: 'real_name',
-        key: 'real_name',
+        title: '姓名',
+        dataIndex: 'u_name',
+        key: 'u_name',
         align: 'center',
       },
       {
-        title: '用户角色',
-        dataIndex: 'role_name',
-        key: 'role_name',
+        title: '手机号',
+        dataIndex: 'u_tel',
+        key: 'u_tel',
         align: 'center',
+        render: u_tel => <span>{u_tel || '--'}</span>,
       },
       {
-        title: '最后登录时间',
-        dataIndex: 'last_login_time',
-        key: 'last_login_time',
+        title: '是否已验票',
+        dataIndex: 'is_use',
+        key: 'is_use',
         align: 'center',
-        render: (last_login_time) => (
-          <span>{moment(last_login_time).format('YYYY-MM-DD')}</span>
-        )
+        render: is_use => <span>{is_use === 1 ? '已验' : '未验'}</span>,
       },
       {
-        title: '最后登录ip',
-        dataIndex: 'last_login_ip',
-        key: 'last_login_ip',
-        align: 'center',
-      },
-      {
-        title: '状态',
-        dataIndex: 'status',
-        key: 'status',
-        align: 'center',
-      },
-      {
-        title: '操作',
+        title: '验票',
         dataIndex: 'action',
         key: 'action',
         align: 'center',
         render: (text, item) => (
-          <div>
-            {
-              currentUser.role === '超级管理员' ?
-                <span>
-                  <a onClick={() => this.edit(item)}>编辑</a>
-                  {
-                    item.user_name === 'admin' ?
-                      null
-                      :
-                      <span> | </span>
-                  }
-                  {
-                    item.user_name === 'admin' ?
-                      null
-                      :
-                      <Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>
-                        <a>删除</a>
-                      </Popconfirm>
-                  }
-                </span>
-                :
-                '--'
-            }
-          </div>
-        )
+          <span>
+            {item.is_use === 1 ? (
+              '--'
+            ) : (
+              <Popconfirm title="确定验票？" onConfirm={() => this.check(item.id)}>
+                <a>验票</a>
+              </Popconfirm>
+            )}
+          </span>
+        ),
       },
     ];
 
-    return(
+    return (
       <div>
-
-        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
-
-        {
-          currentUser.role === '超级管理员' ?
-            <div style={{padding: '20px 0'}}>
-              <Button type="primary" onClick={this.add}>添加{modalTitle}</Button>
-              <FormInit
-                params={modalParams}
-                callback={this.modalCallback}
-                modal={{
-                  title: modalAction + modalTitle,
-                  visible: modalVisible
-                }}
-              />
-            </div>
-            :
-            null
-        }
+        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback} />
 
         <TableInit
-          onRef={ref => this.tableInit = ref}
+          onRef={ref => (this.tableInit = ref)}
           params={{
             api: apiList,
             columns,
@@ -333,6 +149,6 @@ export default class ActivityData extends React.Component {
           }}
         />
       </div>
-    )
+    );
   }
 }

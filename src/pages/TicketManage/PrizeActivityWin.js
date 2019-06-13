@@ -1,87 +1,74 @@
+/**
+ * 活动统计
+ */
 import React from 'react';
 import { connect } from 'dva';
-import { Link, routerRedux } from 'dva/router'
-import { Button, Popconfirm } from 'antd'
-
-import FormInit from '@/components/Form/FormInit'
-import TableInit from '@/components/Table/TableInit'
+import { Link } from 'dva/router';
+import { Button, Popconfirm } from 'antd';
+import moment from 'moment';
+import FormInit from '@/components/Form/FormInit';
+import TableInit from '@/components/Table/TableInit';
 
 @connect(({ global }) => ({
   global,
 }))
 export default class PrizeActivityWin extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.ajaxFlag = true;
     this.state = {
       queryParams: {
-        prize_id: this.props.match.params.id,
-      },                //查询参数
-      pageTitle: '奖项列表',
-      apiList: '/api/prize/prize_arr',
-      apiAdd: '/api/prize/prize_arr_add',
-      apiEdit: '/api/prize/prize_arr_edit',
-      apiDel: '/api/prize/prize_arr_delete',
-
-      stateOptions: [],                   //状态下拉列表
-
-    }
+        id: this.props.match.params.id,
+      }, //查询参数
+      apiList: '/api/prize/statistics',
+    };
   }
 
+  componentDidMount() {}
+
   //表单回调
-  formCallback = (values) => {
+  formCallback = values => {
+    values.id = this.state.queryParams.id;
     this.setState({
-      prize_id: this.queryParams.prize_id,
       queryParams: values,
-    })
+    });
   };
 
-  render(){
+  //削奖
+  check = id => {
+    if (!this.ajaxFlag) return;
+    this.ajaxFlag = false;
 
-    const {currentUser} = this.props.global;
-    const {apiList, queryParams} = this.state;
+    this.props.dispatch({
+      type: 'global/post',
+      url: '/api/prize/operation',
+      payload: {
+        id,
+      },
+      callback: res => {
+        setTimeout(() => {
+          this.ajaxFlag = true;
+        }, 500);
+        if (res.code === '0') {
+          this.tableInit.refresh(this.state.queryParams);
+        }
+      },
+    });
+  };
+
+  render() {
+    const { apiList, queryParams } = this.state;
 
     const searchParams = [
       [
         {
-          key: 'name',
-          label: '奖项名称',
-          type: 'Input',
-          value: '',
-          placeholder: '请输入奖项名称',
-          rules: [],
-        },
-        {
           key: 'tel',
-          label: '手机号码',
+          label: '抽奖手机号',
           type: 'Input',
           inputType: 'number',
-          value: '',
-          placeholder: '请输入手机号码',
-          rules: [],
-        },
-        {
-          key: 'no',
-          label: '兑奖吗',
-          type: 'Input',
-          inputType: 'number',
-          value: '',
-          placeholder: '请输入兑奖吗',
-          rules: [],
-        },
-      ],
-      [
-        {
-          key: 'state',
-          label: '奖项状态',
-          type: 'Select',
           value: '',
           placeholder: '请选择',
-          option: [
-            {label: '删除', value: '0'},
-            {label: '开启', value: '1'},
-          ]
+          rules: [],
         },
         {
           key: 'btn',
@@ -97,13 +84,19 @@ export default class PrizeActivityWin extends React.Component {
               type: 'default',
               htmlType: 'reset',
             },
-          ]
+          ],
         },
         {},
-      ]
+      ],
     ];
 
     const columns = [
+      {
+        title: '抽奖活动id',
+        dataIndex: 'id',
+        key: 'id',
+        align: 'center',
+      },
       {
         title: '奖项名称',
         dataIndex: 'name',
@@ -111,48 +104,58 @@ export default class PrizeActivityWin extends React.Component {
         align: 'center',
       },
       {
-        title: '奖项数量',
-        dataIndex: 'num',
-        key: 'num',
+        title: '抽奖手机号',
+        dataIndex: 'tel',
+        key: 'tel',
         align: 'center',
+        render: tel => <span>{tel || '--'}</span>,
       },
       {
-        title: '活动状态',
-        dataIndex: 'state',
-        key: 'state',
+        title: '是否是新用户抽奖',
+        dataIndex: 'is_new',
+        key: 'is_new',
         align: 'center',
-        render: (state) => (
-          <span>{state === 1 ? '删除' : '关闭'}</span>
-        )
+        render: is_new => <span>{is_new === 1 ? '是' : '否'}</span>,
       },
       {
-        title: '操作',
+        title: '是否已兑奖',
+        dataIndex: 'is_use',
+        key: 'is_use',
+        align: 'center',
+        render: is_use => <span>{is_use === 1 ? '已兑奖' : '为兑奖'}</span>,
+      },
+      {
+        title: '削奖',
         dataIndex: 'action',
         key: 'action',
         align: 'center',
         render: (text, item) => (
           <span>
-            <a onClick={() => this.edit(item)}>查看</a>
+            {item.is_use === 1 || item.name === '未中奖' ? (
+              '--'
+            ) : (
+              <Popconfirm title="确定削奖？" onConfirm={() => this.check(item.id)}>
+                <a>削奖</a>
+              </Popconfirm>
+            )}
           </span>
-        )
+        ),
       },
     ];
 
-    return(
+    return (
       <div>
-
-        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
+        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback} />
 
         <TableInit
-          onRef={ref => this.tableInit = ref}
+          onRef={ref => (this.tableInit = ref)}
           params={{
             api: apiList,
             columns,
             queryParams,
           }}
         />
-
       </div>
-    )
+    );
   }
 }

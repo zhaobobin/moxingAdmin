@@ -1,81 +1,78 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Link, routerRedux } from 'dva/router'
-import { Button, Popconfirm } from 'antd'
+import { Link, routerRedux } from 'dva/router';
+import { Button, Popconfirm } from 'antd';
 
-import FormInit from '@/components/Form/FormInit'
-import TableInit from '@/components/Table/TableInit'
+import FormInit from '@/components/Form/FormInit';
+import TableInit from '@/components/Table/TableInit';
 
 @connect(({ global }) => ({
   global,
 }))
 export default class GoodsList extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.ajaxFlag = true;
     this.state = {
-      queryParams: {},                //查询参数
+      queryParams: {}, //查询参数
       pageTitle: '商品列表',
       apiList: '/api/goods/index',
       apiAdd: '/api/goods/goods_add',
-      apiEdit: '/api/goods/goods_edit',
-      apiDown: '/api/goods/goods_down',
+      apiEdit: '/api/goods/goods_edit', //下架操作
       modalTitle: '商品',
 
-      roleOptions: [],                   //角色下拉列表
-
-    }
+      roleOptions: [], //角色下拉列表
+    };
   }
 
   //表单回调
-  formCallback = (values) => {
+  formCallback = values => {
     this.setState({
       queryParams: values,
-    })
+    });
   };
 
   //添加商品
   add = () => {
-    this.props.dispatch(routerRedux.push(`/goods/add`))
+    this.props.dispatch(routerRedux.push(`/goods/add`));
   };
 
   //编辑商品
-  detail = (id) => {
-    this.props.dispatch(routerRedux.push(`/goods/edit/${id}`))
+  detail = id => {
+    this.props.dispatch(routerRedux.push(`/goods/edit/${id}`));
   };
 
   //down
-  down = (id) => {
-
-    if(!this.ajaxFlag) return;
+  down = id => {
+    if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
-    let {apiDown} = this.state;
+    let { apiEdit } = this.state;
     this.props.dispatch({
       type: 'global/post',
-      url: apiDown,
+      url: apiEdit,
       payload: {
-        id
+        id,
       },
-      callback: (res) => {
-        if(res.code === '0'){
+      callback: res => {
+        if (res.code === '0') {
           this.tableInit.refresh({});
           this.setState({
             modalVisible: false,
             modalValues: '',
-          })
+          });
         }
-      }
+      },
     });
 
-    setTimeout(() => {this.ajaxFlag = true}, 500);
+    setTimeout(() => {
+      this.ajaxFlag = true;
+    }, 500);
   };
 
-  render(){
-
-    const {currentUser} = this.props.global;
-    const {apiList, queryParams, modalTitle} = this.state;
+  render() {
+    const { currentUser } = this.props.global;
+    const { apiList, queryParams, modalTitle } = this.state;
 
     const searchParams = [
       [
@@ -116,7 +113,7 @@ export default class GoodsList extends React.Component {
             { label: '下架', value: '0' },
             { label: '正常', value: '1' },
             { label: '违规', value: '10' },
-          ]
+          ],
         },
         {
           key: 'is_shops',
@@ -125,10 +122,7 @@ export default class GoodsList extends React.Component {
           value: '',
           placeholder: '请选择商户类型',
           rules: [],
-          option: [
-            { label: '店铺', value: '1' },
-            { label: '个人', value: '0' },
-          ]
+          option: [{ label: '店铺', value: '1' }, { label: '个人', value: '0' }],
         },
         {
           key: 'btn',
@@ -144,9 +138,9 @@ export default class GoodsList extends React.Component {
               type: 'default',
               htmlType: 'reset',
             },
-          ]
+          ],
         },
-      ]
+      ],
     ];
 
     const columns = [
@@ -167,20 +161,18 @@ export default class GoodsList extends React.Component {
         dataIndex: 'image',
         key: 'image',
         align: 'center',
-        render: (image) => (
+        render: image => (
           <span>
-            <img src={image} alt="thumb" width="60px" height="60px"/>
+            <img src={image} alt="thumb" width="60px" height="60px" />
           </span>
-        )
+        ),
       },
       {
         title: '商户类型',
         dataIndex: 'is_shops',
         key: 'is_shops',
         align: 'center',
-        render: (is_shops) => (
-          <span>{is_shops === 1 ? '店铺' : '个人'}</span>
-        )
+        render: is_shops => <span>{is_shops === 1 ? '店铺' : '个人'}</span>,
       },
 
       {
@@ -206,22 +198,20 @@ export default class GoodsList extends React.Component {
         dataIndex: 'is_new',
         key: 'is_new',
         align: 'center',
-        render: (is_new) => (
-          <span>{is_new === 1 ? '是' : '否'}</span>
-        )
+        render: is_new => <span>{is_new === 1 ? '是' : '否'}</span>,
       },
       {
         title: '状态',
         dataIndex: 'state',
         key: 'state',
         align: 'center',
-        render: (state) => (
+        render: state => (
           <span>
             {state === 0 ? '下架' : null}
             {state === 1 ? '正常' : null}
             {state === 10 ? '违规' : null}
           </span>
-        )
+        ),
       },
       {
         title: '操作',
@@ -231,39 +221,39 @@ export default class GoodsList extends React.Component {
         render: (text, item) => (
           <div>
             <a onClick={() => this.detail(item.id)}>查看</a>
-            <span> | </span>
-            <Popconfirm title="确定下架该商品？" onClick={() => this.down(item.id)}>
-              <a>下架</a>
-            </Popconfirm>
+            {item.state === 1 ? (
+              <Popconfirm title="确定下架该商品？" onConfirm={() => this.down(item.id)}>
+                <span> | </span>
+                <a>下架</a>
+              </Popconfirm>
+            ) : null}
           </div>
-        )
+        ),
       },
     ];
 
-    return(
+    return (
       <div>
-
-        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
+        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback} />
 
         {/*{*/}
-          {/*currentUser.role === '超级管理员' ?*/}
-            {/*<div style={{padding: '20px 0'}}>*/}
-              {/*<Button type="primary" onClick={this.add}>添加{modalTitle}</Button>*/}
-            {/*</div>*/}
-            {/*:*/}
-            {/*null*/}
+        {/*currentUser.role === '超级管理员' ?*/}
+        {/*<div style={{padding: '20px 0'}}>*/}
+        {/*<Button type="primary" onClick={this.add}>添加{modalTitle}</Button>*/}
+        {/*</div>*/}
+        {/*:*/}
+        {/*null*/}
         {/*}*/}
 
         <TableInit
-          onRef={ref => this.tableInit = ref}
+          onRef={ref => (this.tableInit = ref)}
           params={{
             api: apiList,
             columns,
             queryParams,
           }}
         />
-
       </div>
-    )
+    );
   }
 }

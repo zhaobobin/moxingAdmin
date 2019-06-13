@@ -1,29 +1,26 @@
 import React from 'react';
 
-import FormInit from '@/components/Form/FormInit'
-import TableInit from '@/components/Table/TableInit'
+import FormInit from '@/components/Form/FormInit';
+import TableInit from '@/components/Table/TableInit';
 
 export default class TicketList extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.ajaxFlag = true;
     this.state = {
-      queryParams: {},                //查询参数
-
-    }
+      queryParams: {}, //查询参数
+    };
   }
 
   //表单回调
-  formCallback = (values) => {
+  formCallback = values => {
     this.setState({
       queryParams: values,
-    })
+    });
   };
 
-  render(){
-
-    let {queryParams} = this.state;
+  render() {
+    let { queryParams } = this.state;
     queryParams.id = this.props.match.params.id;
 
     const searchParams = [
@@ -33,7 +30,7 @@ export default class TicketList extends React.Component {
           label: '门票名称',
           type: 'Input',
           value: '',
-          placeholder: '门票名称',
+          placeholder: '请输入',
           rules: [],
         },
         {
@@ -53,13 +50,13 @@ export default class TicketList extends React.Component {
           option: [
             {
               label: '当日票',
-              value: '1'
+              value: '1',
             },
             {
               label: '通用票',
-              value: '2'
-            }
-          ]
+              value: '2',
+            },
+          ],
         },
       ],
       [
@@ -79,9 +76,9 @@ export default class TicketList extends React.Component {
               type: 'default',
               htmlType: 'reset',
             },
-          ]
+          ],
         },
-      ]
+      ],
     ];
 
     const columns = [
@@ -132,26 +129,22 @@ export default class TicketList extends React.Component {
         dataIndex: 'is_day',
         key: 'is_day',
         align: 'center',
-        render: (is_day) => (
-          <span>{is_day === 1 ? '当日票' : '通用票'}</span>
-        )
+        render: is_day => <span>{is_day === 1 ? '当日票' : '通用票'}</span>,
       },
     ];
 
-    return(
+    return (
       <div>
-
-        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
+        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback} />
 
         <TableInit
           params={{
             api: '/api/exhibition/ticket',
             columns,
-            queryParams
+            queryParams,
           }}
         />
-
       </div>
-    )
+    );
   }
 }

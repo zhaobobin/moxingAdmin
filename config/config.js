@@ -20,7 +20,7 @@ const plugins = [
       },
       dynamicImport: {
         loadingComponent: './components/PageLoading/index',
-        webpackChunkName: true,     // 是否通过 webpackChunkName 实现有意义的异步文件名
+        webpackChunkName: true, // 是否通过 webpackChunkName 实现有意义的异步文件名
       },
       pwa: {
         workboxPluginMode: 'InjectManifest',
@@ -56,8 +56,8 @@ if (process.env.APP_TYPE === 'site') {
 
 export default {
   // add for transfer to umi
-  outputPath: "./dist",
-  publicPath: "/",
+  outputPath: './dist',
+  publicPath: '/',
   plugins,
   define: {
     APP_TYPE: process.env.APP_TYPE || '',
@@ -78,7 +78,7 @@ export default {
   },
   proxy: {
     '/api': {
-      target: 'http://datatest.moxinga.com',
+      target: 'http://data.moxinga.com',
       changeOrigin: true,
     },
   },
