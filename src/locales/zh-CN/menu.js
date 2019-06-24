@@ -2,8 +2,14 @@ export default {
   'menu.home': '首页',
 
   'menu.member': '会员管理',
-  'menu.member.list': '会员列表',
-  'menu.member.detail': '会员详情',
+  'menu.member-list': '会员列表',
+  'menu.member-detail': '会员详情',
+
+  'menu.wallet': '钱包管理',
+  'menu.wallet.wallet-list': '用户钱包查询',
+  'menu.wallet.wallet-detail': '用户钱包详情',
+  'menu.wallet.wallet-tx': '用户提现管理',
+  'menu.wallet.wallet-tx-detail': '用户提现详情',
 
   'menu.content': '内容管理',
   'menu.content.category': '文章分类',
@@ -68,5 +74,4 @@ export default {
   'menu.exception.not-find': '404',
   'menu.exception.server-error': '500',
   'menu.exception.trigger': '触发错误',
-
 };

@@ -230,7 +230,7 @@ export default class ArticleForm extends React.Component {
                     <Button type="primary" htmlType="submit">
                       提交
                     </Button>
-                    <Button htmlType="reset">取消</Button>
+                    <Button htmlType="reset">重置</Button>
                   </div>
                 </FormItem>
               </Col>

@@ -18,30 +18,58 @@ export default [
     Routes: ['src/pages/Authorized'],
     authority: ['admin', 'user'],
     routes: [
-
-      { path: '/', redirect: '/member/list' },
+      { path: '/', redirect: '/member' },
 
       {
         name: '会员管理',
         icon: 'team',
         path: 'member',
         key: 'member',
+        component: './MemberManage/MemberList',
+      },
+      {
+        name: '会员详情',
+        icon: 'team',
+        path: 'member/detail/:id',
+        key: 'member-detail',
+        hideInMenu: true,
+        component: './MemberManage/MemberDetail',
+      },
+
+      {
+        name: '钱包管理',
+        icon: 'wallet',
+        path: 'wallet',
+        key: 'wallet',
         routes: [
-          { path: '/member', redirect: '/member/list' },
+          { path: '/wallet', redirect: '/wallet/list' },
           {
-            name: '会员列表',
+            name: '用户钱包查询',
             path: 'list',
-            key: 'list',
-            component: './MemberManage/MemberList',
+            key: 'wallet-list',
+            component: './WalletManage/WalletList',
           },
           {
-            name: '会员详情',
+            name: '钱包详情',
             path: 'detail/:id',
-            key: 'detail',
+            key: 'wallet-detail',
             hideInMenu: true,
-            component: './MemberManage/MemberDetail',
+            component: './WalletManage/WalletDetail',
           },
-        ]
+          {
+            name: '用户提现管理',
+            path: 'tx/:id',
+            key: 'wallet-tx',
+            component: './WalletManage/WalletTx',
+          },
+          {
+            name: '用户提现详情',
+            path: 'tx-detail/:id',
+            key: 'wallet-tx-detail',
+            hideInMenu: true,
+            component: './WalletManage/WalletTxDetail',
+          },
+        ],
       },
 
       {
@@ -103,7 +131,7 @@ export default [
             key: 'article-source',
             component: './ContentManage/ArticleSource',
           },
-        ]
+        ],
       },
 
       {
@@ -133,7 +161,6 @@ export default [
             hideInMenu: true,
             component: './TicketManage/ExhibitionEdit',
           },
-
 
           {
             name: '展会票务统计',
@@ -234,8 +261,7 @@ export default [
             hideInMenu: true,
             component: './TicketManage/PrizeEdit',
           },
-
-        ]
+        ],
       },
 
       {
@@ -284,7 +310,7 @@ export default [
             hideInMenu: true,
             component: './GoodsManage/OrderDetail',
           },
-        ]
+        ],
       },
 
       {
@@ -306,7 +332,7 @@ export default [
             key: 'role',
             component: './UserManage/RoleList',
           },
-        ]
+        ],
       },
 
       {
@@ -367,7 +393,6 @@ export default [
       //     },
       //   ],
       // },
-
 
       {
         name: 'exception',

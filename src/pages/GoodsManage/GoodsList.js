@@ -122,7 +122,11 @@ export default class GoodsList extends React.Component {
           value: '',
           placeholder: '请选择商户类型',
           rules: [],
-          option: [{ label: '店铺', value: '1' }, { label: '个人', value: '0' }],
+          option: [
+            { label: '全部', value: '' },
+            { label: '店铺', value: '1' },
+            { label: '个人', value: '0' },
+          ],
         },
         {
           key: 'btn',
