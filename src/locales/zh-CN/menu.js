@@ -5,6 +5,11 @@ export default {
   'menu.member-list': '会员列表',
   'menu.member-detail': '会员详情',
 
+  'menu.cricle': '圈子管理',
+  'menu.cricle.cricle-category': '圈子分类',
+  'menu.cricle.cricle-list': '圈子列表',
+  'menu.cricle.cricle-detail': '圈子详情',
+
   'menu.wallet': '钱包管理',
   'menu.wallet.wallet-list': '用户钱包查询',
   'menu.wallet.wallet-detail': '用户钱包详情',
@@ -20,6 +25,15 @@ export default {
   'menu.content.article-dynamic': '动态管理',
   'menu.content.article-source': '数据源管理',
   'menu.content.article-comment': '评论管理',
+
+  'menu.activity': '活动&抽奖管理',
+  'menu.activity.activity-list': '活动列表',
+  'menu.activity.create-activity': '创建活动',
+  'menu.activity.create-game': '创建比赛',
+  'menu.activity.create-lucky': '创建抽奖',
+  'menu.activity.edit-activity': '活动详情',
+  'menu.activity.edit-game': '比赛详情',
+  'menu.activity.edit-lucky': '抽奖详情',
 
   'menu.ticket': '票务管理',
   'menu.ticket.exhibition': '展会列表',

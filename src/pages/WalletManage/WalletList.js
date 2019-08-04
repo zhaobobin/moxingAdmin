@@ -48,7 +48,7 @@ export default class WalletList extends React.Component {
           rules: [],
         },
         {
-          key: 'uid',
+          key: 'user_id',
           label: 'User ID',
           type: 'Input',
           value: '',
@@ -92,11 +92,14 @@ export default class WalletList extends React.Component {
         dataIndex: 'alipay',
         key: 'alipay',
         align: 'center',
+        render: (alipay) => (
+          <span>{alipay || '--'}</span>
+        )
       },
       {
         title: 'User ID',
-        dataIndex: 'uid',
-        key: 'uid',
+        dataIndex: 'user_id',
+        key: 'user_id',
         align: 'center',
       },
       {
@@ -125,7 +128,7 @@ export default class WalletList extends React.Component {
         align: 'center',
         render: (text, item) => (
           <div>
-            <a onClick={() => this.detail(item.id)}>查看</a>
+            <a onClick={() => this.detail(item.user_id)}>查看</a>
           </div>
         ),
       },

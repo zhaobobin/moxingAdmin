@@ -27,7 +27,7 @@ export default class ArticleList extends React.Component {
         type: '1'       //文章类型
       },                //查询参数
       apiList: '/api/portal/get_portal',
-      apiDel: '/api/portal/portal_del',
+      apiDel: '/api/portal/del_portal',
       title: '文章',
 
       selectedRowKeys: [],

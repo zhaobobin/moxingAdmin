@@ -28,7 +28,11 @@ export default class GaodeMap extends React.Component {
           let location = result.geocodes[0].location;
           let position = {longitude: location.lng, latitude: location.lat};
           _this.setState({
-            position
+            position,
+          });
+          _this.props.callback({
+            place: defaultAddress,
+            position: [location.lng, location.lat].join()
           })
         }
       });
@@ -48,7 +52,7 @@ export default class GaodeMap extends React.Component {
       if (result && result.info === 'OK') {
         _this.props.callback({
           place: result.regeocode.formattedAddress,
-          position: {lng: o.lnglat.lng, lat: o.lnglat.lat}
+          position: [o.lnglat.lng, o.lnglat.lat].join()
         });
       }
     });

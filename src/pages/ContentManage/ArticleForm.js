@@ -178,7 +178,15 @@ export default class ArticleForm extends React.Component {
     }
 
     currentCategoryNames = currentCategoryNames.join(',');
-    //console.log(currentCategoryNames)
+    // console.log(currentCategoryNames)
+    // console.log(currentCategoryIdsBeifen)
+    this.props.form.setFields({
+      'category': {
+        value: currentCategoryNames,
+        errors: ''
+      }
+    });
+
     this.setState({
       currentCategoryNames,
       currentCategoryIds: currentCategoryIdsBeifen,
@@ -212,12 +220,14 @@ export default class ArticleForm extends React.Component {
     //匹配src属性
     let srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
     let arr = str.match(imgReg);
-
-    for (let i = 0; i < arr.length; i++) {
-      let src = arr[i].match(srcReg);
-      //获取图片地址
-      if (src[1] && images.length < 3) images.push(src[1]);
-    }
+    
+    if(arr){
+      for (let i = 0; i < arr.length; i++) {
+        let src = arr[i].match(srcReg);
+        //获取图片地址
+        if (src[1] && images.length < 3) images.push(src[1]);
+      }
+    };
     return images.join(',');
   };
 
@@ -247,13 +257,15 @@ export default class ArticleForm extends React.Component {
   //保存
   save = values => {
     const { action, detail } = this.props;
-    const api = action === 'add' ? '/api/portal/portal_add' : '/api/portal/portal_edit';
+    const api = action === 'add' ? '/api/portal/add_portal' : '/api/portal/portal_edit';
     let data = values;
     data.uid = this.props.global.currentUser.uid;
     if (action === 'edit') {
       data.id = detail.id;
     }
+    data.category_id = this.state.currentCategoryIds.join(',');
     data.img = this.filterImages(data.content); // 截取文章图片
+    // console.log(data)
     this.props.dispatch({
       type: 'global/post',
       url: api,
@@ -360,7 +372,7 @@ export default class ArticleForm extends React.Component {
                     initialValue: currentCategoryNames || undefined,
                     validateFirst: true,
                     rules: [
-                      // {required: true, message: '请选择文章所属分类'},
+                      {required: true, message: '请选择文章所属分类'},
                     ],
                   })(
                     <Input
@@ -488,6 +500,7 @@ export default class ArticleForm extends React.Component {
           className={styles.articleCategory}
         >
           <Table
+            rowKey="id"
             columns={columns}
             dataSource={category}
             pagination={{

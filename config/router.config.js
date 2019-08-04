@@ -37,6 +37,34 @@ export default [
       },
 
       {
+        name: '圈子管理',
+        icon: 'usergroup-add',
+        path: 'cricle',
+        key: 'cricle',
+        routes: [
+          {
+            name: '圈子分类',
+            path: 'category',
+            key: 'cricle-category',
+            component: './CricleManage/CricleCategory',
+          },
+          {
+            name: '圈子列表',
+            path: 'list',
+            key: 'cricle-list',
+            component: './CricleManage/CricleList',
+          },
+          {
+            name: '圈子详情',
+            path: 'detail/:id',
+            key: 'cricle-detail',
+            hideInMenu: true,
+            component: './CricleManage/CricleDetail',
+          },
+        ]
+      },
+
+      {
         name: '钱包管理',
         icon: 'wallet',
         path: 'wallet',
@@ -132,6 +160,64 @@ export default [
             component: './ContentManage/ArticleSource',
           },
         ],
+      },
+
+      {
+        name: '活动&抽奖管理',
+        icon: 'qrcode',
+        path: 'activity',
+        key: 'activity',
+        routes: [
+          { path: '/activity', redirect: '/activity/list' },
+          {
+            name: '活动列表',
+            path: 'list',
+            key: 'activity-list',
+            component: './ActivityManage/ActivityList',
+          },
+          {
+            name: '创建活动',
+            path: 'create-activity/:keys',
+            key: 'create-activity',
+            hideInMenu: true,
+            component: './ActivityManage/CreateActivity',
+          },
+          {
+            name: '创建比赛',
+            path: 'create-game/:keys',
+            key: 'create-game',
+            hideInMenu: true,
+            component: './ActivityManage/CreateGame',
+          },
+          {
+            name: '创建抽奖',
+            path: 'create-lucky/:keys',
+            key: 'create-lucky',
+            hideInMenu: true,
+            component: './ActivityManage/CreateLucky',
+          },
+          {
+            name: '活动详情',
+            path: 'edit-activity/:id',
+            key: 'edit-activity',
+            hideInMenu: true,
+            component: './ActivityManage/EditActivity',
+          },
+          {
+            name: '比赛详情',
+            path: 'edit-game/:id',
+            key: 'edit-game',
+            hideInMenu: true,
+            component: './ActivityManage/EditActivity',
+          },
+          {
+            name: '抽奖详情',
+            path: 'edit-lucky/:id',
+            key: 'edit-lucky',
+            hideInMenu: true,
+            component: './ActivityManage/EditLucky',
+          },
+        ]
       },
 
       {

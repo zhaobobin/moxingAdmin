@@ -77,7 +77,7 @@ class HeaderView extends PureComponent {
         callback: (res) => {
           if(res === 1){
             dispatch({
-              type: 'login/logout',
+              type: 'global/logout',
             });
           }
         }

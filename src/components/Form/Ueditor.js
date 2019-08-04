@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { ENV, Storage, hasErrors, file2base64 } from '@/utils/utils';
 
-import { EditorState, ContentState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw, convertFromHTML, ContentState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
@@ -44,6 +44,7 @@ export default class Ueditor extends React.Component {
   //监控富文本变化
   onEditorStateChange = (editorState) => {
     let content = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+    if(convertFromHTML(content).contentBlocks === null) content = '';             // 判断内容是否为空
     this.props.callback(content);
     this.setState({
       editorState

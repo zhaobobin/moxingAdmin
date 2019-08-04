@@ -61,6 +61,7 @@ export default class TableInit extends React.Component {
       callback: (res) => {
         this.ajaxFlag = true;
         if (res.code === "0") {
+
           this.setState({
             loading: false,
             list: res.data.rows || res.data,
@@ -93,11 +94,12 @@ export default class TableInit extends React.Component {
 
     const { loading, list, total, queryParams } = this.state;
     const { columns } = this.props.params;
+    //this.props.rowKey
 
     return(
       <div style={{padding: '20px 0'}}>
         <Table
-          rowKey={this.props.rowKey || 'id'}
+          rowKey={'id'}
           loading={loading}
           columns={columns}
           dataSource={list}
