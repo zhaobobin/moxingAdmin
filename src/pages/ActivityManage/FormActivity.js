@@ -19,6 +19,7 @@ import {
 } from 'antd'
 import styles from './Form.less'
 
+import { Map } from 'react-amap';
 import GaodeMap from '@/components/Map/GaodeMap'
 import UploadImage from '@/components/Form/UploadImage'
 import Ueditor from '@/components/Form/Ueditor'
@@ -185,17 +186,9 @@ export default class FormActivity extends React.Component {
   }
   //监控地址
   changeAddress = e => {
-    let _this = this,
-      mapAddress = e.target.value,
-      geocoder = new window.AMap.Geocoder();
-    geocoder.getLocation(mapAddress, function(status, result) {
-      if (result && result.info === 'OK') {
-        let location = result.geocodes[0].location;
-        _this.setState({
-          mapAddress,
-          mapPosition: [location.lng, location.lat].join()
-        });
-      }
+    let mapAddress = e.target.value;
+    this.setState({
+      mapAddress,
     });
   }
   // map end !!!
@@ -299,7 +292,7 @@ export default class FormActivity extends React.Component {
     this.props.form.validateFields('', (err, values) => {
       // console.log(values)
       if (!err) {
-        let {ticketForm, p_num} = this.state
+        let {mapPosition, ticketForm, p_num} = this.state
         if(p_num) values.p_num = p_num;
         for (let i in ticketForm) {
           if (ticketForm[i].choose) {
@@ -327,7 +320,7 @@ export default class FormActivity extends React.Component {
   save = values => {
     const {action, detail} = this.props
     const api =
-      action === 'add' ? '/api/exhibition/exhibition_add' : '/api/exhibition/exhibition_edit'
+      action === 'add' ? '/api/activities/activities_add' : '/api/activities/activities_edit'
     let data = values;
     if (action === 'edit') {
       data.id = detail.id

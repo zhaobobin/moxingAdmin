@@ -185,17 +185,9 @@ export default class FormGame extends React.Component {
   }
   //监控地址
   changeAddress = e => {
-    let _this = this,
-      mapAddress = e.target.value,
-      geocoder = new window.AMap.Geocoder();
-    geocoder.getLocation(mapAddress, function(status, result) {
-      if (result && result.info === 'OK') {
-        let location = result.geocodes[0].location;
-        _this.setState({
-          mapAddress,
-          mapPosition: [location.lng, location.lat].join()
-        });
-      }
+    let mapAddress = e.target.value;
+    this.setState({
+      mapAddress,
     });
   }
   // map end !!!
@@ -326,7 +318,7 @@ export default class FormGame extends React.Component {
   save = values => {
     const {action, detail} = this.props
     const api =
-      action === 'add' ? '/api/exhibition/exhibition_add' : '/api/exhibition/exhibition_edit'
+      action === 'add' ? '/api/activities/activities_add' : '/api/activities/activities_edit'
     let data = values;
     if (action === 'edit') {
       data.id = detail.id
@@ -599,6 +591,20 @@ export default class FormGame extends React.Component {
                         <span className={styles.red}>(未标记)</span>
                       )}
                     </div>
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label={'详细地址'}>
+                    {getFieldDecorator('place_details', {
+                      initialValue: detail.place_details || '',
+                      validateFirst: true,
+                      rules: [{required: true, message: `请输入详细地址`}],
+                    })(
+                      <Input
+                        autoComplete="off"
+                        allowClear={true}
+                        placeholder={`请输入详细地址`}
+                      />
+                    )}
                   </FormItem>
 
                   <FormItem {...formItemLayout} label={<strong>门票信息</strong>}>

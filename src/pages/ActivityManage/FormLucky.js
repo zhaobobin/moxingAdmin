@@ -274,7 +274,7 @@ export default class CreateLucky extends React.Component {
   save = values => {
     const {action, detail} = this.props
     const api =
-      action === 'add' ? '/api/exhibition/exhibition_add' : '/api/exhibition/exhibition_edit'
+      action === 'add' ? '/api/activities/activities_add' : '/api/activities/activities_edit'
     let data = values;
     if (action === 'edit') {
       data.id = detail.id
