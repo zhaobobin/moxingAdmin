@@ -601,6 +601,20 @@ export default class FormActivity extends React.Component {
                     </div>
                   </FormItem>
 
+                  <FormItem {...formItemLayout} label={'详细地址'}>
+                    {getFieldDecorator('place_details', {
+                      initialValue: detail.place_details || '',
+                      validateFirst: true,
+                      rules: [{required: true, message: `请输入详细地址`}],
+                    })(
+                      <Input
+                        autoComplete="off"
+                        allowClear={true}
+                        placeholder={`请输入详细地址`}
+                      />
+                    )}
+                  </FormItem>
+
                   <FormItem {...formItemLayout} label={<strong>门票信息</strong>}>
                     {ticketFormList}
 
