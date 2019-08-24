@@ -622,6 +622,30 @@ export default class FormActivity extends React.Component {
                     </Button>
                   </FormItem>
 
+                  <FormItem {...formItemLayout} label="实名认证">
+                    {getFieldDecorator('shiming',
+                      {
+                        initialValue: detail.shiming ? detail.shiming.toString() : '1',
+                      })(
+                      <RadioGroup name="refund">
+                        <Radio value={'1'}>需要</Radio>
+                        <Radio value={'0'}>不需要</Radio>
+                      </RadioGroup>
+                    )}
+                  </FormItem>
+
+                  <FormItem {...formItemLayout} label="姓名/手机号">
+                    {getFieldDecorator('xingming',
+                      {
+                        initialValue: detail.xingming ? detail.xingming.toString() : '1',
+                      })(
+                      <RadioGroup name="refund">
+                        <Radio value={'1'}>需要</Radio>
+                        <Radio value={'0'}>不需要</Radio>
+                      </RadioGroup>
+                    )}
+                  </FormItem>
+
                   <FormItem {...formItemLayout} label={`${title}介绍`} className={styles.ueditor}>
                     {getFieldDecorator('content', {
                       initialValue: detail.content || '',

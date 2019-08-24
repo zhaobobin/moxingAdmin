@@ -41,7 +41,7 @@ export default class EditActivity extends React.Component {
         if(res.code === '0'){
           this.setState({
             loading: false,
-            detail: res.data
+            detail: res.data[0]
           })
         }
       }
