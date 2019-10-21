@@ -61,7 +61,7 @@ export default [
             hideInMenu: true,
             component: './CricleManage/CricleDetail',
           },
-        ]
+        ],
       },
 
       {
@@ -217,7 +217,14 @@ export default [
             hideInMenu: true,
             component: './ActivityManage/EditLucky',
           },
-        ]
+          {
+            name: '添加报名',
+            path: 'add-sign/:id',
+            key: 'add-sign',
+            hideInMenu: true,
+            component: './ActivityManage/AddSignFrom',
+          },
+        ],
       },
 
       {

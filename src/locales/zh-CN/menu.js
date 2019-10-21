@@ -34,6 +34,7 @@ export default {
   'menu.activity.edit-activity': '活动详情',
   'menu.activity.edit-game': '比赛详情',
   'menu.activity.edit-lucky': '抽奖详情',
+  'menu.activity.add-sign': '添加报名',
 
   'menu.ticket': '票务管理',
   'menu.ticket.exhibition': '展会列表',

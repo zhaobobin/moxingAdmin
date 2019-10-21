@@ -64,8 +64,7 @@ const cachedSave = (response, hashcode) => {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, option) {
-
-  if(process.env.NODE_ENV === 'production'){
+  if (process.env.NODE_ENV === 'production') {
     url = ENV.api.pro + url;
   }
 
@@ -85,7 +84,7 @@ export default function request(url, option) {
 
   const defaultOptions = {
     mode: 'cors',
-    credentials: 'include',                           //跨域访问携带cookie
+    credentials: 'include', //跨域访问携带cookie
   };
   const newOptions = { ...defaultOptions, ...options };
   if (
@@ -107,7 +106,8 @@ export default function request(url, option) {
         ...newOptions.headers,
       };
     }
-  }else if (newOptions.method === 'fileUpload') {//这部分为上传文件
+  } else if (newOptions.method === 'fileUpload') {
+    //这部分为上传文件
     //console.log(newOptions.body)
     newOptions.method = 'POST';
     newOptions.headers = {
