@@ -6,6 +6,7 @@ import { Button, Popconfirm, Modal, Table, Badge } from 'antd';
 
 import FormInit from '@/components/Form/FormInit';
 import TableInit from '@/components/Table/TableInit';
+import AddSignFrom from './AddSignFrom';
 
 @connect(({ global }) => ({
   global,
@@ -127,7 +128,8 @@ export default class ActivityList extends React.Component {
           this.ajaxFlag = true;
         }, 500);
         if (res.code === '0') {
-          this.tableInit.refresh({});
+          //this.tableInit.refresh({});
+          this.queryRound(this.state.currentActivityDetail);  // 刷新活动下的轮次信息
           this.setState({
             roundModalVisible: false,
           });
@@ -177,7 +179,7 @@ export default class ActivityList extends React.Component {
     });
   };
 
-  saveTicket() {
+  saveTicket(values) {
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
@@ -195,9 +197,10 @@ export default class ActivityList extends React.Component {
           this.ajaxFlag = true;
         }, 500);
         if (res.code === '0') {
-          this.tableInit.refresh({});
+          //this.tableInit.refresh({});
+          this.roundTable.queryTicket(this.state.currentRoundDetail); // 刷新轮次下的门票信息
           this.setState({
-            roundModalVisible: false,
+            ticketModalVisible: false,
           });
         }
       },
@@ -217,25 +220,17 @@ export default class ActivityList extends React.Component {
 
   // 添加报名 begin !
   addSign = item => {
-    this.setState({
-      currentRoundDetail: item,
-      signModalVisible: true,
-    });
-  };
-
-  signModalCallback = values => {
-    if (values) {
-      // this.saveTicket(values)
-    } else {
-      this.setState({
-        signModalVisible: false,
-      });
-    }
+    this.addSingForm.show(item.id)
+    // this.setState({
+    //   currentRoundDetail: item,
+    //   signModalVisible: true,
+    // });
   };
   // 添加报名 end !
 
   // 查询活动下的轮次信息 begin !
   onExpand = (expanded, record) => {
+    // console.log(record)
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
@@ -247,46 +242,50 @@ export default class ActivityList extends React.Component {
         },
       });
     } else {
-      this.props.dispatch({
-        type: 'global/post',
-        url: '/api/activities/getround',
-        payload: {
-          id: record.id,
-        },
-        callback: res => {
-          if (res.code === '0') {
-            this.setState({
-              expandVisible: {
-                ...this.state.expandVisible,
-                [record.id]: true,
-              },
-              subTabData: {
-                ...this.state.expandedData,
-                [record.id]: res.data,
-              },
-              expandedRowRenders: {
-                ...this.state.expandedRowRenders,
-                [record.id]: (
-                  <RoundTable
-                    expandVisible
-                    expandRecord={record}
-                    data={res.data}
-                    showTicket={item => this.showTicket(item)}
-                    addTicket={item => this.addTicket(item)}
-                    addSign={item => this.addSign(item)}
-                  />
-                ),
-              },
-            });
-          }
-        },
-      });
+      this.queryRound(record)
     }
 
-    setTimeout(() => {
-      this.ajaxFlag = true;
-    }, 500);
+    setTimeout(() => { this.ajaxFlag = true }, 500);
   };
+
+  // 查询轮次
+  queryRound = (record) => {
+    this.props.dispatch({
+      type: 'global/post',
+      url: '/api/activities/getround',
+      payload: {
+        id: record.id,
+      },
+      callback: res => {
+        if (res.code === '0') {
+          this.setState({
+            expandVisible: {
+              ...this.state.expandVisible,
+              [record.id]: true,
+            },
+            subTabData: {
+              ...this.state.expandedData,
+              [record.id]: res.data,
+            },
+            expandedRowRenders: {
+              ...this.state.expandedRowRenders,
+              [record.id]: (
+                <RoundTable
+                  onRef={e => this.roundTable = e}
+                  expandVisible
+                  expandRecord={record}
+                  data={res.data}
+                  showTicket={item => this.showTicket(item)}
+                  addTicket={item => this.addTicket(item)}
+                  addSign={item => this.addSign(item)}
+                />
+              ),
+            },
+          });
+        }
+      },
+    });
+  }
   // 查询活动下的轮次信息 end !
 
   render() {
@@ -456,7 +455,7 @@ export default class ActivityList extends React.Component {
         },
         {
           key: 'end_time',
-          label: '开始时间',
+          label: '结束时间',
           type: 'DatePicker',
           value: '',
           showTime: true,
@@ -484,7 +483,7 @@ export default class ActivityList extends React.Component {
           placeholder: '请输入门票名称（最多5个汉子）',
           rules: [
             { required: true, message: '请输入门票名称' },
-            { max: 5, message: '不能超过5个汉子' },
+            { max: 10, message: '不能超过5个汉子' },
           ],
         },
         {
@@ -576,7 +575,7 @@ export default class ActivityList extends React.Component {
           <span>
             <a onClick={() => this.edit(item)}>查看</a>
             <a onClick={() => this.addRound(item)}>添加轮次</a>
-            {/*<a onClick={() => this.addSign(item.id)}>添加报名</a>*/}
+            <a onClick={() => this.addSign(item)}>添加报名</a>
             {item.level === '1' ? <a onClick={() => this.addSign(item.id)}>添加活动</a> : null}
           </span>
         ),
@@ -641,14 +640,7 @@ export default class ActivityList extends React.Component {
         />
 
         {/*添加报名*/}
-        <FormInit
-          params={ticketModalParams}
-          callback={this.signModalCallback}
-          modal={{
-            title: '添加门票',
-            visible: signModalVisible,
-          }}
-        />
+        <AddSignFrom onRef={e => this.addSingForm = e} />
       </div>
     );
   }
@@ -669,6 +661,10 @@ class RoundTable extends React.PureComponent {
     };
   }
 
+  componentDidMount(){
+    this.props.onRef(this)
+  }
+
   // 查询轮次下的门票信息 begin !
   onExpand = (expanded, record) => {
     if (!this.ajaxFlag) return;
@@ -682,49 +678,52 @@ class RoundTable extends React.PureComponent {
         },
       });
     } else {
-      this.props.dispatch({
-        type: 'global/post',
-        url: '/api/activities/getroundticket',
-        payload: {
-          round_id: record.id,
-        },
-        callback: res => {
-          setTimeout(() => {
-            this.ajaxFlag = true;
-          }, 500);
-          if (res.code === '0') {
-            this.setState({
-              expandVisible: {
-                ...this.state.expandVisible,
-                [record.id]: true,
-              },
-              subTabData: {
-                ...this.state.expandedData,
-                [record.id]: res.data,
-              },
-              expandedRowRenders: {
-                ...this.state.expandedRowRenders,
-                [record.id]: (
-                  <TicketTable
-                    expandVisible
-                    expandRecord={record}
-                    data={res.data}
-                    // showTicket={(item) => this.showTicket(item)}
-                    // addTicket={(item) => this.addTicket(item)}
-                    // addSign={(item) => this.addSign(item)}
-                  />
-                ),
-              },
-            });
-          }
-        },
-      });
+      this.queryTicket(record)
     }
 
-    setTimeout(() => {
-      this.ajaxFlag = true;
-    }, 500);
+    setTimeout(() => { this.ajaxFlag = true }, 500);
   };
+
+  // 查询门票
+  queryTicket = (record) => {
+    this.props.dispatch({
+      type: 'global/post',
+      url: '/api/activities/getroundticket',
+      payload: {
+        round_id: record.id,
+      },
+      callback: res => {
+        setTimeout(() => {
+          this.ajaxFlag = true;
+        }, 500);
+        if (res.code === '0') {
+          this.setState({
+            expandVisible: {
+              ...this.state.expandVisible,
+              [record.id]: true,
+            },
+            subTabData: {
+              ...this.state.expandedData,
+              [record.id]: res.data,
+            },
+            expandedRowRenders: {
+              ...this.state.expandedRowRenders,
+              [record.id]: (
+                <TicketTable
+                  expandVisible
+                  expandRecord={record}
+                  data={res.data}
+                  // showTicket={(item) => this.showTicket(item)}
+                  // addTicket={(item) => this.addTicket(item)}
+                  // addSign={(item) => this.addSign(item)}
+                />
+              ),
+            },
+          });
+        }
+      },
+    });
+  }
   // 查询轮次下的门票信息 end !
 
   render() {
@@ -741,7 +740,7 @@ class RoundTable extends React.PureComponent {
         render: (text, item) => (
           <span>
             <a onClick={() => this.props.addTicket(item)}>添加门票</a>
-            <a onClick={() => this.props.addSign(item)}>添加报名</a>
+            {/*<a onClick={() => this.props.addSign(item)}>添加报名</a>*/}
           </span>
         ),
       },

@@ -32,7 +32,7 @@ export default class EditActivity extends React.Component {
   queryDetail(id){
     this.props.dispatch({
       type: 'global/post',
-      url: '/api/activities/ticket',
+      url: '/api/activities/admin_ticket',
       payload: {
         id,
       },

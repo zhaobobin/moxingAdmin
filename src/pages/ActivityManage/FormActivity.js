@@ -581,19 +581,19 @@ export default class FormActivity extends React.Component {
                   })(<Input autoComplete="off" allowClear={true} placeholder={`请输入详细地址`} />)}
                 </FormItem>
 
-                {/*<FormItem {...formItemLayout} label={<strong>场次信息</strong>}>*/}
-                {/*{ticketFormList}*/}
+                <FormItem {...formItemLayout} label={<strong>场次信息</strong>}>
+                {ticketFormList}
 
-                {/*<Button*/}
-                {/*type="dashed"*/}
-                {/*size="large"*/}
-                {/*style={{width: '100%'}}*/}
-                {/*onClick={this.addTicketForm}*/}
-                {/*>*/}
-                {/*<Icon type="plus"/>*/}
-                {/*<span>添加门票信息</span>*/}
-                {/*</Button>*/}
-                {/*</FormItem>*/}
+                <Button
+                type="dashed"
+                size="large"
+                style={{width: '100%'}}
+                onClick={this.addTicketForm}
+                >
+                <Icon type="plus"/>
+                <span>添加门票信息</span>
+                </Button>
+                </FormItem>
 
                 <FormItem {...formItemLayout} label="实名认证">
                   {getFieldDecorator('is_real', {
