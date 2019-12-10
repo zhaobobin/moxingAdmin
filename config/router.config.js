@@ -232,6 +232,7 @@ export default [
         icon: 'qrcode',
         path: 'ticket',
         key: 'ticket',
+        hideInMenu: true,
         routes: [
           { path: '/ticket', redirect: '/ticket/exhibition' },
           {

@@ -276,6 +276,7 @@ export default class FormInit extends PureComponent {
           <Modal
             title={modal.title}
             visible={modal.visible}
+            centered={true}
             destroyOnClose={true}
             onOk={this.handleFormSubmit}
             onCancel={this.handleFormCancel}

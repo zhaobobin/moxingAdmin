@@ -42,7 +42,9 @@ export default class AddSignFrom extends React.Component {
     this.ajaxFlag = true;
     this.state = {
       title: '添加报名',
-      id: '',
+      activity_id: '',
+      roundDetail: '',
+      loading: true,
       visible: false,
       signForm: [
         { type: '1', key: 'text', max: 20, is_select: 1, is_only: 1 }
@@ -54,18 +56,25 @@ export default class AddSignFrom extends React.Component {
     this.props.onRef(this)
   }
 
-  show = (id) => {
+  show = ({ activity_id, roundDetail }) => {
     this.setState({
+      loading: false,
       visible: true,
-      id
+      activity_id,
+      roundDetail
     })
   }
 
   hide = () => {
     this.setState({
       visible: false,
-      id: ''
+      activity_id: '',
+      roundDetail: ''
     })
+  }
+
+  queryRound = () => {
+
   }
 
   addSignForm = () => {
@@ -112,7 +121,8 @@ export default class AddSignFrom extends React.Component {
 
     this.props.form.validateFields('', (err, values) => {
       if (err) return;
-      let {id, signForm} = this.state;
+
+      let {activity_id, signForm} = this.state;
       for(let i in signForm){
         for(let j in signSchema) {
           if(signSchema[j].type === signForm[i].type) {
@@ -120,16 +130,16 @@ export default class AddSignFrom extends React.Component {
           }
         }
       }
-      console.log(signForm)
+      // console.log(signForm)
       let data = {
-        activities_id: id,
+        activities_id: activity_id,
         name: values.name,
         price: values.price,
         strong: values.strong,
         end_time: moment(values.end_time).format('YYYY-MM-DD HH:mm:ss'),
         info: JSON.stringify(signForm)
       }
-      console.log(data)
+      // console.log(data)
       this.createSign(data)
     });
 
@@ -151,8 +161,10 @@ export default class AddSignFrom extends React.Component {
   }
 
   render() {
-    const {title, visible, signForm} = this.state
+
+    const {loading, title, roundDetail, visible, signForm} = this.state
     const {getFieldDecorator, getFieldValue, getFieldsError} = this.props.form
+    // console.log(roundDetail)
 
     const signTypeOptions = [
       {label: '单行文本框', value: '1'},
@@ -162,9 +174,9 @@ export default class AddSignFrom extends React.Component {
       {label: '城市选择框', value: '5'},
       {label: '数字输入框', value: '6'},
       {label: '年龄选择器', value: '7'},
-    ]
+    ];
 
-    const signFormList = signForm.length > 0 ?
+    const signFormList = !loading && signForm.length > 0 ?
       signForm.map((item, index) => (
         <div className={styles.signFormItem} key={index}>
           <div className={styles.item + " " + styles.type}>
@@ -218,71 +230,99 @@ export default class AddSignFrom extends React.Component {
         onOk={this.submit}
         onCancel={this.hide}
       >
-        <Form className={styles.container}>
+        {
+          loading ?
+            null
+            :
+            <Form className={styles.container}>
 
-          <FormItem {...formItemLayout} label={'报名名称'}>
-            {getFieldDecorator('name', {
-              initialValue: '',
-              rules: [
-                {required: true, message: '请输入报名名称'},
-                {max: 20, message: '不能超过20个汉子'},
-              ]
-            })(
-              <Input autoComplete="off" placeholder='请输入报名名称'/>
-            )}
-          </FormItem>
+              <FormItem {...formItemLayout} label={'报名名称'}>
+                {getFieldDecorator('name', {
+                  initialValue: '',
+                  rules: [
+                    {required: true, message: '请输入报名名称'},
+                    {max: 20, message: '不能超过20个汉子'},
+                  ]
+                })(
+                  <Input autoComplete="off" placeholder='请输入报名名称'/>
+                )}
+              </FormItem>
 
-          <FormItem {...formItemLayout} label={'报名费用'}>
-            {getFieldDecorator('price', {
-              initialValue: '',
-              rules: [
-                {required: true, message: '请输入报名费用'},
-              ]
-            })(
-              <Input type='number' autoComplete="off" placeholder='请输入报名名称'/>
-            )}
-          </FormItem>
+              {
+                roundDetail.length > 0 ?
+                  <FormItem {...formItemLayout} label={'活动轮次'}>
+                    {getFieldDecorator('round_id', {
+                      initialValue: roundDetail[0].id,
+                      rules: []
+                    })(
+                      <Select placeholder="请选择轮次">
+                        {roundDetail.map((op, key) => (
+                          <Option
+                            key={key}
+                            value={op.id}
+                          >
+                            {op.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    )}
+                  </FormItem>
+                  :
+                  null
+              }
 
-          <FormItem {...formItemLayout} label={'报名人数'}>
-            {getFieldDecorator('strong', {
-              initialValue: '',
-              rules: [
-                {required: true, message: '请输入报名人数'},
-              ]
-            })(
-              <Input type='number' autoComplete="off" placeholder='请输入报名人数'/>
-            )}
-          </FormItem>
+              <FormItem {...formItemLayout} label={'报名费用'}>
+                {getFieldDecorator('price', {
+                  initialValue: '',
+                  rules: [
+                    {required: true, message: '请输入报名费用'},
+                  ]
+                })(
+                  <Input type='number' autoComplete="off" placeholder='请输入报名名称'/>
+                )}
+              </FormItem>
 
-          <FormItem {...formItemLayout} label={'报名截止时间'}>
-            {getFieldDecorator('end_time', {
-              initialValue: '',
-              rules: [
-                {required: true, message: '请选择截止时间'},
-              ]
-            })(
-              <DatePicker style={{width: '100%'}} showTime placeholder='请选择截止时间'/>
-            )}
-          </FormItem>
+              <FormItem {...formItemLayout} label={'报名人数'}>
+                {getFieldDecorator('strong', {
+                  initialValue: '',
+                  rules: [
+                    {required: true, message: '请输入报名人数'},
+                  ]
+                })(
+                  <Input type='number' autoComplete="off" placeholder='请输入报名人数'/>
+                )}
+              </FormItem>
 
-          <FormItem {...formItemLayout} label={<strong>报名表单</strong>}>
-            {signFormList}
-            {
-              signForm.length < 10 ?
-                <Button
-                  type="dashed"
-                  style={{width: '100%'}}
-                  onClick={this.addSignForm}
-                >
-                  <Icon type="plus"/>
-                  <span>添加报名字段</span>
-                </Button>
-                :
-                null
-            }
-          </FormItem>
+              <FormItem {...formItemLayout} label={'报名截止时间'}>
+                {getFieldDecorator('end_time', {
+                  initialValue: '',
+                  rules: [
+                    {required: true, message: '请选择截止时间'},
+                  ]
+                })(
+                  <DatePicker style={{width: '100%'}} showTime placeholder='请选择截止时间'/>
+                )}
+              </FormItem>
 
-        </Form>
+              <FormItem {...formItemLayout} label={<strong>报名表单</strong>}>
+                {signFormList}
+                {
+                  signForm.length < 10 ?
+                    <Button
+                      type="dashed"
+                      style={{width: '100%'}}
+                      onClick={this.addSignForm}
+                    >
+                      <Icon type="plus"/>
+                      <span>添加报名字段</span>
+                    </Button>
+                    :
+                    null
+                }
+              </FormItem>
+
+            </Form>
+        }
       </Modal>
     )
   }

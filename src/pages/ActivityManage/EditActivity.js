@@ -32,16 +32,17 @@ export default class EditActivity extends React.Component {
   queryDetail(id){
     this.props.dispatch({
       type: 'global/post',
-      url: '/api/activities/admin_ticket',
+      url: '/api/activities/activities_edit',
       payload: {
         id,
       },
       callback: (res) => {
         setTimeout(() => {this.ajaxFlag = true}, 500);
         if(res.code === '0'){
+          res.data.id = id
           this.setState({
             loading: false,
-            detail: res.data[0]
+            detail: res.data
           })
         }
       }
@@ -58,7 +59,10 @@ export default class EditActivity extends React.Component {
           loading && !detail ?
             <Loading/>
             :
-            <FormActivity detail={detail} action="edit"/>
+            detail ?
+              <FormActivity detail={detail} action="edit"/>
+              :
+              '暂无数据'
         }
       </div>
     )

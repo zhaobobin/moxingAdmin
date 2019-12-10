@@ -15,7 +15,7 @@ export default class UploadImage extends React.Component {
     this.ajaxFlag = true;
     this.state = {
       loading: false,
-      imageUrl: '',
+      imageUrl: this.props.defaultUrl,
     }
   }
 

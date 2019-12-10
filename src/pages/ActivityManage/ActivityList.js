@@ -24,6 +24,7 @@ export default class ActivityList extends React.Component {
 
       stateOptions: [], //状态下拉列表
 
+      activityLevel: '1',           // 创建活动的等级
       currentActivityDetail: '', // 当前活动详情
       currentRoundDetail: '', // 当前轮次详情
       addModalVisible: false, // 添加活动modal
@@ -47,9 +48,23 @@ export default class ActivityList extends React.Component {
   // 创建活动 begin !
   addActivity = () => {
     this.setState({
+      activityLevel: '1',
       addModalVisible: true,
     });
   };
+
+  addSecondActivity = (item) => {
+    let path = '';
+    switch (item.type) {
+      case '1': path = 'create-activity'; break;
+      case '2': path = 'create-game'; break;
+      case '3': path = 'create-lucky'; break;
+      default: break;
+    }
+    this.props.dispatch(
+      routerRedux.push(`/activity/${path}/2_${item.type}_${item.id}`)
+    )
+  }
 
   edit = item => {
     let path = '';
@@ -69,6 +84,23 @@ export default class ActivityList extends React.Component {
     this.props.dispatch(routerRedux.push(`/activity/${path}/${item.id}`));
   };
 
+  del = (id, type) => {
+    if (!this.ajaxFlag) return;
+    this.ajaxFlag = false;
+    this.props.dispatch({
+      type: 'global/post',
+      url: '/api/activities/activities_del',
+      payload: {
+        id,
+        type
+      },
+      callback: res => {
+        setTimeout(() => { this.ajaxFlag = true }, 500);
+        this.tableInit.refresh({});
+      },
+    });
+  };
+
   // addSign = (id) => {
   //   this.props.dispatch(routerRedux.push(`/activity/add-sign/${id}`))
   // }
@@ -80,17 +112,10 @@ export default class ActivityList extends React.Component {
       let path = '',
         p_num = values.p_num || '';
       switch (values.type) {
-        case '1':
-          path = 'create-activity';
-          break;
-        case '2':
-          path = 'create-game';
-          break;
-        case '3':
-          path = 'create-lucky';
-          break;
-        default:
-          break;
+        case '1': path = 'create-activity'; break;
+        case '2': path = 'create-game'; break;
+        case '3': path = 'create-lucky'; break;
+        default: break;
       }
       if (path)
         this.props.dispatch(
@@ -112,7 +137,7 @@ export default class ActivityList extends React.Component {
     });
   };
 
-  saveRound(values) {
+  saveRound (values) {
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
@@ -188,7 +213,7 @@ export default class ActivityList extends React.Component {
       url: '/api/activities/ticket_add',
       payload: {
         activities_id: this.state.currentActivityDetail.id,
-        round_id: this.state.currentActivityDetail.id,
+        round_id: this.state.currentRoundDetail.id,
         type: this.state.currentActivityDetail.type,
         ...values,
       },
@@ -219,8 +244,26 @@ export default class ActivityList extends React.Component {
   // 添加门票 end !
 
   // 添加报名 begin !
+  // 展开报名modal前，调取相关轮次信息
   addSign = item => {
-    this.addSingForm.show(item.id)
+    const { currentRoundDetail } = this.state;
+    if(currentRoundDetail){
+      this.addSingForm.show({ activity_id: item.id, roundDetail: currentRoundDetail})
+    } else {
+      this.props.dispatch({
+        type: 'global/post',
+        url: '/api/activities/getround',
+        payload: {
+          id: item.id
+        },
+        callback: (res) => {
+          if(res.code === '0') {
+            this.addSingForm.show({ activity_id: item.id, roundDetail: res.data})
+          }
+        }
+      })
+    }
+
     // this.setState({
     //   currentRoundDetail: item,
     //   signModalVisible: true,
@@ -259,6 +302,7 @@ export default class ActivityList extends React.Component {
       callback: res => {
         if (res.code === '0') {
           this.setState({
+            currentActivityDetail: record,
             expandVisible: {
               ...this.state.expandVisible,
               [record.id]: true,
@@ -291,6 +335,7 @@ export default class ActivityList extends React.Component {
   render() {
     const { currentUser } = this.props.global;
     const {
+      activityLevel,
       apiList,
       queryParams,
       modalTitle,
@@ -386,7 +431,7 @@ export default class ActivityList extends React.Component {
           label: '活动级别',
           type: 'Select',
           inputType: 'Select',
-          value: '1',
+          value: activityLevel,
           placeholder: '请选择',
           disabled: true,
           rules: [{ required: true, message: '请选择活动级别' }],
@@ -576,7 +621,13 @@ export default class ActivityList extends React.Component {
             <a onClick={() => this.edit(item)}>查看</a>
             <a onClick={() => this.addRound(item)}>添加轮次</a>
             <a onClick={() => this.addSign(item)}>添加报名</a>
-            {item.level === '1' ? <a onClick={() => this.addSign(item.id)}>添加活动</a> : null}
+            {item.level === '1' ? <a onClick={() => this.addSecondActivity(item)}>添加二级活动</a> : null}
+            <Popconfirm title={`是否要${item.state === '1' ? '下架' : '上架'}？`} onConfirm={() => this.del(item.id, item.state === '1' ? '2' : '1')}>
+              <a>{item.state === '1' ? '下架' : '上架'}</a>
+            </Popconfirm>
+            <Popconfirm title="是否要删除？" onConfirm={() => this.del(item.id, '3')}>
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
       },
@@ -586,13 +637,11 @@ export default class ActivityList extends React.Component {
       <div>
         <FormInit layout="horizontal" params={searchParams} callback={this.formCallback} />
 
-        {currentUser.role === '超级管理员' ? (
-          <div style={{ padding: '20px 0' }}>
-            <Button type="primary" onClick={this.addActivity}>
-              添加{modalTitle}
-            </Button>
-          </div>
-        ) : null}
+        <div style={{ padding: '20px 0' }}>
+          <Button type="primary" onClick={this.addActivity}>
+            添加{modalTitle}
+          </Button>
+        </div>
 
         <TableInit
           onRef={ref => (this.tableInit = ref)}
@@ -767,10 +816,135 @@ class RoundTable extends React.PureComponent {
   global,
 }))
 class TicketTable extends React.PureComponent {
-  showTicketDetail = id => {};
+
+  constructor(props){
+    super(props);
+    this.state = {
+      visible: false,
+      detail: ''
+    }
+  }
+
+  showTicketDetail = id => {
+    this.props.dispatch({
+      type: 'global/post',
+      url: '/api/activities/round_ticket_edit',
+      payload: {
+        id
+      },
+      callback: (res) => {
+        if(res.code === '0'){
+          this.setState({
+            visible: true,
+            detail: res.data
+          })
+        }
+      }
+    })
+  };
+
+  ticketDetailModalCallback = (values) => {
+    if (values) {
+
+    } else {
+      this.setState({
+        visible: false,
+      });
+    }
+  }
 
   render() {
+
     const { data } = this.props;
+    const { visible, detail } = this.state;
+
+    // 查看门票详情
+    const ticketModalParams = [
+      [
+        {
+          key: 'id',
+          label: '门票id',
+          type: 'Input',
+          inputType: 'Input',
+          value: detail.id || '',
+          disabled: true,
+          placeholder: '',
+          rules: [],
+        },
+        {
+          key: 'name',
+          label: '门票名称',
+          type: 'Input',
+          inputType: 'Input',
+          value: detail.name || '',
+          disabled: true,
+          placeholder: '',
+          rules: [],
+        },
+        {
+          key: 'time',
+          label: '门票有效时间',
+          type: 'Input',
+          inputType: 'Input',
+          value: detail.time || '',
+          disabled: true,
+          placeholder: '',
+          rules: [],
+        },
+
+        {
+          key: 'storage',
+          label: '销售数量',
+          type: 'Input',
+          inputType: 'Number',
+          value: detail.storage || '',
+          disabled: true,
+          placeholder: '',
+          rules: [],
+        },
+        {
+          key: 'inspect',
+          label: '核销数量',
+          type: 'Input',
+          inputType: 'Number',
+          value: detail.inspect || '',
+          disabled: true,
+          placeholder: '',
+          rules: [],
+        },
+        {
+          key: 'overdue',
+          label: '过期数量',
+          type: 'Input',
+          inputType: 'Number',
+          value: detail.overdue || '',
+          disabled: true,
+          placeholder: '',
+          rules: [],
+        },
+
+        {
+          key: 'price',
+          label: '门票价格',
+          type: 'Input',
+          inputType: 'Number',
+          value: detail.price || '',
+          disabled: true,
+          placeholder: '',
+          rules: [],
+        },
+        {
+          key: 'total',
+          label: '总计销售金额',
+          type: 'Input',
+          inputType: 'Number',
+          value: detail.total || '',
+          disabled: true,
+          placeholder: '',
+          rules: [],
+        },
+      ],
+    ];
 
     const loading = !data;
 
@@ -790,6 +964,18 @@ class TicketTable extends React.PureComponent {
       },
     ];
 
-    return <Table loading={loading} columns={columns} dataSource={data} pagination={false} />;
+    return (
+      <div>
+        <Table loading={loading} columns={columns} dataSource={data} pagination={false} />
+        <FormInit
+          params={ticketModalParams}
+          callback={this.ticketDetailModalCallback}
+          modal={{
+            title: '门票详情',
+            visible: visible,
+          }}
+        />
+      </div>
+    );
   }
 }
