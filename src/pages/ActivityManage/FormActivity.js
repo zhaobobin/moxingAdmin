@@ -285,13 +285,14 @@ export default class FormActivity extends React.Component {
 
   submit = e => {
     e.preventDefault();
+    let _this = this
     confirm({
       title: '确定保存已修改的内容?',
       content: '',
       okText: '确定',
       cancelText: '取消',
       onOk() {
-        this.handleFormSubmit()
+        _this.formSubmit()
       },
       onCancel() {
       },
@@ -299,7 +300,7 @@ export default class FormActivity extends React.Component {
   }
 
   //表单确定
-  handleFormSubmit = () => {
+  formSubmit = () => {
 
     if (!this.ajaxFlag) return
     this.ajaxFlag = false
@@ -320,8 +321,8 @@ export default class FormActivity extends React.Component {
         // values.ticket = JSON.stringify(ticketForm)
         values.coordinate = mapPosition // 地图坐标
         values.shelf_time = moment(values.shelf_time._d).format('YYYY-MM-DD HH:mm') //售票开始时间
-        values.start_ticket_time = moment(values.ticket_time[0]._d).format('YYYY-MM-DD HH:mm') //售票开始时间
-        values.end_ticket_time = moment(values.ticket_time[1]._d).format('YYYY-MM-DD HH:mm') //售票结束时间
+        // values.start_ticket_time = moment(values.ticket_time[0]._d).format('YYYY-MM-DD HH:mm') //售票开始时间
+        // values.end_ticket_time = moment(values.ticket_time[1]._d).format('YYYY-MM-DD HH:mm') //售票结束时间
         values.start_time = moment(values.time[0]._d).format('YYYY-MM-DD HH:mm') //活动开始时间
         values.end_time = moment(values.time[1]._d).format('YYYY-MM-DD HH:mm') //活动结束时间
         delete values.ticket_time
@@ -529,24 +530,24 @@ export default class FormActivity extends React.Component {
                   })(<DatePicker style={{width: '100%'}} showTime placeholder="请选择时间"/>)}
                 </FormItem>
 
-                <FormItem {...formItemLayout} label="售票时间">
-                  {getFieldDecorator('ticket_time', {
-                    initialValue:
-                      detail.start_ticket_time && detail.end_ticket_time
-                        ? [
-                          moment(detail.start_ticket_time, 'YYYY-MM-DD HH:mm'),
-                          moment(detail.end_ticket_time, 'YYYY-MM-DD HH:mm'),
-                        ]
-                        : '',
-                    rules: [{required: true, message: '请选择上架时间'}],
-                  })(
-                    <RangePicker
-                      style={{width: '100%'}}
-                      showTime={{format: 'HH:mm'}}
-                      placeholder={['售票开始时间', '售票结束时间']}
-                    />
-                  )}
-                </FormItem>
+                {/*<FormItem {...formItemLayout} label="售票时间">*/}
+                  {/*{getFieldDecorator('ticket_time', {*/}
+                    {/*initialValue:*/}
+                      {/*detail.start_ticket_time && detail.end_ticket_time*/}
+                        {/*? [*/}
+                          {/*moment(detail.start_ticket_time, 'YYYY-MM-DD HH:mm'),*/}
+                          {/*moment(detail.end_ticket_time, 'YYYY-MM-DD HH:mm'),*/}
+                        {/*]*/}
+                        {/*: '',*/}
+                    {/*rules: [{required: true, message: '请选择上架时间'}],*/}
+                  {/*})(*/}
+                    {/*<RangePicker*/}
+                      {/*style={{width: '100%'}}*/}
+                      {/*showTime={{format: 'HH:mm'}}*/}
+                      {/*placeholder={['售票开始时间', '售票结束时间']}*/}
+                    {/*/>*/}
+                  {/*)}*/}
+                {/*</FormItem>*/}
 
                 <FormItem {...formItemLayout} label={`${title}时间`}>
                   {getFieldDecorator('time', {
