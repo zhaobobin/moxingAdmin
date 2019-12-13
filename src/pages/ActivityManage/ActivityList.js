@@ -844,7 +844,7 @@ class TicketTable extends React.PureComponent {
   showTicketDetail = id => {
     this.props.dispatch({
       type: 'global/post',
-      url: '/api/activities/round_ticket_edit',
+      url: '/api/activities/ticket_details',
       payload: {
         id
       },
@@ -860,8 +860,20 @@ class TicketTable extends React.PureComponent {
   };
 
   ticketDetailModalCallback = (values) => {
+    // console.log(values)
     if (values) {
-
+      // this.props.dispatch({
+      //   type: 'global/post',
+      //   url: '/api/activities/ticket_edit',
+      //   payload: values,
+      //   callback: (res) => {
+      //     if(res.code === '0'){
+      //       this.setState({
+      //         visible: false,
+      //       })
+      //     }
+      //   }
+      // })
     } else {
       this.setState({
         visible: false,
@@ -882,7 +894,7 @@ class TicketTable extends React.PureComponent {
           label: '门票id',
           type: 'Input',
           inputType: 'Input',
-          value: detail.id || '',
+          value: detail.id ? detail.id.toString() : '',
           disabled: true,
           placeholder: '',
           rules: [],
@@ -893,8 +905,25 @@ class TicketTable extends React.PureComponent {
           type: 'Input',
           inputType: 'Input',
           value: detail.name || '',
-          disabled: true,
           placeholder: '',
+          rules: [],
+        },
+        {
+          key: 'start_ticket_time',
+          label: '开始售票时间',
+          type: 'DatePicker',
+          value: detail.start_ticket_time || '',
+          placeholder: '请选择',
+          disabled: true,
+          rules: [],
+        },
+        {
+          key: 'end_ticket_time',
+          label: '结束售票时间',
+          type: 'DatePicker',
+          value: detail.end_ticket_time || '',
+          placeholder: '请选择',
+          disabled: true,
           rules: [],
         },
 
@@ -903,37 +932,26 @@ class TicketTable extends React.PureComponent {
           label: '销售数量',
           type: 'Input',
           inputType: 'Number',
-          value: detail.storage || '',
-          disabled: true,
+          value: detail.storage ? detail.storage.toString() : '',
           placeholder: '',
           rules: [],
         },
         {
-          key: 'number',
-          label: '剩余数量',
+          key: 'salenum',
+          label: '已卖出数量',
           type: 'Input',
           inputType: 'Number',
-          value: detail.storage || '',
+          value: detail.salenum ? detail.salenum.toString() : '0',
           disabled: true,
           placeholder: '',
           rules: [],
         },
         {
           key: 'inspect',
-          label: '核销数量',
+          label: '已检票数量',
           type: 'Input',
           inputType: 'Number',
-          value: detail.inspect || '',
-          disabled: true,
-          placeholder: '',
-          rules: [],
-        },
-        {
-          key: 'overdue',
-          label: '过期数量',
-          type: 'Input',
-          inputType: 'Number',
-          value: detail.overdue || '',
+          value: detail.inspect ? detail.inspect.toString() : '0',
           disabled: true,
           placeholder: '',
           rules: [],
@@ -944,37 +962,8 @@ class TicketTable extends React.PureComponent {
           label: '门票价格',
           type: 'Input',
           inputType: 'Number',
-          value: detail.price || '',
-          disabled: true,
+          value: detail.price ? detail.price.toString() : '',
           placeholder: '',
-          rules: [],
-        },
-        {
-          key: 'total',
-          label: '总计销售金额',
-          type: 'Input',
-          inputType: 'Number',
-          value: detail.total || '',
-          disabled: true,
-          placeholder: '',
-          rules: [],
-        },
-        {
-          key: 'start_ticket_time',
-          label: '开始售票时间',
-          type: 'DatePicker',
-          value: '',
-          placeholder: '请选择',
-          disabled: true,
-          rules: [],
-        },
-        {
-          key: 'end_ticket_time',
-          label: '结束售票时间',
-          type: 'DatePicker',
-          value: '',
-          placeholder: '请选择',
-          disabled: true,
           rules: [],
         },
       ],
@@ -1007,6 +996,7 @@ class TicketTable extends React.PureComponent {
           modal={{
             title: '门票详情',
             visible: visible,
+            okText: '修改'
           }}
         />
       </div>

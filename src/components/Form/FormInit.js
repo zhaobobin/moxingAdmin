@@ -278,6 +278,8 @@ export default class FormInit extends PureComponent {
             visible={modal.visible}
             centered={true}
             destroyOnClose={true}
+            okText={modal.okText || '确定'}
+            cancelText={modal.cancelText || '取消'}
             onOk={this.handleFormSubmit}
             onCancel={this.handleFormCancel}
           >
