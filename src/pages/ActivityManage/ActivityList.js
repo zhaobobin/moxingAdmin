@@ -28,7 +28,7 @@ export default class ActivityList extends React.Component {
       currentActivityDetail: '', // 当前活动详情
       currentRoundDetail: '', // 当前轮次详情
       addModalVisible: false, // 添加活动modal
-      roundModalVisible: false, // 添加轮次modal
+      roundModalVisible: false, // 添加、修改轮次modal
       ticketModalVisible: false, // 添加门票modal
       signModalVisible: false, // 添加报名modal
 
@@ -137,17 +137,32 @@ export default class ActivityList extends React.Component {
     });
   };
 
+  // 修改轮次
+  editRound = item => {
+    this.setState({
+      currentRoundDetail: item,
+      roundModalVisible: true,
+    });
+  };
+
   saveRound (values) {
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
+    let api, params = values,
+      { currentActivityDetail, currentRoundDetail } = this.state;
+    if(currentRoundDetail.id){
+      api = '/api/activities/round_edit';
+      params.id = currentRoundDetail.id
+    } else {
+      api = '/api/activities/round_add';
+      params.activities_id = currentActivityDetail.id
+    }
+
     this.props.dispatch({
       type: 'global/post',
-      url: '/api/activities/round_add',
-      payload: {
-        activities_id: this.state.currentActivityDetail.id,
-        ...values,
-      },
+      url: api,
+      payload: params,
       callback: res => {
         setTimeout(() => {
           this.ajaxFlag = true;
@@ -156,6 +171,7 @@ export default class ActivityList extends React.Component {
           //this.tableInit.refresh({});
           this.queryRound(this.state.currentActivityDetail);  // 刷新活动下的轮次信息
           this.setState({
+            currentRoundDetail: '',
             roundModalVisible: false,
           });
         }
@@ -171,6 +187,7 @@ export default class ActivityList extends React.Component {
       this.saveRound(values);
     } else {
       this.setState({
+        currentRoundDetail: '',
         roundModalVisible: false,
       });
     }
@@ -207,6 +224,9 @@ export default class ActivityList extends React.Component {
   saveTicket(values) {
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
+
+    values.start_ticket_time = parseInt(new Date(values.start_ticket_time).getTime() / 1000)
+    values.end_ticket_time = parseInt(new Date(values.end_ticket_time).getTime() / 1000)
 
     this.props.dispatch({
       type: 'global/post',
@@ -320,6 +340,7 @@ export default class ActivityList extends React.Component {
                   expandRecord={record}
                   data={res.data}
                   showTicket={item => this.showTicket(item)}
+                  editRound={item => this.editRound(item)}
                   addTicket={item => this.addTicket(item)}
                   addSign={item => this.addSign(item)}
                 />
@@ -340,6 +361,7 @@ export default class ActivityList extends React.Component {
       queryParams,
       modalTitle,
       currentActivityDetail,
+      currentRoundDetail,
       addModalVisible,
       roundModalVisible,
       ticketModalVisible,
@@ -479,7 +501,7 @@ export default class ActivityList extends React.Component {
           label: '轮次名称',
           type: 'Input',
           inputType: 'Input',
-          value: '',
+          value: currentRoundDetail ? currentRoundDetail.name : '',
           placeholder: '请输入',
           rules: [{ required: true, message: '请输入轮次名称' }],
         },
@@ -487,7 +509,7 @@ export default class ActivityList extends React.Component {
           key: 'start_time',
           label: '开始时间',
           type: 'DatePicker',
-          value: '',
+          value: currentRoundDetail ? currentRoundDetail.start_time : '',
           showTime: true,
           disabledDate: current => {
             return (
@@ -502,7 +524,7 @@ export default class ActivityList extends React.Component {
           key: 'end_time',
           label: '结束时间',
           type: 'DatePicker',
-          value: '',
+          value: currentRoundDetail ? currentRoundDetail.end_time : '',
           showTime: true,
           disabledDate: current => {
             return (
@@ -532,6 +554,22 @@ export default class ActivityList extends React.Component {
           ],
         },
         {
+          key: 'start_ticket_time',
+          label: '开始售票时间',
+          type: 'DatePicker',
+          value: '',
+          placeholder: '请选择',
+          rules: [{ required: true, message: '请选择开始售票时间' }],
+        },
+        {
+          key: 'end_ticket_time',
+          label: '结束售票时间',
+          type: 'DatePicker',
+          value: '',
+          placeholder: '请选择',
+          rules: [{ required: true, message: '请选择结束售票时间' }],
+        },
+        {
           key: 'price',
           label: '门票价格',
           type: 'Input',
@@ -548,22 +586,6 @@ export default class ActivityList extends React.Component {
           value: '',
           placeholder: '请输入门票库存',
           rules: [{ required: true, message: '请输入门票库存' }],
-        },
-        {
-          key: 'start_ticket_time',
-          label: '开始售票时间',
-          type: 'DatePicker',
-          value: '',
-          placeholder: '请选择',
-          rules: [{ required: true, message: '请选择开始售票时间' }],
-        },
-        {
-          key: 'end_ticket_time',
-          label: '结束售票时间',
-          type: 'DatePicker',
-          value: '',
-          placeholder: '请选择',
-          rules: [{ required: true, message: '请选择结束售票时间' }],
         },
       ],
     ];
@@ -689,10 +711,20 @@ export default class ActivityList extends React.Component {
           params={roundModalParams}
           callback={this.roundModalCallback}
           modal={{
-            title: '添加轮次',
+            title: currentRoundDetail ? '修改轮次' : '添加轮次',
             visible: roundModalVisible,
           }}
         />
+
+        {/*修改轮次*/}
+        {/*<FormInit*/}
+          {/*params={roundModalParams}*/}
+          {/*callback={this.roundModalCallback}*/}
+          {/*modal={{*/}
+            {/*title: '修改轮次',*/}
+            {/*visible: roundEditModalVisible,*/}
+          {/*}}*/}
+        {/*/>*/}
 
         {/*添加门票*/}
         <FormInit
@@ -804,6 +836,7 @@ class RoundTable extends React.PureComponent {
         key: 'action',
         render: (text, item) => (
           <span>
+            <a onClick={() => this.props.editRound(item)}>修改轮次</a>
             <a onClick={() => this.props.addTicket(item)}>添加门票</a>
             {/*<a onClick={() => this.props.addSign(item)}>添加报名</a>*/}
           </span>
@@ -862,18 +895,20 @@ class TicketTable extends React.PureComponent {
   ticketDetailModalCallback = (values) => {
     // console.log(values)
     if (values) {
-      // this.props.dispatch({
-      //   type: 'global/post',
-      //   url: '/api/activities/ticket_edit',
-      //   payload: values,
-      //   callback: (res) => {
-      //     if(res.code === '0'){
-      //       this.setState({
-      //         visible: false,
-      //       })
-      //     }
-      //   }
-      // })
+      values.start_ticket_time = parseInt(new Date(values.start_ticket_time).getTime() / 1000)
+      values.end_ticket_time = parseInt(new Date(values.end_ticket_time).getTime() / 1000)
+      this.props.dispatch({
+        type: 'global/post',
+        url: '/api/activities/ticket_edit',
+        payload: values,
+        callback: (res) => {
+          if(res.code === '0'){
+            this.setState({
+              visible: false,
+            })
+          }
+        }
+      })
     } else {
       this.setState({
         visible: false,
@@ -912,7 +947,7 @@ class TicketTable extends React.PureComponent {
           key: 'start_ticket_time',
           label: '开始售票时间',
           type: 'DatePicker',
-          value: detail.start_ticket_time || '',
+          value: detail.start_ticket_time ? moment(detail.start_ticket_time*1000).format('YYYY-MM-DD HH:mm:ss') : '',
           placeholder: '请选择',
           disabled: true,
           rules: [],
@@ -921,7 +956,7 @@ class TicketTable extends React.PureComponent {
           key: 'end_ticket_time',
           label: '结束售票时间',
           type: 'DatePicker',
-          value: detail.end_ticket_time || '',
+          value: detail.end_ticket_time ? moment(detail.end_ticket_time*1000).format('YYYY-MM-DD HH:mm:ss') : '',
           placeholder: '请选择',
           disabled: true,
           rules: [],

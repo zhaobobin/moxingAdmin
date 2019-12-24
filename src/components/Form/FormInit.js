@@ -14,6 +14,7 @@
  */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import moment from 'moment'
 import {
   Form,
   Input,
@@ -160,7 +161,7 @@ export default class FormInit extends PureComponent {
         html = (
           <FormItem {...formItemLayout} label={topic.label}>
             {getFieldDecorator(topic.key, {
-              initialValue: topic.value ? topic.value : undefined,
+              initialValue: topic.value ? moment(topic.value, 'YYYY-MM-DD HH:mm:ss') : undefined,
               rules: topic.rules ? topic.rules : undefined,
             })(
               <DatePicker

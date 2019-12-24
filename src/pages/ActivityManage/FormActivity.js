@@ -321,8 +321,8 @@ export default class FormActivity extends React.Component {
         // values.ticket = JSON.stringify(ticketForm)
         values.coordinate = mapPosition // 地图坐标
         values.shelf_time = moment(values.shelf_time._d).format('YYYY-MM-DD HH:mm') //售票开始时间
-        // values.start_ticket_time = moment(values.ticket_time[0]._d).format('YYYY-MM-DD HH:mm') //售票开始时间
-        // values.end_ticket_time = moment(values.ticket_time[1]._d).format('YYYY-MM-DD HH:mm') //售票结束时间
+        values.start_ticket_time = moment(values.ticket_time[0]._d).format('YYYY-MM-DD HH:mm') //售票开始时间
+        values.end_ticket_time = moment(values.ticket_time[1]._d).format('YYYY-MM-DD HH:mm') //售票结束时间
         values.start_time = moment(values.time[0]._d).format('YYYY-MM-DD HH:mm') //活动开始时间
         values.end_time = moment(values.time[1]._d).format('YYYY-MM-DD HH:mm') //活动结束时间
         delete values.ticket_time
@@ -530,24 +530,24 @@ export default class FormActivity extends React.Component {
                   })(<DatePicker style={{width: '100%'}} showTime placeholder="请选择时间"/>)}
                 </FormItem>
 
-                {/*<FormItem {...formItemLayout} label="售票时间">*/}
-                  {/*{getFieldDecorator('ticket_time', {*/}
-                    {/*initialValue:*/}
-                      {/*detail.start_ticket_time && detail.end_ticket_time*/}
-                        {/*? [*/}
-                          {/*moment(detail.start_ticket_time, 'YYYY-MM-DD HH:mm'),*/}
-                          {/*moment(detail.end_ticket_time, 'YYYY-MM-DD HH:mm'),*/}
-                        {/*]*/}
-                        {/*: '',*/}
-                    {/*rules: [{required: true, message: '请选择上架时间'}],*/}
-                  {/*})(*/}
-                    {/*<RangePicker*/}
-                      {/*style={{width: '100%'}}*/}
-                      {/*showTime={{format: 'HH:mm'}}*/}
-                      {/*placeholder={['售票开始时间', '售票结束时间']}*/}
-                    {/*/>*/}
-                  {/*)}*/}
-                {/*</FormItem>*/}
+                <FormItem {...formItemLayout} label="售票时间">
+                  {getFieldDecorator('ticket_time', {
+                    initialValue:
+                      detail.start_ticket_time && detail.end_ticket_time
+                        ? [
+                          moment(detail.start_ticket_time, 'YYYY-MM-DD HH:mm'),
+                          moment(detail.end_ticket_time, 'YYYY-MM-DD HH:mm'),
+                        ]
+                        : '',
+                    rules: [{required: true, message: '请选择上架时间'}],
+                  })(
+                    <RangePicker
+                      style={{width: '100%'}}
+                      showTime={{format: 'HH:mm'}}
+                      placeholder={['售票开始时间', '售票结束时间']}
+                    />
+                  )}
+                </FormItem>
 
                 <FormItem {...formItemLayout} label={`${title}时间`}>
                   {getFieldDecorator('time', {
@@ -628,7 +628,7 @@ export default class FormActivity extends React.Component {
 
                 <FormItem {...formItemLayout} label="实名认证">
                   {getFieldDecorator('is_real', {
-                    initialValue: detail.is_real ? detail.is_real.toString() : '1',
+                    initialValue: detail ? detail.is_real.toString() : '1',
                   })(
                     <RadioGroup name="refund">
                       <Radio value={'1'}>需要</Radio>
