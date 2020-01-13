@@ -523,7 +523,7 @@ export default class FormGame extends React.Component {
               >
                 <FormItem {...formItemLayout} label={'活动级别'}>
                   {getFieldDecorator('level', {
-                    initialValue: level,
+                    initialValue: level.toString(),
                   })(
                     <Select disabled>
                       <Option value="1">一级活动</Option>
@@ -534,7 +534,7 @@ export default class FormGame extends React.Component {
 
                 <FormItem {...formItemLayout} label={'活动类型'}>
                   {getFieldDecorator('type', {
-                    initialValue: type,
+                    initialValue: type.toString(),
                   })(
                     <Select disabled>
                       <Option value="1">常规活动</Option>
@@ -640,19 +640,19 @@ export default class FormGame extends React.Component {
                   })(<Input autoComplete="off" allowClear={true} placeholder={`请输入详细地址`} />)}
                 </FormItem>
 
-                <FormItem {...formItemLayout} label={<strong>门票信息</strong>}>
-                  {ticketFormList}
+                {/*<FormItem {...formItemLayout} label={<strong>门票信息</strong>}>*/}
+                {/*{ticketFormList}*/}
 
-                  <Button
-                    type="dashed"
-                    size="large"
-                    style={{ width: '100%' }}
-                    onClick={this.addTicketForm}
-                  >
-                    <Icon type="plus" />
-                    <span>添加门票信息</span>
-                  </Button>
-                </FormItem>
+                {/*<Button*/}
+                {/*type="dashed"*/}
+                {/*size="large"*/}
+                {/*style={{ width: '100%' }}*/}
+                {/*onClick={this.addTicketForm}*/}
+                {/*>*/}
+                {/*<Icon type="plus" />*/}
+                {/*<span>添加门票信息</span>*/}
+                {/*</Button>*/}
+                {/*</FormItem>*/}
 
                 <FormItem {...formItemLayout} label={`${title}介绍`} className={styles.ueditor}>
                   {getFieldDecorator('content', {

@@ -1,75 +1,74 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Link, routerRedux } from 'dva/router'
-import { Button, Popconfirm } from 'antd'
+import { Link, routerRedux } from 'dva/router';
+import { Button, Popconfirm } from 'antd';
 
-import FormInit from '@/components/Form/FormInit'
-import TableInit from '@/components/Table/TableInit'
+import FormInit from '@/components/Form/FormInit';
+import TableInit from '@/components/Table/TableInit';
 
 @connect(({ global }) => ({
   global,
 }))
 export default class OrderList extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.ajaxFlag = true;
     this.state = {
-      queryParams: {},                //查询参数
+      queryParams: {}, //查询参数
       pageTitle: '订单列表',
       apiList: '/api/order/order',
       modalTitle: '订单',
 
-      stateOptions: [],                   //状态下拉列表
-
-    }
+      stateOptions: [], //状态下拉列表
+    };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.queryStateList();
   }
 
-  queryStateList(){
+  queryStateList() {
     this.props.dispatch({
       type: 'global/post',
       url: '/api/order/order_state',
       payload: {},
-      callback: (res) => {
-        setTimeout(() => {this.ajaxFlag = true}, 500);
-        if(res.code === '0'){
+      callback: res => {
+        setTimeout(() => {
+          this.ajaxFlag = true;
+        }, 500);
+        if (res.code === '0') {
           let arr = [];
-          for(let i in res.data){
+          for (let i in res.data) {
             let item = {
               label: res.data[i].name,
-              value: res.data[i].state
+              value: res.data[i].state,
             };
-            arr.push(item)
+            arr.push(item);
           }
           this.setState({
             loading: false,
-            stateOptions: arr
-          })
+            stateOptions: arr,
+          });
         }
-      }
+      },
     });
   }
 
   //表单回调
-  formCallback = (values) => {
+  formCallback = values => {
     this.setState({
       queryParams: values,
-    })
+    });
   };
 
   //详情
-  detail = (id) => {
-    this.props.dispatch(routerRedux.push(`/goods/order-detail/${id}`))
+  detail = id => {
+    this.props.dispatch(routerRedux.push(`/goods/order-detail/${id}`));
   };
 
-  render(){
-
-    const {currentUser} = this.props.global;
-    const {loading, apiList, queryParams, modalTitle, stateOptions} = this.state;
+  render() {
+    const { currentUser } = this.props.global;
+    const { loading, apiList, queryParams, modalTitle, stateOptions } = this.state;
 
     const searchParams = [
       [
@@ -96,7 +95,7 @@ export default class OrderList extends React.Component {
           type: 'Select',
           value: '',
           placeholder: '请选择',
-          option: stateOptions
+          option: stateOptions,
         },
       ],
       [
@@ -116,9 +115,9 @@ export default class OrderList extends React.Component {
               type: 'default',
               htmlType: 'reset',
             },
-          ]
+          ],
         },
-      ]
+      ],
     ];
 
     const columns = [
@@ -126,15 +125,14 @@ export default class OrderList extends React.Component {
         title: '订单编号',
         dataIndex: 'order_no',
         key: 'order_no',
+        width: 160,
         align: 'center',
-        width: 150
       },
       {
         title: '收件人',
         dataIndex: 'realname',
         key: 'realname',
-        align: 'center',
-        width: 150
+        width: 160,
       },
       {
         title: '联系方式',
@@ -165,19 +163,19 @@ export default class OrderList extends React.Component {
         dataIndex: 'pay_type',
         key: 'pay_type',
         align: 'center',
-        render: (pay_type) => (
+        render: pay_type => (
           <span>
             {pay_type === 1 ? '支付宝' : null}
             {pay_type === 2 ? '微信' : null}
           </span>
-        )
+        ),
       },
       {
         title: '状态',
         dataIndex: 'order_state',
         key: 'order_state',
         align: 'center',
-        render: (order_state) => (
+        render: order_state => (
           <span>
             {order_state === 0 ? '已取消' : null}
             {order_state === 1 ? '待付款' : null}
@@ -190,7 +188,7 @@ export default class OrderList extends React.Component {
             {order_state === 8 ? '已退货' : null}
             {order_state === 9 ? '商家接入' : null}
           </span>
-        )
+        ),
       },
       {
         title: '生成时间',
@@ -213,34 +211,27 @@ export default class OrderList extends React.Component {
           <span>
             <a onClick={() => this.detail(item.order_no)}>查看</a>
           </span>
-        )
+        ),
       },
     ];
 
-    return(
+    return (
       <div>
+        {loading ? null : (
+          <div>
+            <FormInit layout="horizontal" params={searchParams} callback={this.formCallback} />
 
-        {
-          loading ?
-            null
-            :
-            <div>
-
-              <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
-
-              <TableInit
-                onRef={ref => this.tableInit = ref}
-                params={{
-                  api: apiList,
-                  columns,
-                  queryParams,
-                }}
-              />
-
-            </div>
-        }
-
+            <TableInit
+              onRef={ref => (this.tableInit = ref)}
+              params={{
+                api: apiList,
+                columns,
+                queryParams,
+              }}
+            />
+          </div>
+        )}
       </div>
-    )
+    );
   }
 }

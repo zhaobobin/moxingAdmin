@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 
 import Loading from '@/components/Common/Loading';
-import FormGame from './FormGame';
+import FormPrize from './FormPrize';
 
 @connect(({ global }) => ({
   global,
@@ -53,7 +53,7 @@ export default class EditActivity extends React.Component {
     const { loading, detail } = this.state;
 
     return (
-      <div>{loading && !detail ? <Loading /> : <FormGame detail={detail} action="edit" />}</div>
+      <div>{loading && !detail ? <Loading /> : <FormPrize detail={detail} action="edit" />}</div>
     );
   }
 }

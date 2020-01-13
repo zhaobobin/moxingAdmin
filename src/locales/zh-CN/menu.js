@@ -5,6 +5,13 @@ export default {
   'menu.member-list': '会员列表',
   'menu.member-detail': '会员详情',
 
+  'menu.channel': '渠道统计',
+  'menu.channel.list': '渠道列表',
+  'menu.channel.channel-user': '用户注册记录',
+  'menu.channel.channel-order': '渠道订单统计',
+  'menu.channel.channel-invite': '邀请记录',
+  'menu.channel.channel-invite-order': '邀请用户订单记录',
+
   'menu.cricle': '圈子管理',
   'menu.cricle.cricle-category': '圈子分类',
   'menu.cricle.cricle-list': '圈子列表',
@@ -28,12 +35,14 @@ export default {
 
   'menu.activity': '活动&抽奖管理',
   'menu.activity.activity-list': '活动列表',
+  'menu.activity.game-list': '比赛列表',
+  'menu.activity.prize-list': '抽奖列表',
   'menu.activity.create-activity': '创建活动',
   'menu.activity.create-game': '创建比赛',
-  'menu.activity.create-lucky': '创建抽奖',
+  'menu.activity.create-prize': '创建抽奖',
   'menu.activity.edit-activity': '活动详情',
   'menu.activity.edit-game': '比赛详情',
-  'menu.activity.edit-lucky': '抽奖详情',
+  'menu.activity.edit-prize': '抽奖详情',
   'menu.activity.add-sign': '添加报名',
 
   'menu.ticket': '票务管理',

@@ -11,6 +11,7 @@ export default [
       { component: '404' },
     ],
   },
+
   // app
   {
     path: '/',
@@ -34,6 +35,46 @@ export default [
         key: 'member-detail',
         hideInMenu: true,
         component: './MemberManage/MemberDetail',
+      },
+
+      {
+        name: '渠道统计',
+        icon: 'solution',
+        path: 'channel',
+        key: 'channel',
+        routes: [
+          {
+            name: '渠道列表',
+            path: 'list',
+            key: 'list',
+            component: './ChannelManage/ChannelList',
+          },
+          {
+            name: '用户注册记录',
+            path: 'user',
+            key: 'channel-user',
+            component: './ChannelManage/ChannelUser',
+          },
+          {
+            name: '渠道订单统计',
+            path: 'order',
+            key: 'channel-order',
+            component: './ChannelManage/ChannelOrder',
+          },
+          {
+            name: '邀请记录',
+            path: 'invite',
+            key: 'channel-invite',
+            component: './ChannelManage/ChannelInvite',
+          },
+          {
+            name: '邀请用户订单记录',
+            path: 'invite-order/:uid',
+            key: 'channel-invite-order',
+            hideInMenu: true,
+            component: './ChannelManage/ChannelInviteOrder',
+          },
+        ],
       },
 
       {
@@ -176,6 +217,18 @@ export default [
             component: './ActivityManage/ActivityList',
           },
           {
+            name: '比赛列表',
+            path: 'game',
+            key: 'game-list',
+            component: './ActivityManage/GameList',
+          },
+          {
+            name: '抽奖列表',
+            path: 'prize',
+            key: 'prize-list',
+            component: './ActivityManage/PrizeList',
+          },
+          {
             name: '创建活动',
             path: 'create-activity/:keys',
             key: 'create-activity',
@@ -191,10 +244,10 @@ export default [
           },
           {
             name: '创建抽奖',
-            path: 'create-lucky/:keys',
-            key: 'create-lucky',
+            path: 'create-prize/:keys',
+            key: 'create-prize',
             hideInMenu: true,
-            component: './ActivityManage/CreateLucky',
+            component: './ActivityManage/CreatePrize',
           },
           {
             name: '活动详情',
@@ -212,10 +265,10 @@ export default [
           },
           {
             name: '抽奖详情',
-            path: 'edit-lucky/:id',
-            key: 'edit-lucky',
+            path: 'edit-prize/:id',
+            key: 'edit-prize',
             hideInMenu: true,
-            component: './ActivityManage/EditLucky',
+            component: './ActivityManage/EditPrize',
           },
           {
             name: '添加报名',

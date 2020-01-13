@@ -1,5 +1,5 @@
 /**
- * 活动列表
+ * 比赛列表
  */
 import React from 'react';
 import { connect } from 'dva';
@@ -14,18 +14,18 @@ import AddSignFrom from './AddSignFrom';
 @connect(({ global }) => ({
   global,
 }))
-export default class ActivityList extends React.Component {
+export default class GameList extends React.Component {
   constructor(props) {
     super(props);
     this.ajaxFlag = true;
     this.state = {
       queryParams: {
-        type: '1',
+        type: '2',
       }, //查询参数
-      pageTitle: '活动列表',
+      pageTitle: '比赛列表',
       apiList: '/api/activities/index',
       getActivity: '/api/activities/get_activity',
-      modalTitle: '活动',
+      modalTitle: '比赛',
 
       stateOptions: [], //状态下拉列表
 
@@ -47,7 +47,7 @@ export default class ActivityList extends React.Component {
   formCallback = values => {
     this.setState({
       queryParams: {
-        type: '1',
+        type: '2',
         ...values,
       },
     });
@@ -55,7 +55,7 @@ export default class ActivityList extends React.Component {
 
   // 创建活动 begin !
   addActivity = () => {
-    this.props.dispatch(routerRedux.push('/activity/create-activity/1_1')); // level、type
+    this.props.dispatch(routerRedux.push('/activity/create-game/1_2')); // level、type
     // this.setState({
     //   activityLevel: '1',
     //   addModalVisible: true,
@@ -116,6 +116,10 @@ export default class ActivityList extends React.Component {
       },
     });
   };
+
+  // addSign = (id) => {
+  //   this.props.dispatch(routerRedux.push(`/activity/add-sign/${id}`))
+  // }
 
   // 添加活动回调
   addModalCallback = values => {
@@ -725,14 +729,14 @@ export default class ActivityList extends React.Component {
         />
 
         {/*添加活动*/}
-        {/*<FormInit*/}
-        {/*params={addModalParams}*/}
-        {/*callback={this.addModalCallback}*/}
-        {/*modal={{*/}
-        {/*title: '添加活动',*/}
-        {/*visible: addModalVisible,*/}
-        {/*}}*/}
-        {/*/>*/}
+        <FormInit
+          params={addModalParams}
+          callback={this.addModalCallback}
+          modal={{
+            title: '添加活动',
+            visible: addModalVisible,
+          }}
+        />
 
         {/*添加轮次*/}
         <FormInit
