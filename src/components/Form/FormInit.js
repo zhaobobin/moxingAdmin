@@ -14,7 +14,7 @@
  */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import moment from 'moment'
+import moment from 'moment';
 import {
   Form,
   Input,
@@ -35,6 +35,7 @@ import UploadImage from '@/components/Form/UploadImage';
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const { TextArea } = Input;
 
 const formItemLayout = {
   labelCol: {
@@ -148,6 +149,25 @@ export default class FormInit extends PureComponent {
               <InputNumber
                 autoComplete="off"
                 min={0}
+                placeholder={topic.placeholder}
+                style={style}
+                allowClear={true}
+              />
+            )}
+          </FormItem>
+        );
+        break;
+
+      case 'TextArea':
+        html = (
+          <FormItem {...formItemLayout} label={topic.label}>
+            {getFieldDecorator(topic.key, {
+              initialValue: topic.value ? topic.value : undefined,
+              rules: topic.rules ? topic.rules : undefined,
+            })(
+              <TextArea
+                autoSize
+                autoComplete="off"
                 placeholder={topic.placeholder}
                 style={style}
                 allowClear={true}

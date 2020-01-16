@@ -135,20 +135,8 @@ export default class ChannelOrder extends React.Component {
   };
 
   render() {
-    const { currentUser } = this.props.global;
-    const {
-      apiList,
-      queryParams,
-      modalVisible,
-      modalAction,
-      modalTitle,
-      modalValues,
-      roleOptions,
-      total,
-      amount,
-      user,
-    } = this.state;
-
+    const { apiList, queryParams, modalValues, roleOptions, total, amount, user } = this.state;
+    console.log(queryParams);
     const searchParams = [
       [
         {
@@ -307,8 +295,8 @@ export default class ChannelOrder extends React.Component {
         align: 'center',
         render: pay_type => (
           <span>
-            {pay_type === '1' ? '支付宝' : null}
-            {pay_type === '2' ? '微信' : null}
+            {pay_type === 1 ? '支付宝' : null}
+            {pay_type === 2 ? '微信' : null}
           </span>
         ),
       },
@@ -326,10 +314,10 @@ export default class ChannelOrder extends React.Component {
         align: 'center',
         render: order_state => (
           <span>
-            {order_state === '2' ? '已付款-待发货' : null}
-            {order_state === '4' ? '已发货' : null}
-            {order_state === '5' ? '提醒发货' : null}
-            {order_state === '6' ? '已收货' : null}
+            {order_state === 2 ? '已付款-待发货' : null}
+            {order_state === 4 ? '已发货' : null}
+            {order_state === 5 ? '提醒发货' : null}
+            {order_state === 6 ? '已收货' : null}
           </span>
         ),
       },

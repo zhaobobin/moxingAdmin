@@ -46,18 +46,18 @@ export default class TableInit extends React.Component {
 
     this.setState({ loading: true });
 
-    const { uid } = this.props.global.currentUser;
+    // const { uid } = this.props.global.currentUser;
     const { page, page_count } = this.state.queryParams;
-
+    const payload = {
+      page,
+      page_count,
+      ...queryParams,
+    };
+    // if(uid) payload['uid'] = uid
     this.props.dispatch({
       type: 'global/post',
       url: this.props.params.api,
-      payload: {
-        uid,
-        page,
-        page_count,
-        ...queryParams,
-      },
+      payload,
       callback: res => {
         this.ajaxFlag = true;
         if (res.code === '0') {

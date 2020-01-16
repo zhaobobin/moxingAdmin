@@ -120,6 +120,32 @@ export default class ChannelList extends React.Component {
     });
   };
 
+  // 上下架
+  changeState = item => {
+    let { apiEdit } = this.state;
+
+    this.props.dispatch({
+      type: 'global/post',
+      url: apiEdit,
+      payload: {
+        id: item.id,
+        state: item.state === 1 ? 0 : 1,
+      },
+      callback: res => {
+        setTimeout(() => {
+          this.ajaxFlag = true;
+        }, 500);
+        if (res.code === '0') {
+          this.tableInit.refresh({});
+          this.setState({
+            modalVisible: false,
+            modalValues: '',
+          });
+        }
+      },
+    });
+  };
+
   //modal回调
   modalCallback = values => {
     if (values) {
@@ -147,13 +173,13 @@ export default class ChannelList extends React.Component {
     const modalParams = [
       [
         {
-          key: 'chanel_code',
+          key: 'chanel_no',
           label: '渠道号',
           type: 'Input',
           inputType: 'Input',
-          value: modalValues ? modalValues.chanel_code : undefined,
+          value: modalValues ? modalValues.chanel_no : undefined,
           placeholder: '请输入',
-          rules: [],
+          rules: [{ required: true, message: '渠道号不能为空' }],
         },
         {
           key: 'chanel_name',
@@ -162,7 +188,19 @@ export default class ChannelList extends React.Component {
           inputType: 'Input',
           value: modalValues ? modalValues.chanel_name : undefined,
           placeholder: '请输入',
-          rules: [],
+          rules: [
+            { required: true, message: '渠道名称不能为空' },
+            { pattern: /^[a-zA-Z]+$/, message: '只能输入英文' },
+          ],
+        },
+        {
+          key: 'chanel_url',
+          label: '渠道地址',
+          type: 'Input',
+          inputType: 'Input',
+          value: modalValues ? modalValues.chanel_url : undefined,
+          placeholder: '请输入要推广的H5页面链接',
+          rules: [{ required: true, message: '渠道链接不能为空' }],
         },
         {
           key: 'name',
@@ -180,13 +218,12 @@ export default class ChannelList extends React.Component {
           inputType: 'Input',
           value: modalValues ? modalValues.tel : undefined,
           placeholder: '请输入',
-          rules: [],
+          rules: [{ pattern: /^\d{11}$/, message: '请输入正确的手机号' }],
         },
         {
           key: 'desc',
           label: '渠道简介',
-          type: 'Input',
-          inputType: 'Input',
+          type: 'TextArea',
           value: modalValues ? modalValues.desc : undefined,
           placeholder: '请输入',
           rules: [],
@@ -197,8 +234,8 @@ export default class ChannelList extends React.Component {
     const columns = [
       {
         title: '渠道号',
-        dataIndex: 'chanel_code',
-        key: 'chanel_code',
+        dataIndex: 'chanel_no',
+        key: 'chanel_no',
         align: 'center',
       },
       {
@@ -206,6 +243,13 @@ export default class ChannelList extends React.Component {
         dataIndex: 'chanel_name',
         key: 'chanel_name',
         align: 'center',
+      },
+      {
+        title: '渠道链接',
+        dataIndex: 'url',
+        key: 'url',
+        align: 'center',
+        width: 200,
       },
       {
         title: '渠道联系人',
@@ -240,13 +284,14 @@ export default class ChannelList extends React.Component {
         align: 'center',
         render: (text, item) => (
           <div>
-            {currentUser.role === '超级管理员' ? (
+            {currentUser.role === '超级管理员' && item.state === 0 ? (
               <span>
                 <a onClick={() => this.edit(item)}>编辑</a>
               </span>
-            ) : (
-              '--'
-            )}
+            ) : null}
+            <span>
+              <a onClick={() => this.changeState(item)}>{item.state === 1 ? '下架' : '上架'}</a>
+            </span>
           </div>
         ),
       },
