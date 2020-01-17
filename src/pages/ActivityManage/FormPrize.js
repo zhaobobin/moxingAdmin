@@ -28,6 +28,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
+const { confirm } = Modal;
 
 const formItemLayout = {
   labelCol: {
@@ -172,9 +173,6 @@ export default class CreatePrize extends React.Component {
     let { luckyForm } = this.state;
     let item = {
       name: '',
-      is_day: '0',
-      choose: '',
-      price: '',
       storage: '',
     };
     luckyForm.push(item);
@@ -239,9 +237,23 @@ export default class CreatePrize extends React.Component {
   };
 
   //表单确定
-  handleFormSubmit = e => {
-    e.preventDefault();
 
+  submit = e => {
+    e.preventDefault();
+    let _this = this;
+    confirm({
+      title: '确定保存已修改的内容?',
+      content: '',
+      okText: '确定',
+      cancelText: '取消',
+      onOk() {
+        _this.formSubmit();
+      },
+      onCancel() {},
+    });
+  };
+
+  formSubmit = () => {
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
@@ -285,7 +297,7 @@ export default class CreatePrize extends React.Component {
       payload: data,
       callback: res => {
         if (res.code === '0') {
-          this.props.dispatch(routerRedux.push('/activity'));
+          this.props.dispatch(routerRedux.push('/activity/prize'));
         }
         setTimeout(() => {
           this.ajaxFlag = true;
@@ -306,6 +318,7 @@ export default class CreatePrize extends React.Component {
             <div key={index} className={styles.ticketFormItem}>
               <FormItem {...formItemLayout2} label="奖品名称">
                 {getFieldDecorator(`lucky-name-${index}`, {
+                  initialValue: (detail && item.name) || '',
                   validateFirst: true,
                   rules: [{ required: true, message: '请输入奖品名称' }],
                 })(
@@ -319,6 +332,7 @@ export default class CreatePrize extends React.Component {
               </FormItem>
               <FormItem {...formItemLayout2} label="奖品库存">
                 {getFieldDecorator(`lucky-storage-${index}`, {
+                  initialValue: (detail && item.storage) || '',
                   validateFirst: true,
                   rules: [
                     { required: true, message: '请输入奖品库存' },
@@ -351,11 +365,7 @@ export default class CreatePrize extends React.Component {
         ) : (
           <Row>
             <Col xs={24} sm={24} md={24} lg={14}>
-              <Form
-                hideRequiredMark={true}
-                onSubmit={this.handleFormSubmit}
-                onReset={this.handleFormReset}
-              >
+              <Form hideRequiredMark={true} onSubmit={this.submit} onReset={this.handleFormReset}>
                 <FormItem {...formItemLayout} label={'活动级别'}>
                   {getFieldDecorator('level', {
                     initialValue: level.toString(),
@@ -398,10 +408,10 @@ export default class CreatePrize extends React.Component {
                 <FormItem {...formItemLayout} label={`${title}时间`}>
                   {getFieldDecorator('time', {
                     initialValue:
-                      detail.start_ticket_time && detail.end_ticket_time
+                      detail.start_time && detail.end_time
                         ? [
-                            moment(detail.start_ticket_time, 'YYYY-MM-DD HH:mm'),
-                            moment(detail.end_ticket_time, 'YYYY-MM-DD HH:mm'),
+                            moment(detail.start_time, 'YYYY-MM-DD HH:mm'),
+                            moment(detail.end_time, 'YYYY-MM-DD HH:mm'),
                           ]
                         : '',
                     rules: [{ required: true, message: '请选择时间' }],

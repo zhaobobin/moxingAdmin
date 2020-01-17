@@ -280,12 +280,6 @@ export default class PrizeList extends React.Component {
 
         <TableInit
           onRef={ref => (this.tableInit = ref)}
-          onExpand={this.onExpand}
-          expandedRowRender={record =>
-            this.state.expandVisible[record.id] === true
-              ? this.state.expandedRowRenders[record.id]
-              : true
-          }
           params={{
             api: apiList,
             columns,

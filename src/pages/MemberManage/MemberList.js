@@ -334,11 +334,11 @@ export default class MemberList extends React.Component {
             <a onClick={() => this.detail(item.id)}>详情</a>
             <span> | </span>
             <a onClick={() => this.edit(item)}>编辑</a>
-            {currentUser.role === '超级管理员' ? (
+            {currentUser.role === '超级管理员' && item.state ? (
               <span>
                 <Popconfirm title="确定删除该用户？" onConfirm={() => this.del(item.id)}>
                   <span> | </span>
-                  <a>删除</a>
+                  <a>{item.state === 1 ? '冻结' : '解冻'}</a>
                 </Popconfirm>
               </span>
             ) : null}

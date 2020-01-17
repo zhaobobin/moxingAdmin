@@ -40,6 +40,7 @@ export default class EditActivity extends React.Component {
           this.ajaxFlag = true;
         }, 500);
         if (res.code === '0') {
+          res.data.id = id;
           this.setState({
             loading: false,
             detail: res.data,

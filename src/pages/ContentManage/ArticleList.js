@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Link, routerRedux } from 'dva/router'
-import { Button, Popconfirm } from 'antd'
+import { Link, routerRedux } from 'dva/router';
+import { Button, Popconfirm } from 'antd';
 
-import FormInit from '@/components/Form/FormInit'
-import TableInit from '@/components/Table/TableInit'
+import FormInit from '@/components/Form/FormInit';
+import TableInit from '@/components/Table/TableInit';
 
 const titleStyle = {
   width: '100px',
@@ -18,45 +18,46 @@ const titleStyle = {
   global,
 }))
 export default class ArticleList extends React.Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.ajaxFlag = true;
     this.state = {
       queryParams: {
-        type: '1'       //文章类型
-      },                //查询参数
+        type: '1', //文章类型
+      }, //查询参数
       apiList: '/api/portal/get_portal',
       apiDel: '/api/portal/del_portal',
       title: '文章',
 
       selectedRowKeys: [],
-
-    }
+    };
   }
 
   //表单回调
-  formCallback = (values) => {
+  formCallback = values => {
     this.setState({
-      queryParams: values,
-    })
+      queryParams: {
+        type: '1',
+        ...values,
+      },
+    });
   };
 
   //添加
   add = () => {
-    this.props.dispatch(routerRedux.push('/content/article-add'))
+    this.props.dispatch(routerRedux.push('/content/article-add'));
   };
 
   //编辑
-  edit = (id) => {
-    this.props.dispatch(routerRedux.push(`/content/article-edit/article/${id}`))
+  edit = id => {
+    this.props.dispatch(routerRedux.push(`/content/article-edit/article/${id}`));
   };
 
-  del = (id) => {
-    if(!this.ajaxFlag) return;
+  del = id => {
+    if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
-    let {apiDel} = this.state;
+    let { apiDel } = this.state;
 
     this.props.dispatch({
       type: 'global/post',
@@ -64,25 +65,26 @@ export default class ArticleList extends React.Component {
       payload: {
         id,
       },
-      callback: (res) => {
-        setTimeout(() => {this.ajaxFlag = true}, 500);
-        if(res.code === '0'){
-          this.tableInit.refresh({})
+      callback: res => {
+        setTimeout(() => {
+          this.ajaxFlag = true;
+        }, 500);
+        if (res.code === '0') {
+          this.tableInit.refresh(this.state.queryParams);
         }
-      }
+      },
     });
   };
 
   // 批量选择
-  onSelectChange = (selectedRowKeys) => {
-    console.log(selectedRowKeys)
-    this.setState({ selectedRowKeys: selectedRowKeys});
+  onSelectChange = selectedRowKeys => {
+    console.log(selectedRowKeys);
+    this.setState({ selectedRowKeys: selectedRowKeys });
   };
 
-  render(){
-
-    const {currentUser} = this.props.global;
-    const {apiList, queryParams, title, selectedRowKeys} = this.state;
+  render() {
+    const { currentUser } = this.props.global;
+    const { apiList, queryParams, title, selectedRowKeys } = this.state;
 
     const searchParams = [
       [
@@ -129,17 +131,17 @@ export default class ArticleList extends React.Component {
           option: [
             {
               label: '未发布',
-              value: '0'
+              value: '0',
             },
             {
               label: '已发布',
-              value: '2'
+              value: '2',
             },
             {
               label: '已下架',
-              value: '3'
+              value: '3',
             },
-          ]
+          ],
         },
         {
           key: 'btn',
@@ -155,9 +157,9 @@ export default class ArticleList extends React.Component {
               type: 'default',
               htmlType: 'reset',
             },
-          ]
+          ],
         },
-      ]
+      ],
     ];
 
     const columns = [
@@ -165,20 +167,14 @@ export default class ArticleList extends React.Component {
         title: '文章标题',
         dataIndex: 'title',
         key: 'title',
-        render: (title) => (
-          <div style={titleStyle}>
-            {title || '--'}
-          </div>
-        )
+        render: title => <div style={titleStyle}>{title || '--'}</div>,
       },
       {
         title: '分类',
         dataIndex: 'category_name',
         key: 'category_name',
         align: 'center',
-        render: (category_name) => (
-          <span>{category_name || '--'}</span>
-        )
+        render: category_name => <span>{category_name || '--'}</span>,
       },
       {
         title: '发布时间',
@@ -227,13 +223,13 @@ export default class ArticleList extends React.Component {
         dataIndex: 'status',
         key: 'status',
         align: 'center',
-        render: (status) => (
+        render: status => (
           <span>
             {status === 0 ? '未发布' : null}
             {status === 1 ? '已发布' : null}
             {status === 2 ? '已下架' : null}
           </span>
-        )
+        ),
       },
       {
         title: '操作',
@@ -243,37 +239,32 @@ export default class ArticleList extends React.Component {
         render: (text, item) => (
           <span>
             <a onClick={() => this.edit(item.id)}>编辑</a>
-            {
-              currentUser.role === '超级管理员' ?
-                <Popconfirm title="确定删除该文章？" onConfirm={() => this.del(item.id)}>
-                  <span> | </span>
-                  <a>删除</a>
-                </Popconfirm>
-                :
-                null
-            }
+            {currentUser.role === '超级管理员' ? (
+              <Popconfirm title="确定删除该文章？" onConfirm={() => this.del(item.id)}>
+                <span> | </span>
+                <a>删除</a>
+              </Popconfirm>
+            ) : null}
           </span>
-        )
+        ),
       },
     ];
 
-    return(
+    return (
       <div>
+        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback} />
 
-        <FormInit layout="horizontal" params={searchParams} callback={this.formCallback}/>
-
-        {
-          currentUser.role === '超级管理员' ?
-            <div style={{padding: '20px 0'}}>
-              <Button type="primary" onClick={this.add}>添加{title}</Button>
-            </div>
-            :
-            null
-        }
+        {currentUser.role === '超级管理员' ? (
+          <div style={{ padding: '20px 0' }}>
+            <Button type="primary" onClick={this.add}>
+              添加{title}
+            </Button>
+          </div>
+        ) : null}
 
         <TableInit
           rowKey="id"
-          onRef={ref => this.tableInit = ref}
+          onRef={ref => (this.tableInit = ref)}
           params={{
             api: apiList,
             columns,
@@ -284,8 +275,7 @@ export default class ArticleList extends React.Component {
             onChange: this.onSelectChange,
           }}
         />
-
       </div>
-    )
+    );
   }
 }
