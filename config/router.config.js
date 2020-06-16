@@ -210,23 +210,12 @@ export default [
         key: 'activity',
         routes: [
           { path: '/activity', redirect: '/activity/list' },
+          // 活动
           {
             name: '活动列表',
             path: 'list',
             key: 'activity-list',
             component: './ActivityManage/ActivityList',
-          },
-          {
-            name: '比赛列表',
-            path: 'game',
-            key: 'game-list',
-            component: './ActivityManage/GameList',
-          },
-          {
-            name: '抽奖列表',
-            path: 'prize',
-            key: 'prize-list',
-            component: './ActivityManage/PrizeList',
           },
           {
             name: '创建活动',
@@ -236,11 +225,46 @@ export default [
             component: './ActivityManage/CreateActivity',
           },
           {
+            name: '活动详情',
+            path: 'edit-activity/:id',
+            key: 'edit-activity',
+            hideInMenu: true,
+            component: './ActivityManage/EditActivity',
+          },
+          {
+            name: '添加报名',
+            path: 'add-sign/:id',
+            key: 'add-sign',
+            hideInMenu: true,
+            component: './ActivityManage/AddSignFrom',
+          },
+          // 比赛
+          {
+            name: '比赛列表',
+            path: 'game',
+            key: 'game-list',
+            component: './ActivityManage/GameList',
+          },
+          {
             name: '创建比赛',
             path: 'create-game/:keys',
             key: 'create-game',
             hideInMenu: true,
             component: './ActivityManage/CreateGame',
+          },
+          {
+            name: '比赛详情',
+            path: 'edit-game/:id',
+            key: 'edit-game',
+            hideInMenu: true,
+            component: './ActivityManage/EditActivity',
+          },
+          // 抽奖
+          {
+            name: '抽奖列表',
+            path: 'prize',
+            key: 'prize-list',
+            component: './ActivityManage/PrizeList',
           },
           {
             name: '创建抽奖',
@@ -250,20 +274,6 @@ export default [
             component: './ActivityManage/CreatePrize',
           },
           {
-            name: '活动详情',
-            path: 'edit-activity/:id',
-            key: 'edit-activity',
-            hideInMenu: true,
-            component: './ActivityManage/EditActivity',
-          },
-          {
-            name: '比赛详情',
-            path: 'edit-game/:id',
-            key: 'edit-game',
-            hideInMenu: true,
-            component: './ActivityManage/EditActivity',
-          },
-          {
             name: '抽奖详情',
             path: 'edit-prize/:id',
             key: 'edit-prize',
@@ -271,11 +281,18 @@ export default [
             component: './ActivityManage/EditPrize',
           },
           {
-            name: '添加报名',
-            path: 'add-sign/:id',
-            key: 'add-sign',
+            name: '抽奖名单',
+            path: 'prize-person/:id',
+            key: 'prize-person-list',
             hideInMenu: true,
-            component: './ActivityManage/AddSignFrom',
+            component: './ActivityManage/PrizePersonList',
+          },
+          {
+            name: '奖品名单',
+            path: 'prize-goods/:id',
+            key: 'prize-goods-list',
+            hideInMenu: true,
+            component: './ActivityManage/PrizeGoodsList',
           },
         ],
       },

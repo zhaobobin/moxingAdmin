@@ -74,8 +74,14 @@ export default class ChannelList extends React.Component {
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
 
-    let { apiAdd, apiEdit, modalAction } = this.state;
-    let api = modalAction === '添加' ? apiAdd : apiEdit;
+    let { apiAdd, apiEdit, modalAction, modalValues } = this.state;
+    let api;
+    if(modalAction === '添加') {
+      api = apiAdd;
+    } else {
+      api = apiEdit;
+      values.id = modalValues.id;
+    }
     this.props.dispatch({
       type: 'global/post',
       url: api,
@@ -128,8 +134,8 @@ export default class ChannelList extends React.Component {
       type: 'global/post',
       url: apiEdit,
       payload: {
-        id: item.id,
-        state: item.state === 1 ? 0 : 1,
+        ...item,
+        state: item.state === 1 ? '0' : '1',
       },
       callback: res => {
         setTimeout(() => {

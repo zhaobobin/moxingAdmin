@@ -112,7 +112,7 @@ export default class GameList extends React.Component {
         setTimeout(() => {
           this.ajaxFlag = true;
         }, 500);
-        this.tableInit.refresh({});
+        this.tableInit.refresh(this.state.queryParams);
       },
     });
   };
@@ -674,6 +674,18 @@ export default class GameList extends React.Component {
         key: 'level',
         align: 'center',
         render: level => <span>{level === '1' ? '一级活动' : '二级活动'}</span>,
+      },
+      {
+        title: '状态',
+        dataIndex: 'state',
+        key: 'state',
+        align: 'center',
+        render: state => (
+          <span>
+            <Badge status={state === '1' ? 'success' : 'error'} />
+            {state === '1' ? '上架' : '下架'}
+          </span>
+        ),
       },
 
       {

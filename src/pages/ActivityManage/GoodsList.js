@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'dva'
 import moment from 'moment'
 import {Link, routerRedux} from 'dva/router'
-import {Button, Popconfirm, Modal} from 'antd'
+import {Button, Badge, Popconfirm, Modal} from 'antd'
 
 import FormInit from '@/components/Form/FormInit'
 import TableInit from '@/components/Table/TableInit'
@@ -35,6 +35,25 @@ export default class ActivityList extends React.Component {
       modalVisible: true,
     })
   }
+
+  del = (id, type) => {
+    if (!this.ajaxFlag) return;
+    this.ajaxFlag = false;
+    this.props.dispatch({
+      type: 'global/post',
+      url: '/api/activities/activities_del',
+      payload: {
+        id,
+        type,
+      },
+      callback: res => {
+        setTimeout(() => {
+          this.ajaxFlag = true;
+        }, 500);
+        this.tableInit.refresh(this.state.queryParams);
+      },
+    });
+  };
 
   render() {
 
@@ -161,18 +180,23 @@ export default class ActivityList extends React.Component {
         render: end_time => <span>{end_time ? moment(end_time).format('YYYY-MM-DD') : '--'}</span>,
       },
       {
-        title: '活动状态',
-        dataIndex: 'state',
-        key: 'state',
-        align: 'center',
-        render: state => <span>{state === '1' ? '上架' : '下架'}</span>,
-      },
-      {
         title: '活动级别',
         dataIndex: 'level',
         key: 'level',
         align: 'center',
         render: level => <span>{state === '1' ? '一级活动' : '二级活动'}</span>,
+      },
+      {
+        title: '状态',
+        dataIndex: 'state',
+        key: 'state',
+        align: 'center',
+        render: state => (
+          <span>
+            <Badge status={state === '1' ? 'success' : 'error'} />
+            {state === '1' ? '上架' : '下架'}
+          </span>
+        ),
       },
 
       {
@@ -183,6 +207,15 @@ export default class ActivityList extends React.Component {
         render: (text, item) => (
           <span>
             <a onClick={() => this.edit(item.id)}>查看</a>
+            <Popconfirm
+              title={`是否要${item.state === '1' ? '下架' : '上架'}？`}
+              onConfirm={() => this.del(item.id, item.state === '1' ? '2' : '1')}
+            >
+              <a>{item.state === '1' ? '下架' : '上架'}</a>
+            </Popconfirm>
+            <Popconfirm title="是否要删除？" onConfirm={() => this.del(item.id, '3')}>
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
       },

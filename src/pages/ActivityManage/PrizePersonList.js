@@ -1,5 +1,5 @@
 /**
- * 活动统计
+ * 抽奖 - 抽奖名单
  */
 import React from 'react';
 import { connect } from 'dva';
@@ -12,7 +12,7 @@ import TableInit from '@/components/Table/TableInit';
 @connect(({ global }) => ({
   global,
 }))
-export default class PrizeActivityWin extends React.Component {
+export default class PrizePersonList extends React.Component {
   constructor(props) {
     super(props);
     this.ajaxFlag = true;

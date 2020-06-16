@@ -78,7 +78,7 @@ export default {
   },
   proxy: {
     '/api': {
-      target: 'http://datatest.moxinga.com',
+      target: 'http://data.moxinga.com',
       changeOrigin: true,
     },
   },

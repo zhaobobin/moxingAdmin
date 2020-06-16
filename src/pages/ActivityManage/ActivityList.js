@@ -4,8 +4,8 @@
 import React from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Link, routerRedux } from 'dva/router';
-import { Button, Popconfirm, Modal, Table, Badge } from 'antd';
+import { routerRedux } from 'dva/router';
+import { Button, Badge, Popconfirm, Table, notification } from 'antd';
 
 import FormInit from '@/components/Form/FormInit';
 import TableInit from '@/components/Table/TableInit';
@@ -98,21 +98,33 @@ export default class ActivityList extends React.Component {
     this.props.dispatch(routerRedux.push(`/activity/${path}/${item.id}`));
   };
 
-  del = (id, type) => {
+  // 删除、下架活动
+  del = (item, type) => {
     if (!this.ajaxFlag) return;
     this.ajaxFlag = false;
+
+    if (type === '3' && item.state === '1') {
+      setTimeout(() => {
+        notification.error({
+          message: '该活动为上架状态，不能删除！'
+        });
+        this.ajaxFlag = true;
+      }, 500);
+      return;
+    }
+
     this.props.dispatch({
       type: 'global/post',
       url: '/api/activities/activities_del',
       payload: {
-        id,
+        id: item.id,
         type,
       },
       callback: res => {
         setTimeout(() => {
           this.ajaxFlag = true;
         }, 500);
-        this.tableInit.refresh({});
+        this.tableInit.refresh(this.state.queryParams);
       },
     });
   };
@@ -156,6 +168,42 @@ export default class ActivityList extends React.Component {
     });
   };
 
+  // 删除轮次
+  removeRound = id => {
+    if (!this.ajaxFlag) return;
+    this.ajaxFlag = false;
+
+    const { currentActivityDetail } = this.state;
+    if (currentActivityDetail.state === '0') {
+      this.props.dispatch({
+        type: 'global/post',
+        url: '/api/activities/round_dal',
+        payload: {
+          id
+        },
+        callback: res => {
+          setTimeout(() => {
+            this.ajaxFlag = true;
+          }, 500);
+          if (res.code === '0') {
+            this.queryRound(this.state.currentActivityDetail); // 刷新活动下的轮次信息
+            this.setState({
+              currentRoundDetail: '',
+              roundModalVisible: false,
+            });
+          }
+        },
+      });
+    } else {
+      notification.error({
+        message: '该活动为上架状态，不能删除轮次！'
+      });
+      setTimeout(() => {
+        this.ajaxFlag = true;
+      }, 500);
+    }
+  }
+
   // 修改轮次
   editRound = item => {
     this.setState({
@@ -188,7 +236,6 @@ export default class ActivityList extends React.Component {
           this.ajaxFlag = true;
         }, 500);
         if (res.code === '0') {
-          //this.tableInit.refresh({});
           this.queryRound(this.state.currentActivityDetail); // 刷新活动下的轮次信息
           this.setState({
             currentRoundDetail: '',
@@ -281,6 +328,40 @@ export default class ActivityList extends React.Component {
       });
     }
   };
+
+  // 删除门票
+  removeTicket = id => {
+    if (!this.ajaxFlag) return;
+    this.ajaxFlag = false;
+
+    const { currentActivityDetail } = this.state;
+    if (currentActivityDetail.state === '0') {
+      this.props.dispatch({
+        type: 'global/post',
+        url: '/api/activities/ticket_dal',
+        payload: {
+          id,
+        },
+        callback: res => {
+          setTimeout(() => {
+            this.ajaxFlag = true;
+          }, 500);
+          if (res.code === '0') {
+            this.roundTable.queryTicket(this.state.currentRoundDetail); // 刷新轮次下的门票信息
+          }
+        },
+      });
+    } else {
+      notification.error({
+        message: '该活动为上架状态，不能删除门票！'
+      });
+      setTimeout(() => {
+        this.ajaxFlag = true;
+      }, 500);
+    }
+
+  }
+
   // 添加门票 end !
 
   // 添加报名 begin !
@@ -345,6 +426,7 @@ export default class ActivityList extends React.Component {
         if (res.code === '0') {
           this.setState({
             currentActivityDetail: record,
+            currentRoundDetail: res.data,
             expandVisible: {
               ...this.state.expandVisible,
               [record.id]: true,
@@ -363,6 +445,8 @@ export default class ActivityList extends React.Component {
                   data={res.data}
                   showTicket={item => this.showTicket(item)}
                   editRound={item => this.editRound(item)}
+                  removeRound={item => this.removeRound(item)}
+                  removeTicket={item => this.removeTicket(item)}
                   addTicket={item => this.addTicket(item)}
                   addSign={item => this.addSign(item)}
                 />
@@ -376,7 +460,6 @@ export default class ActivityList extends React.Component {
   // 查询活动下的轮次信息 end !
 
   render() {
-    const { currentUser } = this.props.global;
     const {
       activityLevel,
       apiList,
@@ -537,7 +620,7 @@ export default class ActivityList extends React.Component {
           disabledDate: current => {
             return (
               current < moment(currentActivityDetail.start_time) ||
-              current > moment(currentActivityDetail.end_time)
+              current > moment(currentActivityDetail.end_time).add(1, 'd')
             );
           },
           placeholder: '请选择',
@@ -552,7 +635,7 @@ export default class ActivityList extends React.Component {
           disabledDate: current => {
             return (
               current < moment(currentActivityDetail.start_time) ||
-              current > moment(currentActivityDetail.end_time)
+              current >= moment(currentActivityDetail.end_time).add(1, 'd')
             );
           },
           placeholder: '请选择',
@@ -658,18 +741,23 @@ export default class ActivityList extends React.Component {
         render: end_time => <span>{end_time ? moment(end_time).format('YYYY-MM-DD') : '--'}</span>,
       },
       {
-        title: '活动状态',
-        dataIndex: 'state',
-        key: 'state',
-        align: 'center',
-        render: state => <span>{state === '1' ? '上架' : '下架'}</span>,
-      },
-      {
         title: '活动级别',
         dataIndex: 'level',
         key: 'level',
         align: 'center',
         render: level => <span>{level === '1' ? '一级活动' : '二级活动'}</span>,
+      },
+      {
+        title: '状态',
+        dataIndex: 'state',
+        key: 'state',
+        align: 'center',
+        render: state => (
+          <span>
+            <Badge status={state === '1' ? 'success' : 'error'} />
+            {state === '1' ? '上架' : '下架'}
+          </span>
+        ),
       },
 
       {
@@ -687,11 +775,11 @@ export default class ActivityList extends React.Component {
             ) : null}
             <Popconfirm
               title={`是否要${item.state === '1' ? '下架' : '上架'}？`}
-              onConfirm={() => this.del(item.id, item.state === '1' ? '2' : '1')}
+              onConfirm={() => this.del(item, item.state === '1' ? '2' : '1')}
             >
               <a>{item.state === '1' ? '下架' : '上架'}</a>
             </Popconfirm>
-            <Popconfirm title="是否要删除？" onConfirm={() => this.del(item.id, '3')}>
+            <Popconfirm title="是否要删除？" onConfirm={() => this.del(item, '3')}>
               <a>删除</a>
             </Popconfirm>
           </span>
@@ -840,9 +928,7 @@ class RoundTable extends React.PureComponent {
                   expandVisible
                   expandRecord={record}
                   data={res.data}
-                  // showTicket={(item) => this.showTicket(item)}
-                  // addTicket={(item) => this.addTicket(item)}
-                  // addSign={(item) => this.addSign(item)}
+                  removeTicket={this.props.removeTicket}
                 />
               ),
             },
@@ -867,6 +953,9 @@ class RoundTable extends React.PureComponent {
         render: (text, item) => (
           <span>
             <a onClick={() => this.props.editRound(item)}>修改轮次</a>
+            <Popconfirm title="是否要删除该轮次？" onConfirm={() => this.props.removeRound(item.id)}>
+              <a>删除轮次</a>
+            </Popconfirm>
             <a onClick={() => this.props.addTicket(item)}>添加门票</a>
             {/*<a onClick={() => this.props.addSign(item)}>添加报名</a>*/}
           </span>
@@ -928,11 +1017,18 @@ class TicketTable extends React.PureComponent {
       values.end_ticket_time = parseInt(new Date(values.end_ticket_time).getTime() / 1000);
       this.props.dispatch({
         type: 'global/post',
-        url: '/api/activities/ticket_edit',
+        url: '/api/activities/round_ticket_edit',
         payload: values,
         callback: res => {
           if (res.code === '0') {
+            let { data } = this.state;
+            for(let i in data){
+              if(data[i].id === values.id){
+                data[i] = values
+              }
+            }
             this.setState({
+              data,
               visible: false,
             });
           }
@@ -1049,6 +1145,9 @@ class TicketTable extends React.PureComponent {
         render: (text, item) => (
           <span>
             <a onClick={() => this.showTicketDetail(item.id)}>查看</a>
+            <Popconfirm title="是否要删除该门票？" onConfirm={() => this.props.removeTicket(item.id)}>
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
       },

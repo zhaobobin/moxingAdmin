@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import { Link, routerRedux } from 'dva/router';
-import { Button, Popconfirm, Modal, Table, Badge } from 'antd';
+import { Button, Badge, Popconfirm, Modal, Table } from 'antd';
 
 import FormInit from '@/components/Form/FormInit';
 import TableInit from '@/components/Table/TableInit';
@@ -74,7 +74,7 @@ export default class PrizeList extends React.Component {
         setTimeout(() => {
           this.ajaxFlag = true;
         }, 500);
-        this.tableInit.refresh({});
+        this.tableInit.refresh(this.state.queryParams);
       },
     });
   };
@@ -148,54 +148,6 @@ export default class PrizeList extends React.Component {
       ],
     ];
 
-    // 添加活动
-    const addModalParams = [
-      [
-        {
-          key: 'level',
-          label: '活动级别',
-          type: 'Select',
-          inputType: 'Select',
-          value: activityLevel,
-          placeholder: '请选择',
-          disabled: true,
-          rules: [{ required: true, message: '请选择活动级别' }],
-          option: [
-            {
-              label: '一级活动',
-              value: '1',
-            },
-            {
-              label: '二级活动',
-              value: '2',
-            },
-          ],
-        },
-        {
-          key: 'type',
-          label: '活动类型',
-          type: 'Select',
-          value: '1',
-          placeholder: '请选择',
-          rules: [{ required: true, message: '请选择活动类型' }],
-          option: [
-            {
-              label: '常规活动',
-              value: '1',
-            },
-            {
-              label: '比赛活动',
-              value: '2',
-            },
-            {
-              label: '抽奖活动',
-              value: '3',
-            },
-          ],
-        },
-      ],
-    ];
-
     // 表格结构
     const columns = [
       {
@@ -241,18 +193,23 @@ export default class PrizeList extends React.Component {
         render: end_time => <span>{end_time ? moment(end_time).format('YYYY-MM-DD') : '--'}</span>,
       },
       {
-        title: '活动状态',
-        dataIndex: 'state',
-        key: 'state',
-        align: 'center',
-        render: state => <span>{state === '1' ? '上架' : '下架'}</span>,
-      },
-      {
         title: '活动级别',
         dataIndex: 'level',
         key: 'level',
         align: 'center',
         render: level => <span>{level === '1' ? '一级活动' : '二级活动'}</span>,
+      },
+      {
+        title: '状态',
+        dataIndex: 'state',
+        key: 'state',
+        align: 'center',
+        render: state => (
+          <span>
+            <Badge status={state === '1' ? 'success' : 'error'} />
+            {state === '1' ? '上架' : '下架'}
+          </span>
+        ),
       },
 
       {
@@ -263,6 +220,17 @@ export default class PrizeList extends React.Component {
         render: (text, item) => (
           <span>
             <a onClick={() => this.edit(item)}>查看</a>
+            <Link to={`/activity/prize-person/${item.id}`}>名单</Link>
+            <Link to={`/activity/prize-goods/${item.id}`}>奖品</Link>
+            <Popconfirm
+              title={`是否要${item.state === '1' ? '下架' : '上架'}？`}
+              onConfirm={() => this.del(item.id, item.state === '1' ? '2' : '1')}
+            >
+              <a>{item.state === '1' ? '下架' : '上架'}</a>
+            </Popconfirm>
+            <Popconfirm title="是否要删除？" onConfirm={() => this.del(item.id, '3')}>
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
       },
